@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Latest Exams & Recruitment</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family:
+        Inter,
+        Arial,
+        Helvetica,
+        sans-serif;
+
+      background: #f5f7fb;
+      color: #1f2937;
+    }
+
+    .container {
+      width: min(1450px, 96%);
+      margin: 25px auto;
+    }
+
+    /* HEADER */
+
+    .header {
+      background:
+        linear-gradient(
+          135deg,
+          #2563eb,
+          #4f46e5
+        );
+
+      color: #ffffff;
+      padding: 28px;
+      border-radius: 18px;
+      margin-bottom: 18px;
+
+      box-shadow:
+        0 10px 30px
+        rgba(37, 99, 235, 0.20);
+    }
+
+    .header h1 {
+      font-size: 28px;
+      line-height: 1.3;
+      margin-bottom: 7px;
+    }
+
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    /* SEARCH */
+
+    .toolbar {
+      background: #ffffff;
+      padding: 14px;
+      border-radius: 13px;
+      margin-bottom: 14px;
+
+      box-shadow:
+        0 3px 14px
+        rgba(0, 0, 0, 0.06);
+    }
+
+    .search {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      outline: none;
+
+      padding: 13px 15px;
+
+      border-radius: 9px;
+
+      font-size: 15px;
+
+      transition: 0.2s;
+    }
+
+    .search:focus {
+      border-color: #2563eb;
+
+      box-shadow:
+        0 0 0 3px
+        rgba(37, 99, 235, 0.12);
+    }
+
+    /* TABS */
+
+    .tabs-wrapper {
+      background: transparent;
+      margin-bottom: 14px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+
+      overflow-x: auto;
+
+      padding: 3px 2px 10px;
+
+      scrollbar-width: thin;
+    }
+
+    .tab {
+      border: 0;
+      outline: 0;
+
+      background: #ffffff;
+
+      color: #374151;
+
+      padding: 11px 18px;
+
+      border-radius: 9px;
+
+      cursor: pointer;
+
+      font-size: 14px;
+      font-weight: 700;
+
+      white-space: nowrap;
+
+      box-shadow:
+        0 2px 9px
+        rgba(0, 0, 0, 0.06);
+
+      transition: 0.2s;
+    }
+
+    .tab:hover {
+      color: #2563eb;
+      background: #eff6ff;
+    }
+
+    .tab.active {
+      color: #ffffff;
+      background: #2563eb;
+
+      box-shadow:
+        0 5px 15px
+        rgba(37, 99, 235, 0.25);
+    }
+
+    /* STATUS */
+
+    .status {
+      background: #ffffff;
+
+      border-radius: 10px;
+
+      padding: 12px 15px;
+
+      margin-bottom: 14px;
+
+      color: #4b5563;
+
+      font-size: 14px;
+    }
+
+    /* TABLE */
+
+    .table-card {
+      background: #ffffff;
+
+      border-radius: 15px;
+
+      overflow: hidden;
+
+      box-shadow:
+        0 5px 20px
+        rgba(0, 0, 0, 0.07);
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+
+      border-collapse: collapse;
+
+      min-width: 900px;
+    }
+
+    thead {
+      background: #111827;
+      color: #ffffff;
+    }
+
+    th {
+      padding: 14px 13px;
+
+      text-align: left;
+
+      font-size: 13px;
+
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 13px;
+
+      border-bottom:
+        1px solid #e5e7eb;
+
+      font-size: 14px;
+
+      vertical-align: top;
+
+      line-height: 1.45;
+    }
+
+    tbody tr {
+      transition: 0.15s;
+    }
+
+    tbody tr:hover {
+      background: #f8fafc;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .post-date {
+      color: #2563eb;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .board {
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .post-name {
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .qualification {
+      color: #4b5563;
+    }
+
+    .advt {
+      color: #6b7280;
+      white-space: nowrap;
+    }
+
+    .last-date {
+      color: #dc2626;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    /* LOADING */
+
+    .loading {
+      padding: 50px 20px;
+
+      text-align: center;
+
+      color: #6b7280;
+
+      font-size: 15px;
+    }
+
+    .spinner {
+      width: 28px;
+      height: 28px;
+
+      border: 3px solid #e5e7eb;
+
+      border-top-color: #2563eb;
+
+      border-radius: 50%;
+
+      animation:
+        spin 0.8s linear infinite;
+
+      margin:
+        0 auto 12px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ERROR */
+
+    .error {
+      padding: 25px;
+
+      background: #fef2f2;
+
+      color: #991b1b;
+
+      border:
+        1px solid #fecaca;
+
+      border-radius: 10px;
+
+      line-height: 1.6;
+    }
+
+    /* EMPTY */
+
+    .empty {
+      padding: 45px 20px;
+
+      text-align: center;
+
+      color: #6b7280;
+    }
+
+    /* FOOTER */
+
+    .footer {
+      text-align: center;
+
+      padding: 20px;
+
+      color: #6b7280;
+
+      font-size: 13px;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 700px) {
+
+      .container {
+        width: 96%;
+        margin: 12px auto;
+      }
+
+      .header {
+        padding: 21px 17px;
+        border-radius: 13px;
+      }
+
+      .header h1 {
+        font-size: 22px;
+      }
+
+      .header p {
+        font-size: 13px;
+      }
+
+      .tab {
+        padding: 10px 14px;
+      }
+
+      .table-card {
+        border-radius: 11px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+  <div class="container">
+
+    <!-- HEADER -->
+
+    <header class="header">
+
+      <h1>
+        📚 Latest Exam & Recruitment Updates
+      </h1>
+
+      <p>
+        Government exams, recruitment and vacancy updates
+      </p>
+
+    </header>
+
+
+    <!-- SEARCH -->
+
+    <div class="toolbar">
+
+      <input
+        type="search"
+        id="search"
+        class="search"
+        placeholder="🔍 Search exam, post, board, qualification..."
+        autocomplete="off"
+      >
+
+    </div>
+
+
+    <!-- TABS -->
+
+    <div class="tabs-wrapper">
+
+      <div
+        id="tabs"
+        class="tabs"
+      ></div>
+
+    </div>
+
+
+    <!-- STATUS -->
+
+    <div
+      id="status"
+      class="status"
+    >
+      Loading...
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="table-card">
+
+      <div class="table-scroll">
+
+        <div id="tableContainer">
+
+          <div class="loading">
+
+            <div class="spinner"></div>
+
+            Loading data...
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <footer class="footer">
+      © 2026 Exam & Recruitment Updates
+    </footer>
+
+  </div>
+
+
+<script>
+
+  /*
+   * ======================================================
+   * IMPORTANT
+   * ======================================================
+   *
+   * Yahan Apps Script Web App URL paste karo.
+   *
+   * Example:
+   *
+   * const API_URL =
+   * "https://script.google.com/macros/s/XXXXXXXX/exec";
+   *
+   */
+
+  const API_URL =
+    "https://script.google.com/macros/s/AKfycbzGDazBXohrCZ_uibsKM0hC91-5yPpR1G-J1nnyu4_DOYgAdD0Zy9_PSNWHvTR4mspVdg/exec";
+
+
+  let sheetData = [];
+
+  let currentSheet = 0;
+
+
+  /*
+   * ======================================================
+   * LOAD DATA
+   * ======================================================
+   */
+
+  async function loadData() {
+
+    const tableContainer =
+      document.getElementById(
+        "tableContainer"
+      );
+
+    const status =
+      document.getElementById(
+        "status"
+      );
+
+    try {
+
+      if (
+        !API_URL ||
+        API_URL.includes(
+          "PASTE_YOUR"
+        )
+      ) {
+
+        throw new Error(
+          "HTML me API_URL set nahi kiya gaya hai."
+        );
+
+      }
+
+
+      tableContainer.innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          Loading Google Sheet...
+        </div>
+      `;
+
+
+      const response =
+        await fetch(
+          API_URL + "?t=" + Date.now(),
+          {
+            method: "GET",
+            cache: "no-store"
+          }
+        );
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          "Server response: " +
+          response.status
+        );
+
+      }
+
+
+      const data =
+        await response.json();
+
+
+      if (!data.success) {
+
+        throw new Error(
+          data.error ||
+          "Unknown Google Sheet error."
+        );
+
+      }
+
+
+      sheetData =
+        Array.isArray(data.sheets)
+          ? data.sheets
+          : [];
+
+
+      if (!sheetData.length) {
+
+        throw new Error(
+          "Google Sheet me koi sheet nahi mili."
+        );
+
+      }
+
+
+      createTabs();
+
+
+      currentSheet = 0;
+
+
+      showSheet(0);
+
+
+      status.textContent =
+        sheetData.length +
+        " sheet(s) loaded successfully.";
+
+    }
+
+
+    catch (error) {
+
+      console.error(error);
+
+
+      tableContainer.innerHTML = `
+        <div class="error">
+
+          <strong>
+            ⚠️ Data load nahi ho saka
+          </strong>
+
+          <br><br>
+
+          ${escapeHTML(
+            error.message
+          )}
+
+          <br><br>
+
+          Apps Script deployment me
+          <strong>
+            Who has access → Anyone
+          </strong>
+          select hona chahiye.
+
+        </div>
+      `;
+
+      status.textContent =
+        "Unable to load Google Sheet data.";
+
+    }
+
+  }
+
+
+  /*
+   * ======================================================
+   * CREATE TABS
+   * ======================================================
+   */
+
+  function createTabs() {
+
+    const tabs =
+      document.getElementById(
+        "tabs"
+      );
+
+
+    tabs.innerHTML = "";
+
+
+    sheetData.forEach(
+      function(sheet, index) {
+
+        const button =
+          document.createElement(
+            "button"
+          );
+
+
+        button.className =
+          "tab" +
+          (
+            index === currentSheet
+              ? " active"
+              : ""
+          );
+
+
+        button.textContent =
+          sheet.name;
+
+
+        button.addEventListener(
+          "click",
+          function() {
+
+            currentSheet = index;
+
+
+            document
+              .querySelectorAll(".tab")
+              .forEach(
+                function(tab) {
+
+                  tab.classList.remove(
+                    "active"
+                  );
+
+                }
+              );
+
+
+            button.classList.add(
+              "active"
+            );
+
+
+            document
+              .getElementById(
+                "search"
+              )
+              .value = "";
+
+
+            showSheet(index);
+
+          }
+        );
+
+
+        tabs.appendChild(
+          button
+        );
+
+      }
+    );
+
+  }
+
+
+  /*
+   * ======================================================
+   * SHOW SELECTED SHEET
+   * ======================================================
+   */
+
+  function showSheet(index) {
+
+    const sheet =
+      sheetData[index];
+
+
+    if (!sheet) {
+      return;
+    }
+
+
+    renderTable(
+      sheet.rows || []
+    );
+
+
+    document
+      .getElementById("status")
+      .textContent =
+      sheet.name +
+      " — " +
+      (sheet.rows || []).length +
+      " updates";
+
+  }
+
+
+  /*
+   * ======================================================
+   * RENDER TABLE
+   * ======================================================
+   */
+
+  function renderTable(rows) {
+
+    const container =
+      document.getElementById(
+        "tableContainer"
+      );
+
+
+    if (!rows.length) {
+
+      container.innerHTML = `
+        <div class="empty">
+          📭 No data found in this sheet.
+        </div>
+      `;
+
+      return;
+    }
+
+
+    let html = `
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Post Date
+            </th>
+
+            <th>
+              Recruitment Board
+            </th>
+
+            <th>
+              Exam / Post Name
+            </th>
+
+            <th>
+              Qualification
+            </th>
+
+            <th>
+              Advt No
+            </th>
+
+            <th>
+              Last Date
+            </th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+    `;
+
+
+    rows.forEach(
+      function(item) {
+
+        html += `
+
+          <tr>
+
+            <td class="post-date">
+              ${escapeHTML(
+                item.postDate
+              )}
+            </td>
+
+            <td class="board">
+              ${escapeHTML(
+                item.board
+              )}
+            </td>
+
+            <td class="post-name">
+              ${escapeHTML(
+                item.postName
+              )}
+            </td>
+
+            <td class="qualification">
+              ${escapeHTML(
+                item.qualification
+              )}
+            </td>
+
+            <td class="advt">
+              ${escapeHTML(
+                item.advtNo
+              )}
+            </td>
+
+            <td class="last-date">
+              ${escapeHTML(
+                item.lastDate
+              )}
+            </td>
+
+          </tr>
+
+        `;
+
+      }
+    );
+
+
+    html += `
+
+        </tbody>
+
+      </table>
+
+    `;
+
+
+    container.innerHTML =
+      html;
+
+  }
+
+
+  /*
+   * ======================================================
+   * SEARCH
+   * ======================================================
+   */
+
+  document
+    .getElementById("search")
+    .addEventListener(
+      "input",
+      function() {
+
+        const query =
+          this.value
+            .toLowerCase()
+            .trim();
+
+
+        const sheet =
+          sheetData[currentSheet];
+
+
+        if (!sheet) {
+          return;
+        }
+
+
+        const rows =
+          sheet.rows || [];
+
+
+        if (!query) {
+
+          renderTable(rows);
+
+          document
+            .getElementById(
+              "status"
+            )
+            .textContent =
+            sheet.name +
+            " — " +
+            rows.length +
+            " updates";
+
+          return;
+
+        }
+
+
+        const filtered =
+          rows.filter(
+            function(item) {
+
+              return [
+                item.postDate,
+                item.board,
+                item.postName,
+                item.qualification,
+                item.advtNo,
+                item.lastDate
+              ]
+                .join(" ")
+                .toLowerCase()
+                .includes(query);
+
+            }
+          );
+
+
+        renderTable(
+          filtered
+        );
+
+
+        document
+          .getElementById(
+            "status"
+          )
+          .textContent =
+          filtered.length +
+          " result(s) found";
+
+      }
+    );
+
+
+  /*
+   * ======================================================
+   * ESCAPE HTML
+   * ======================================================
+   */
+
+  function escapeHTML(value) {
+
+    return String(
+      value || ""
+    )
+      .replace(
+        /&/g,
+        "&amp;"
+      )
+      .replace(
+        /</g,
+        "&lt;"
+      )
+      .replace(
+        />/g,
+        "&gt;"
+      )
+      .replace(
+        /"/g,
+        "&quot;"
+      )
+      .replace(
+        /'/g,
+        "&#039;"
+      );
+
+  }
+
+
+  /*
+   * ======================================================
+   * START
+   * ======================================================
+   */
+
+  loadData();
+
+</script>
+
+</body>
+
+</html>

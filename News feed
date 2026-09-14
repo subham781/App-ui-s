@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily News Widget</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      padding: 16px;
+    }
+
+    .news-widget {
+      max-width: 480px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+
+    .widget-header {
+      padding: 16px 18px 12px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .widget-header h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .widget-header p {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    /* Categories - Horizontal Scroll */
+    .categories {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .categories::-webkit-scrollbar {
+      height: 0;
+    }
+
+    .cat-btn {
+      flex-shrink: 0;
+      padding: 7px 14px;
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .cat-btn.active {
+      background: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+    }
+
+    /* News List */
+    .news-list {
+      max-height: 420px;
+      overflow-y: auto;
+      padding: 8px 0;
+    }
+
+    .news-item {
+      display: block;
+      padding: 14px 18px;
+      text-decoration: none;
+      color: inherit;
+      border-bottom: 1px solid #f1f5f9;
+      transition: background 0.15s;
+    }
+
+    .news-item:hover {
+      background: #f8fafc;
+    }
+
+    .news-item:last-child {
+      border-bottom: none;
+    }
+
+    .news-title {
+      font-size: 0.92rem;
+      font-weight: 600;
+      line-height: 1.4;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+
+    .news-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+
+    .source {
+      font-weight: 500;
+      color: #3b82f6;
+    }
+
+    .loading, .error {
+      padding: 40px 20px;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    .error {
+      color: #ef4444;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="news-widget">
+    <div class="widget-header">
+      <h2>Daily News</h2>
+      <p>Latest headlines • Auto refresh</p>
+    </div>
+
+    <!-- Categories (Horizontal Scroll) -->
+    <div class="categories" id="categories">
+      <button class="cat-btn active" data-q="top news">Top</button>
+      <button class="cat-btn" data-q="india">India</button>
+      <button class="cat-btn" data-q="world">World</button>
+      <button class="cat-btn" data-q="technology">Tech</button>
+      <button class="cat-btn" data-q="sports">Sports</button>
+      <button class="cat-btn" data-q="business">Business</button>
+    </div>
+
+    <!-- News List -->
+    <div class="news-list" id="newsList">
+      <div class="loading">Loading news...</div>
+    </div>
+  </div>
+
+  <script>
+    const newsList = document.getElementById('newsList');
+    const categoryBtns = document.querySelectorAll('.cat-btn');
+
+    // Load news function
+    async function loadNews(query = 'top news') {
+      newsList.innerHTML = '<div class="loading">Loading news...</div>';
+
+      try {
+        // freenewsapi.ai - No API key needed
+        const res = await fetch(`https://freenewsapi.ai/v1/search?q=${encodeURIComponent(query)}&lang=en&size=12&sort=date`);
+        const data = await res.json();
+
+        if (!data.results || data.results.length === 0) {
+          newsList.innerHTML = '<div class="error">No news found</div>';
+          return;
+        }
+
+        newsList.innerHTML = data.results.map(item => {
+          const time = new Date(item.published_at).toLocaleString('en-IN', {
+            day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+          });
+
+          return `
+            <a class="news-item" href="${item.url}" target="_blank" rel="noopener">
+              <div class="news-title">${item.title}</div>
+              <div class="news-meta">
+                <span class="source">${item.host || item.sitename || 'News'}</span>
+                <span>${time}</span>
+              </div>
+            </a>
+          `;
+        }).join('');
+
+      } catch (err) {
+        newsList.innerHTML = '<div class="error">Failed to load news. Try again later.</div>';
+        console.error(err);
+      }
+    }
+
+    // Category click
+    categoryBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        categoryBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        loadNews(btn.dataset.q);
+      });
+    });
+
+    // Initial load
+    loadNews('top news');
+
+    // Auto refresh every 10 minutes
+    setInterval(() => {
+      const active = document.querySelector('.cat-btn.active');
+      if (active) loadNews(active.dataset.q);
+    }, 10 * 60 * 1000);
+  </script>
+</body>
+</html>

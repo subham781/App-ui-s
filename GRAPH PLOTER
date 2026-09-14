@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Equation Graph Plotter</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+    }
+
+    .app {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      max-width: 100%;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      flex-shrink: 0;
+      padding: 12px 16px 8px;
+      text-align: center;
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    header h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    header p {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    /* ===== GRAPH AREA (takes more than half) ===== */
+    .graph-section {
+      flex: 1.6;
+      min-height: 0;
+      padding: 10px 12px 6px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .graph-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      flex-shrink: 0;
+    }
+
+    .graph-header h2 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 0.75rem;
+      color: #475569;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+
+    .canvas-wrapper {
+      flex: 1;
+      min-height: 0;
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* ===== BOTTOM INPUT AREA ===== */
+    .input-section {
+      flex-shrink: 0;
+      background: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      padding: 12px 0 16px;
+    }
+
+    .input-scroll {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 0 14px 6px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+    }
+
+    .input-scroll::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .input-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+
+    .input-card {
+      flex: 0 0 auto;
+      width: 260px;
+      background: #f1f5f9;
+      border-radius: 14px;
+      padding: 12px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .input-card label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 90px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: #1e293b;
+      resize: none;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .range-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .range-row > div {
+      flex: 1;
+    }
+
+    .range-row label {
+      font-size: 0.7rem;
+      margin-bottom: 4px;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 7px 8px;
+      font-size: 0.85rem;
+      color: #1e293b;
+      outline: none;
+    }
+
+    input[type="number"]:focus {
+      border-color: #3b82f6;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .btn-plot {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .btn-plot:active {
+      background: #2563eb;
+    }
+
+    .btn-clear {
+      background: #e2e8f0;
+      color: #475569;
+    }
+
+    .btn-clear:active {
+      background: #cbd5e1;
+    }
+
+    .error-msg {
+      font-size: 0.75rem;
+      color: #ef4444;
+      margin-top: 6px;
+      min-height: 16px;
+      padding: 0 4px;
+    }
+
+    /* Examples card */
+    .examples-card {
+      flex: 0 0 auto;
+      width: 200px;
+      background: #f8fafc;
+      border-radius: 14px;
+      padding: 12px;
+      border: 1px dashed #cbd5e1;
+      font-size: 0.75rem;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    .examples-card strong {
+      color: #334155;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    /* Desktop adjustments */
+    @media (min-width: 768px) {
+      .app {
+        max-width: 900px;
+        margin: 0 auto;
+        border-left: 1px solid #e2e8f0;
+        border-right: 1px solid #e2e8f0;
+      }
+
+      header h1 {
+        font-size: 1.5rem;
+      }
+
+      .input-card {
+        width: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header>
+      <h1>Equation Graph Plotter</h1>
+      <p>Enter equations → See graph instantly</p>
+    </header>
+
+    <!-- Graph (takes more than half height) -->
+    <div class="graph-section">
+      <div class="graph-header">
+        <h2>Graph</h2>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="canvas-wrapper">
+        <canvas id="graphCanvas"></canvas>
+      </div>
+    </div>
+
+    <!-- Bottom Input Area (horizontal scroll) -->
+    <div class="input-section">
+      <div class="input-scroll">
+        <!-- Main Input Card -->
+        <div class="input-card">
+          <label>Equations (one per line)</label>
+          <textarea id="equations" placeholder="x^2
+sin(x)
+2*x + 1"></textarea>
+
+          <div class="range-row">
+            <div>
+              <label>X Min</label>
+              <input type="number" id="xmin" value="-8" step="1">
+            </div>
+            <div>
+              <label>X Max</label>
+              <input type="number" id="xmax" value="8" step="1">
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-plot" onclick="plotGraphs()">Plot</button>
+            <button class="btn-clear" onclick="clearAll()">Clear</button>
+          </div>
+          <div class="error-msg" id="error"></div>
+        </div>
+
+        <!-- Examples Card -->
+        <div class="examples-card">
+          <strong>Try these:</strong>
+          x^2<br>
+          sin(x)<br>
+          cos(x)<br>
+          2*x - 3<br>
+          x^3 - 4*x<br>
+          abs(x)<br>
+          sqrt(x)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('graphCanvas');
+    const ctx = canvas.getContext('2d');
+    const colors = ['#3b82f6', '#ec4899', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4'];
+
+    function resizeCanvas() {
+      const wrapper = canvas.parentElement;
+      const rect = wrapper.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
+    }
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      plotGraphs();
+    });
+
+    function clearAll() {
+      document.getElementById('equations').value = '';
+      document.getElementById('error').textContent = '';
+      document.getElementById('legend').innerHTML = '';
+      drawGrid();
+    }
+
+    function drawGrid() {
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      const xmin = parseFloat(document.getElementById('xmin').value) || -8;
+      const xmax = parseFloat(document.getElementById('xmax').value) || 8;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // White background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, width, height);
+
+      const xRange = xmax - xmin;
+      const yRange = xRange * (height / width); // keep aspect
+      const ymin = -yRange / 2;
+      const ymax = yRange / 2;
+
+      const scaleX = width / xRange;
+      const scaleY = height / yRange;
+
+      // Light grid
+      ctx.strokeStyle = '#f1f5f9';
+      ctx.lineWidth = 1;
+
+      for (let x = Math.ceil(xmin); x <= xmax; x++) {
+        const px = (x - xmin) * scaleX;
+        ctx.beginPath();
+        ctx.moveTo(px, 0);
+        ctx.lineTo(px, height);
+        ctx.stroke();
+      }
+
+      for (let y = Math.ceil(ymin); y <= ymax; y++) {
+        const py = height - (y - ymin) * scaleY;
+        ctx.beginPath();
+        ctx.moveTo(0, py);
+        ctx.lineTo(width, py);
+        ctx.stroke();
+      }
+
+      // Axes
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 1.5;
+
+      const y0 = height - (0 - ymin) * scaleY;
+      ctx.beginPath();
+      ctx.moveTo(0, y0);
+      ctx.lineTo(width, y0);
+      ctx.stroke();
+
+      const x0 = (0 - xmin) * scaleX;
+      ctx.beginPath();
+      ctx.moveTo(x0, 0);
+      ctx.lineTo(x0, height);
+      ctx.stroke();
+
+      // Labels
+      ctx.fillStyle = '#64748b';
+      ctx.font = '11px Inter';
+      ctx.fillText(xmin.toFixed(0), 4, y0 - 5);
+      ctx.fillText(xmax.toFixed(0), width - 22, y0 - 5);
+      if (ymax > 0) ctx.fillText(ymax.toFixed(0), x0 + 4, 14);
+      if (ymin < 0) ctx.fillText(ymin.toFixed(0), x0 + 4, height - 6);
+    }
+
+    function plotGraphs() {
+      const errorEl = document.getElementById('error');
+      const legendEl = document.getElementById('legend');
+      errorEl.textContent = '';
+      legendEl.innerHTML = '';
+
+      const raw = document.getElementById('equations').value.trim();
+      if (!raw) {
+        errorEl.textContent = 'Enter at least one equation';
+        drawGrid();
+        return;
+      }
+
+      const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      const xmin = parseFloat(document.getElementById('xmin').value) || -8;
+      const xmax = parseFloat(document.getElementById('xmax').value) || 8;
+
+      if (xmin >= xmax) {
+        errorEl.textContent = 'X Min must be < X Max';
+        return;
+      }
+
+      drawGrid();
+
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      const xRange = xmax - xmin;
+      const yRange = xRange * (height / width);
+      const ymin = -yRange / 2;
+      const ymax = yRange / 2;
+      const scaleX = width / xRange;
+      const scaleY = height / yRange;
+
+      const points = 500;
+      const step = xRange / points;
+
+      lines.forEach((eq, index) => {
+        let expression = eq;
+        if (expression.includes('=')) {
+          expression = expression.split('=')[1].trim();
+        }
+
+        expression = expression
+          .replace(/\^/g, '**')
+          .replace(/(\d)x/g, '$1*x')
+          .replace(/x\(/g, 'x*(');
+
+        const color = colors[index % colors.length];
+
+        // Legend
+        const item = document.createElement('div');
+        item.className = 'legend-item';
+        item.innerHTML = `<div class="legend-color" style="background:\( {color}"></div> \){eq}`;
+        legendEl.appendChild(item);
+
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5;
+        ctx.lineJoin = 'round';
+
+        let started = false;
+
+        for (let i = 0; i <= points; i++) {
+          const x = xmin + i * step;
+          let y;
+          try {
+            y = math.evaluate(expression, { x });
+          } catch (e) {
+            continue;
+          }
+
+          if (typeof y !== 'number' || isNaN(y) || !isFinite(y)) continue;
+
+          const px = (x - xmin) * scaleX;
+          const py = height - (y - ymin) * scaleY;
+
+          if (!started) {
+            ctx.moveTo(px, py);
+            started = true;
+          } else {
+            ctx.lineTo(px, py);
+          }
+        }
+        ctx.stroke();
+      });
+    }
+
+    // Init
+    resizeCanvas();
+    document.getElementById('equations').value = 'x^2\nsin(x)\n0.5*x';
+    plotGraphs();
+  </script>
+</body>
+</html>

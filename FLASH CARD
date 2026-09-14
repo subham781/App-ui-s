@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>SSC & UPSC Flashcards (API)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f1f5f9;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      color: #1e293b;
+    }
+    header {
+      background: white;
+      padding: 16px 20px;
+      text-align: center;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    header h1 { font-size: 1.3rem; font-weight: 700; }
+    header p { font-size: 0.82rem; color: #64748b; margin-top: 3px; }
+
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .categories {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .categories::-webkit-scrollbar { height: 0; }
+    .cat-btn {
+      flex-shrink: 0;
+      padding: 7px 14px;
+      border-radius: 20px;
+      border: 1px solid #cbd5e1;
+      background: white;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #475569;
+      cursor: pointer;
+    }
+    .cat-btn.active {
+      background: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+    }
+
+    .card-area {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1200px;
+      min-height: 300px;
+    }
+
+    .flashcard {
+      width: 100%;
+      height: 300px;
+      position: relative;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .flashcard.flipped { transform: rotateY(180deg); }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+      border: 1px solid #e2e8f0;
+    }
+    .card-front { background: white; }
+    .card-back {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      transform: rotateY(180deg);
+    }
+
+    .card-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+      opacity: 0.7;
+    }
+    .card-text {
+      font-size: 1.15rem;
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.45;
+    }
+    .card-back .card-text { font-weight: 500; font-size: 1.1rem; }
+
+    .category-tag {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      font-size: 0.68rem;
+      background: #f1f5f9;
+      color: #475569;
+      padding: 3px 9px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+    .card-back .category-tag {
+      background: rgba(255,255,255,0.2);
+      color: white;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .btn {
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+    }
+    .btn-primary { background: #3b82f6; color: white; flex: 1; }
+    .btn-secondary {
+      background: white;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+    }
+
+    .progress {
+      text-align: center;
+      margin-top: 14px;
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+    .status {
+      text-align: center;
+      margin-top: 8px;
+      font-size: 0.78rem;
+      color: #94a3b8;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SSC & UPSC Flashcards</h1>
+    <p>Random questions from API • Different every time</p>
+  </header>
+
+  <div class="container">
+    <div class="categories" id="categories">
+      <button class="cat-btn active" data-cat="0">All</button>
+      <button class="cat-btn" data-cat="23">History</button>
+      <button class="cat-btn" data-cat="22">Geography</button>
+      <button class="cat-btn" data-cat="24">Politics</button>
+      <button class="cat-btn" data-cat="17">Science</button>
+      <button class="cat-btn" data-cat="9">General</button>
+    </div>
+
+    <div class="card-area">
+      <div class="flashcard" id="flashcard" onclick="flipCard()">
+        <div class="card-face card-front">
+          <div class="category-tag" id="frontTag">Loading</div>
+          <div class="card-label">Question</div>
+          <div class="card-text" id="questionText">Fetching questions...</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="category-tag" id="backTag">Loading</div>
+          <div class="card-label">Answer</div>
+          <div class="card-text" id="answerText">Please wait...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-secondary" onclick="prevCard()">← Prev</button>
+      <button class="btn btn-primary" onclick="nextCard()">Next →</button>
+      <button class="btn btn-secondary" onclick="loadQuestions()">↻ New</button>
+    </div>
+
+    <div class="progress" id="progress">—</div>
+    <div class="status" id="status">Loading from API...</div>
+  </div>
+
+  <script>
+    // OpenTDB Category mapping
+    const categoryMap = {
+      0: "All",
+      23: "History",
+      22: "Geography",
+      24: "Politics",
+      17: "Science",
+      9: "General Knowledge"
+    };
+
+    let cards = [];
+    let currentIndex = 0;
+    let currentCategory = 0;
+
+    // Decode HTML entities from API
+    function decodeHTML(html) {
+      const txt = document.createElement("textarea");
+      txt.innerHTML = html;
+      return txt.value;
+    }
+
+    async function loadQuestions() {
+      const status = document.getElementById('status');
+      status.textContent = "Fetching new questions...";
+      document.getElementById('questionText').textContent = "Loading...";
+      document.getElementById('answerText').textContent = "Loading...";
+
+      try {
+        let url = `https://opentdb.com/api.php?amount=12&type=multiple`;
+        if (currentCategory !== 0) {
+          url += `&category=${currentCategory}`;
+        }
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.response_code !== 0 || !data.results.length) {
+          throw new Error("No questions received");
+        }
+
+        cards = data.results.map(item => ({
+          cat: item.category.replace("Entertainment: ", "").replace("Science: ", ""),
+          q: decodeHTML(item.question),
+          a: decodeHTML(item.correct_answer)
+        }));
+
+        // Shuffle
+        cards = cards.sort(() => Math.random() - 0.5);
+        currentIndex = 0;
+        loadCard();
+        status.textContent = "Fresh questions from API ✓";
+
+      } catch (err) {
+        console.error(err);
+        status.textContent = "API failed • Using fallback questions";
+        // Fallback static questions (India focused)
+        cards = [
+          { cat: "History", q: "Who was the first Governor-General of independent India?", a: "Lord Mountbatten" },
+          { cat: "Polity", q: "How many fundamental rights are currently in Indian Constitution?", a: "6" },
+          { cat: "Geography", q: "Which is the longest river in India?", a: "Ganga" },
+          { cat: "Economy", q: "What does GDP stand for?", a: "Gross Domestic Product" },
+          { cat: "Science", q: "What is the chemical formula of water?", a: "H₂O" },
+          { cat: "History", q: "In which year was the Battle of Plassey fought?", a: "1757" },
+          { cat: "Polity", q: "Who is known as the Father of the Indian Constitution?", a: "Dr. B.R. Ambedkar" },
+          { cat: "Geography", q: "Tropic of Cancer passes through how many Indian states?", a: "8" }
+        ].sort(() => Math.random() - 0.5);
+        currentIndex = 0;
+        loadCard();
+      }
+    }
+
+    function loadCard() {
+      if (!cards.length) return;
+      const card = cards[currentIndex];
+      document.getElementById('questionText').textContent = card.q;
+      document.getElementById('answerText').textContent = card.a;
+      document.getElementById('frontTag').textContent = card.cat;
+      document.getElementById('backTag').textContent = card.cat;
+      document.getElementById('progress').textContent = `${currentIndex + 1} / ${cards.length}`;
+      document.getElementById('flashcard').classList.remove('flipped');
+    }
+
+    function flipCard() {
+      document.getElementById('flashcard').classList.toggle('flipped');
+    }
+
+    function nextCard() {
+      currentIndex = (currentIndex + 1) % cards.length;
+      loadCard();
+    }
+
+    function prevCard() {
+      currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+      loadCard();
+    }
+
+    // Category buttons
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentCategory = parseInt(btn.dataset.cat);
+        loadQuestions();
+      });
+    });
+
+    // First load
+    loadQuestions();
+  </script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>App Features</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            min-height: 100vh;
+            color: #1e293b;
+            padding: 16px;
+        }
+
+        /* ========== HEADER ========== */
+        .header {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        /* ========== ADDS / PROMOTIONS SECTION ========== */
+        .section-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin: 10px 0 12px 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .adds-wrapper {
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .adds-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .adds-track {
+            display: flex;
+            gap: 14px;
+            width: max-content;
+            animation: autoScroll 25s linear infinite;
+        }
+
+        /* Pause animation when user touches */
+        .adds-wrapper:active .adds-track {
+            animation-play-state: paused;
+        }
+
+        @keyframes autoScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .add-card {
+            width: 160px;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            border: 1px solid #e2e8f0;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .add-card:active {
+            transform: scale(0.96);
+        }
+
+        .add-image {
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+        }
+
+        .add-info {
+            padding: 12px;
+        }
+
+        .add-info h4 {
+            font-size: 0.92rem;
+            font-weight: 600;
+            margin-bottom: 3px;
+            color: #0f172a;
+        }
+
+        .add-info p {
+            font-size: 0.75rem;
+            color: #64748b;
+            line-height: 1.3;
+        }
+
+        /* ========== FEATURES GRID (2 COLUMNS) ========== */
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 18px;
+            padding: 18px 14px;
+            text-align: center;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .feature-card:active {
+            transform: scale(0.96);
+            background: #f8fafc;
+        }
+
+        .icon-box {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 12px;
+        }
+
+        .feature-card h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #0f172a;
+        }
+
+        .feature-card p {
+            font-size: 0.75rem;
+            color: #64748b;
+            line-height: 1.35;
+        }
+
+        /* Icon colors */
+        .color-1 { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+        .color-2 { background: linear-gradient(135deg, #fce7f3, #fbcfe8); }
+        .color-3 { background: linear-gradient(135deg, #d1fae5, #a7f3d0); }
+        .color-4 { background: linear-gradient(135deg, #fef3c7, #fde68a); }
+        .color-5 { background: linear-gradient(135deg, #e0e7ff, #c7d2fe); }
+        .color-6 { background: linear-gradient(135deg, #ffedd5, #fed7aa); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Educational Tools</h1>
+        <p>Choose a tool or explore resources</p>
+    </div>
+
+    <!-- ==================== ADDS / PROMOTIONS ==================== -->
+    <div class="section-title">📚 Recommended for You</div>
+
+    <div class="adds-wrapper">
+        <div class="adds-track" id="addsTrack">
+            <!-- Cards will be generated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- ==================== FEATURES ==================== -->
+    <div class="section-title">⚡ App Features</div>
+
+    <div class="features-grid" id="featuresContainer">
+        <!-- Cards will be generated by JavaScript -->
+    </div>
+
+    <script>
+        // ======================================================
+        // 🔥 1. ADDS / PROMOTIONS (Coaching + Books)
+        //    Just add more objects in this array
+        // ======================================================
+        const adds = [
+            {
+                id: "coaching_1",
+                title: "IIT JEE Coaching",
+                subtitle: "Live Classes • Doubt Solving",
+                icon: "🎓",
+                color: "#dbeafe"
+            },
+            {
+                id: "book_1",
+                title: "NCERT Solutions",
+                subtitle: "Class 9 to 12 • Free PDF",
+                icon: "📖",
+                color: "#fce7f3"
+            },
+            {
+                id: "coaching_2",
+                title: "NEET Crash Course",
+                subtitle: "30 Days Intensive",
+                icon: "💊",
+                color: "#d1fae5"
+            },
+            {
+                id: "book_2",
+                title: "Best Sellers 2026",
+                subtitle: "Top Educational Books",
+                icon: "🏆",
+                color: "#fef3c7"
+            },
+            {
+                id: "coaching_3",
+                title: "UPSC Foundation",
+                subtitle: "Complete Guidance",
+                icon: "🏛️",
+                color: "#e0e7ff"
+            },
+            {
+                id: "book_3",
+                title: "Mathematics Formula",
+                subtitle: "Quick Revision Book",
+                icon: "📐",
+                color: "#ffedd5"
+            }
+            // Add more here easily...
+        ];
+
+        // ======================================================
+        // 🔥 2. FEATURES (2 Column Grid)
+        // ======================================================
+        const features = [
+            {
+                id: "graph_plotter",
+                title: "Graph Plotter",
+                description: "Plot math graphs easily",
+                icon: "📈",
+                color: "color-1"
+            },
+            {
+                id: "synonyms_finder",
+                title: "Synonyms Finder",
+                description: "Find better words fast",
+                icon: "📚",
+                color: "color-2"
+            },
+            {
+                id: "calculator",
+                title: "Smart Calculator",
+                description: "Scientific calculator",
+                icon: "🧮",
+                color: "color-3"
+            },
+            {
+                id: "unit_converter",
+                title: "Unit Converter",
+                description: "Length, weight & more",
+                icon: "🔄",
+                color: "color-4"
+            },
+            {
+                id: "formula_sheet",
+                title: "Formula Sheet",
+                description: "All important formulas",
+                icon: "📝",
+                color: "color-5"
+            },
+            {
+                id: "quiz",
+                title: "Daily Quiz",
+                description: "Test your knowledge",
+                icon: "❓",
+                color: "color-6"
+            }
+            // Add more features here...
+        ];
+
+        // ========== RENDER ADDS ==========
+        const addsTrack = document.getElementById('addsTrack');
+
+        // We duplicate the items so the infinite scroll looks smooth
+        const allAdds = [...adds, ...adds];
+
+        allAdds.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'add-card';
+            card.innerHTML = `
+                <div class="add-image" style="background: ${item.color}">
+                    ${item.icon}
+                </div>
+                <div class="add-info">
+                    <h4>${item.title}</h4>
+                    <p>${item.subtitle}</p>
+                </div>
+            `;
+
+            card.addEventListener('click', () => {
+                if (window.AppInventor) {
+                    window.AppInventor.setWebViewString("add_" + item.id);
+                } else {
+                    alert("Clicked Add: " + item.id);
+                }
+            });
+
+            addsTrack.appendChild(card);
+        });
+
+        // ========== RENDER FEATURES ==========
+        const container = document.getElementById('featuresContainer');
+
+        features.forEach(feature => {
+            const card = document.createElement('div');
+            card.className = 'feature-card';
+            card.innerHTML = `
+                <div class="icon-box ${feature.color}">
+                    ${feature.icon}
+                </div>
+                <h3>${feature.title}</h3>
+                <p>${feature.description}</p>
+            `;
+
+            card.addEventListener('click', () => {
+                if (window.AppInventor) {
+                    window.AppInventor.setWebViewString(feature.id);
+                } else {
+                    alert("Selected: " + feature.id);
+                }
+            });
+
+            container.appendChild(card);
+        });
+    </script>
+</body>
+</html>

@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>My Feed</title>
 
     <style>
@@ -15,68 +14,42 @@
             margin: 0;
             background: #fafafa;
             color: #111;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        .topbar {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            height: 60px;
-            background: white;
-            border-bottom: 1px solid #ddd;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo {
-            font-size: 22px;
-            font-weight: 700;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         .feed {
             width: 100%;
             max-width: 600px;
-            margin: 25px auto;
+            margin: 0 auto;
+            padding-top: 10px;
         }
 
         .post {
             background: white;
-            border: 1px solid #ddd;
+            border: 1px solid #dbdbdb;
             border-radius: 8px;
-            margin-bottom: 25px;
+            margin-bottom: 24px;
             overflow: hidden;
         }
 
         .post-header {
-            height: 58px;
+            height: 56px;
             display: flex;
             align-items: center;
             padding: 10px 14px;
         }
 
         .avatar {
-            width: 36px;
-            height: 36px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
-            background: linear-gradient(
-                135deg,
-                #ffdc80,
-                #fcaf45,
-                #f77737,
-                #e1306c,
-                #c13584,
-                #833ab4
-            );
-
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
             display: flex;
             align-items: center;
             justify-content: center;
-
             color: white;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 14px;
             margin-right: 10px;
         }
 
@@ -86,9 +59,9 @@
         }
 
         .time {
-            color: #888;
+            color: #8e8e8e;
             font-size: 12px;
-            margin-left: 8px;
+            margin-left: 6px;
         }
 
         .post-image {
@@ -96,17 +69,19 @@
             display: block;
             max-height: 700px;
             object-fit: cover;
-            background: #eee;
+            background: #efefef;
         }
 
         .post-content {
-            padding: 12px 14px 16px;
+            padding: 10px 14px 14px;
         }
 
+        /* ===== Instagram style actions ===== */
         .actions {
             display: flex;
-            gap: 18px;
-            margin-bottom: 10px;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 8px;
         }
 
         .action {
@@ -114,67 +89,80 @@
             background: none;
             padding: 0;
             cursor: pointer;
-            font-size: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .action.like.active {
-            color: #ed4956;
+        .action svg {
+            width: 26px;
+            height: 26px;
+            stroke: #262626;
+            fill: none;
+            stroke-width: 2;
+            transition: 0.15s;
+        }
+
+        .action.like.active svg {
+            fill: #ed4956;
+            stroke: #ed4956;
+        }
+
+        .action.save {
+            margin-left: auto;
+        }
+
+        .action.save.active svg {
+            fill: #262626;
         }
 
         .likes {
             font-size: 14px;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .title {
-            font-size: 15px;
-            font-weight: 700;
-            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
         }
 
         .description {
             font-size: 14px;
-            line-height: 1.5;
-            color: #333;
+            line-height: 1.45;
+            color: #262626;
         }
 
         .comments {
-            margin-top: 10px;
-            color: #777;
+            margin-top: 8px;
+            color: #8e8e8e;
             font-size: 13px;
         }
 
         .loading {
             text-align: center;
             padding: 60px 20px;
-            color: #777;
+            color: #8e8e8e;
         }
 
         .error {
             background: #fff;
-            border: 1px solid #e33;
-            color: #c00;
+            border: 1px solid #ed4956;
+            color: #ed4956;
             padding: 20px;
             margin: 30px auto;
             max-width: 600px;
             border-radius: 8px;
+            text-align: center;
         }
 
         @media (max-width: 650px) {
-            .feed {
-                margin: 0 auto;
-            }
-
             .post {
                 border-left: 0;
                 border-right: 0;
                 border-radius: 0;
-                margin-bottom: 15px;
-            }
-
-            .post-image {
-                max-height: 600px;
+                margin-bottom: 12px;
             }
         }
     </style>
@@ -182,253 +170,145 @@
 
 <body>
 
-    <header class="topbar">
-        <div class="logo">My Feed</div>
-    </header>
-
     <main id="feed" class="feed">
-        <div class="loading">
-            Loading posts...
-        </div>
+        <div class="loading">Loading posts...</div>
     </main>
 
-
     <script>
-
         // =====================================================
         // CHANGE ONLY THIS URL
         // =====================================================
-
-        const API_URL =
-            "https://script.google.com/macros/s/AKfycbzVYw5uC-1sASG-6BAMChC3JhCqKK-0LHMgmkQjEmAolRF8_3ozyETPH6cEWBVqDil3/exec";
-
-
-        // =====================================================
-        // LOAD POSTS
-        // =====================================================
+        const API_URL = "https://script.google.com/macros/s/AKfycbzVYw5uC-1sASG-6BAMChC3JhCqKK-0LHMgmkQjEmAolRF8_3ozyETPH6cEWBVqDil3/exec";
 
         async function loadPosts() {
-
             const feed = document.getElementById("feed");
 
             try {
-
                 const response = await fetch(API_URL);
-
-                if (!response.ok) {
-                    throw new Error("API request failed");
-                }
+                if (!response.ok) throw new Error("API request failed");
 
                 const data = await response.json();
-
-                if (!data.success) {
-                    throw new Error("API returned an error");
-                }
+                if (!data.success) throw new Error("API returned an error");
 
                 feed.innerHTML = "";
 
                 if (!data.posts || data.posts.length === 0) {
-
-                    feed.innerHTML = `
-                        <div class="loading">
-                            No posts found.
-                        </div>
-                    `;
-
+                    feed.innerHTML = `<div class="loading">No posts found.</div>`;
                     return;
                 }
 
-                data.posts.forEach(post => {
-                    createPost(post);
-                });
+                data.posts.forEach(post => createPost(post));
 
             } catch (error) {
-
                 console.error(error);
-
                 feed.innerHTML = `
                     <div class="error">
-                        <strong>Unable to load posts.</strong>
-                        <br><br>
+                        <strong>Unable to load posts.</strong><br><br>
                         Check your Apps Script URL and deployment settings.
                     </div>
                 `;
             }
         }
 
-
-        // =====================================================
-        // CREATE POST
-        // =====================================================
-
         function createPost(post) {
-
             const feed = document.getElementById("feed");
-
             const postElement = document.createElement("article");
-
             postElement.className = "post";
 
             postElement.innerHTML = `
-
                 <div class="post-header">
-
                     <div class="avatar">
                         ${escapeHTML(post.username.charAt(0).toUpperCase())}
                     </div>
-
                     <div>
-                        <span class="username">
-                            ${escapeHTML(post.username)}
-                        </span>
-
-                        <span class="time">
-                            ${escapeHTML(post.time)}
-                        </span>
+                        <span class="username">${escapeHTML(post.username)}</span>
+                        <span class="time">${escapeHTML(post.time)}</span>
                     </div>
-
                 </div>
 
-
-                <img
-                    class="post-image"
-                    src="${escapeAttribute(post.image)}"
-                    alt="${escapeAttribute(post.title)}"
-                    loading="lazy"
-                    onerror="this.style.display='none'"
-                >
-
+                <img class="post-image"
+                     src="${escapeAttribute(post.image)}"
+                     alt="${escapeAttribute(post.title)}"
+                     loading="lazy"
+                     onerror="this.style.display='none'">
 
                 <div class="post-content">
-
                     <div class="actions">
-
-                        <button
-                            class="action like"
-                            onclick="toggleLike(this, ${post.likes})"
-                            aria-label="Like"
-                        >
-                            ♡
+                        <!-- Like -->
+                        <button class="action like" onclick="toggleLike(this)" aria-label="Like">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.902-.436-.432-1.793-1.66-4.303-3.902C5.152 14.081 2.5 12.194 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 1.941c.84 1.175.98 1.763 1.12 1.763s.278-.588 1.11-1.766a4.17 4.17 0 0 1 3.679-1.938m0-2a6.04 6.04 0 0 0-4.797 2.127 6.052 6.052 0 0 0-4.787-2.127A6.985 6.985 0 0 0 .5 9.122c0 3.61 2.55 5.827 5.307 8.186a42.86 42.86 0 0 0 4.566 3.606c.192.144.426.22.66.22s.468-.076.66-.221a42.76 42.76 0 0 0 4.565-3.606c2.758-2.358 5.308-4.575 5.308-8.185A6.985 6.985 0 0 0 16.792 1.904z"/>
+                            </svg>
                         </button>
 
-                        <button
-                            class="action"
-                            onclick="sharePost()"
-                            aria-label="Share"
-                        >
-                            ♢
+                        <!-- Share -->
+                        <button class="action" onclick="sharePost()" aria-label="Share">
+                            <svg viewBox="0 0 24 24">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
                         </button>
 
+                        <!-- Save (Bookmark) -->
+                        <button class="action save" onclick="toggleSave(this)" aria-label="Save">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </button>
                     </div>
-
 
                     <div class="likes">
-                        <span class="like-count">
-                            ${formatNumber(post.likes)}
-                        </span>
-                        likes
+                        <span class="like-count">${formatNumber(post.likes)}</span> likes
                     </div>
 
-
-                    <div class="title">
-                        ${escapeHTML(post.title)}
-                    </div>
-
-
-                    <div class="description">
-                        ${escapeHTML(post.description)}
-                    </div>
-
-
-                    <div class="comments">
-                        View all ${formatNumber(post.comments)} comments
-                    </div>
-
+                    <div class="title">${escapeHTML(post.title)}</div>
+                    <div class="description">${escapeHTML(post.description)}</div>
+                    <div class="comments">View all ${formatNumber(post.comments)} comments</div>
                 </div>
             `;
 
             feed.appendChild(postElement);
         }
 
-
-        // =====================================================
-        // LIKE BUTTON
-        // =====================================================
-
-        function toggleLike(button, originalLikes) {
-
+        // Like toggle
+        function toggleLike(button) {
             const post = button.closest(".post");
-
-            const countElement =
-                post.querySelector(".like-count");
-
-            let current =
-                parseInt(
-                    countElement.textContent.replace(/,/g, "")
-                );
+            const countElement = post.querySelector(".like-count");
+            let current = parseInt(countElement.textContent.replace(/,/g, ""));
 
             if (button.classList.contains("active")) {
-
                 button.classList.remove("active");
-
-                button.innerHTML = "♡";
-
                 current--;
-
             } else {
-
                 button.classList.add("active");
-
-                button.innerHTML = "♥";
-
                 current++;
             }
-
-            countElement.textContent =
-                formatNumber(current);
+            countElement.textContent = formatNumber(current);
         }
 
+        // Save toggle
+        function toggleSave(button) {
+            button.classList.toggle("active");
+        }
 
-        // =====================================================
-        // SHARE
-        // =====================================================
-
+        // Share
         function sharePost() {
-
             if (navigator.share) {
-
                 navigator.share({
                     title: document.title,
                     url: window.location.href
                 });
-
             } else {
-
-                navigator.clipboard.writeText(
-                    window.location.href
-                );
-
+                navigator.clipboard.writeText(window.location.href);
                 alert("Link copied!");
             }
         }
 
-
-        // =====================================================
-        // NUMBER FORMAT
-        // =====================================================
-
         function formatNumber(number) {
-
             return Number(number).toLocaleString();
         }
 
-
-        // =====================================================
-        // SECURITY HELPERS
-        // =====================================================
-
         function escapeHTML(value) {
-
             return String(value)
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
@@ -437,22 +317,12 @@
                 .replace(/'/g, "&#039;");
         }
 
-
         function escapeAttribute(value) {
-
             return escapeHTML(value);
         }
 
-
-        // =====================================================
-        // START
-        // =====================================================
-
+        // Start
         loadPosts();
-
     </script>
-
 </body>
 </html>
-
-

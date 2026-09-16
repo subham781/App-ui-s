@@ -256,13 +256,14 @@
     // 🔥 YAHAN APNA FIREBASE CONFIG DALO
     // ==========================================
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-      projectId: "YOUR_PROJECT",
-      storageBucket: "YOUR_PROJECT.appspot.com",
-      messagingSenderId: "XXXXXXXXXX",
-      appId: "1:XXXXXXXX:web:XXXXXXXX"
+      apiKey: "AIzaSyCDvOq7CUmM92aDNyEfP7TNXsCLgmDoQxg",
+  authDomain: "prepexam-f98bf.firebaseapp.com",
+  databaseURL: "https://prepexam-f98bf-default-rtdb.firebaseio.com",
+  projectId: "prepexam-f98bf",
+  storageBucket: "prepexam-f98bf.firebasestorage.app",
+  messagingSenderId: "570075784084",
+  appId: "1:570075784084:web:0ebdbef4a887ce777aa581",
+  measurementId: "G-M11VSKC2FY"
     };
 
     firebase.initializeApp(firebaseConfig);

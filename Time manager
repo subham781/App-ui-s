@@ -4,171 +4,91 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Student Time Manager</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: #f0f2f5;
       color: #1c1e21;
       min-height: 100vh;
       padding: 16px;
       padding-bottom: 40px;
     }
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-    }
-    h1 {
-      font-size: 1.4rem;
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 4px;
-    }
-    .subtitle {
-      text-align: center;
-      font-size: 0.85rem;
-      color: #65676b;
-      margin-bottom: 20px;
-    }
+    .container { max-width: 480px; margin: 0 auto; }
+    h1 { font-size: 1.4rem; font-weight: 700; text-align: center; margin-bottom: 4px; }
+    .subtitle { text-align: center; font-size: 0.85rem; color: #65676b; margin-bottom: 16px; }
     .card {
-      background: white;
-      border-radius: 14px;
-      padding: 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-      margin-bottom: 16px;
+      background: white; border-radius: 14px; padding: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 16px;
     }
-    .card-title {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 14px;
-      color: #1877f2;
-    }
-    .form-group {
-      margin-bottom: 12px;
-    }
-    label {
-      display: block;
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: #65676b;
-      margin-bottom: 5px;
-    }
+    .card-title { font-size: 1rem; font-weight: 600; margin-bottom: 14px; color: #1877f2; }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-size: 0.82rem; font-weight: 500; color: #65676b; margin-bottom: 5px; }
     input, select {
-      width: 100%;
-      padding: 11px 12px;
-      border: 1.5px solid #ccd0d5;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      outline: none;
-      background: white;
+      width: 100%; padding: 11px 12px; border: 1.5px solid #ccd0d5;
+      border-radius: 8px; font-size: 0.95rem; outline: none; background: white;
     }
-    input:focus, select:focus {
-      border-color: #1877f2;
-    }
-    .row {
-      display: flex;
-      gap: 10px;
-    }
-    .row .form-group {
-      flex: 1;
-    }
+    input:focus, select:focus { border-color: #1877f2; }
+    .row { display: flex; gap: 10px; }
+    .row .form-group { flex: 1; }
     .btn {
-      width: 100%;
-      padding: 13px;
-      border: none;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      cursor: pointer;
-      background: #1877f2;
-      color: white;
-      margin-top: 6px;
-    }
-    .btn:active {
-      background: #166fe5;
+      width: 100%; padding: 13px; border: none; border-radius: 10px;
+      font-weight: 600; font-size: 0.95rem; cursor: pointer;
+      background: #1877f2; color: white; margin-top: 6px;
     }
     .btn-danger {
-      background: #e41e3f;
-      padding: 7px 12px;
-      font-size: 0.8rem;
-      width: auto;
-      margin-top: 0;
+      background: #e41e3f; padding: 7px 12px; font-size: 0.8rem;
+      width: auto; margin-top: 0;
     }
-    .timetable {
-      margin-top: 8px;
-    }
-    .day-section {
-      margin-bottom: 16px;
-    }
+    .btn-alarm-on { background: #31a24c; }
+    .day-section { margin-bottom: 16px; }
     .day-title {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #1877f2;
-      margin-bottom: 8px;
-      padding-bottom: 4px;
-      border-bottom: 2px solid #e7f3ff;
+      font-size: 0.9rem; font-weight: 600; color: #1877f2;
+      margin-bottom: 8px; padding-bottom: 4px; border-bottom: 2px solid #e7f3ff;
     }
     .slot {
-      background: #f8f9fa;
-      border-radius: 10px;
-      padding: 12px;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
+      background: #f8f9fa; border-radius: 10px; padding: 12px; margin-bottom: 8px;
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
     }
-    .slot-info {
-      flex: 1;
-    }
-    .slot-time {
-      font-size: 0.82rem;
-      color: #65676b;
-      margin-bottom: 2px;
-    }
-    .slot-subject {
-      font-size: 0.95rem;
-      font-weight: 600;
-    }
-    .slot-note {
-      font-size: 0.78rem;
-      color: #65676b;
-      margin-top: 2px;
-    }
-    .empty {
-      text-align: center;
-      padding: 30px 10px;
-      color: #65676b;
-      font-size: 0.9rem;
-    }
-    .clear-btn {
-      background: #e4e6eb;
-      color: #050505;
-      margin-top: 10px;
-    }
+    .slot-info { flex: 1; }
+    .slot-time { font-size: 0.82rem; color: #65676b; margin-bottom: 2px; }
+    .slot-subject { font-size: 0.95rem; font-weight: 600; }
+    .slot-note { font-size: 0.78rem; color: #65676b; margin-top: 2px; }
+    .empty { text-align: center; padding: 30px 10px; color: #65676b; font-size: 0.9rem; }
+    .clear-btn { background: #e4e6eb; color: #050505; margin-top: 10px; }
     .success-msg {
-      background: #e7f6ec;
-      color: #31a24c;
-      text-align: center;
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      display: none;
+      background: #e7f6ec; color: #31a24c; text-align: center; padding: 10px;
+      border-radius: 8px; margin-bottom: 12px; font-size: 0.9rem; font-weight: 500; display: none;
+    }
+    .alarm-banner {
+      background: #fff3cd; color: #856404; text-align: center; padding: 10px;
+      border-radius: 8px; margin-bottom: 12px; font-size: 0.85rem; display: none;
+    }
+    .alarm-banner.show { display: block; }
+    .switch-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 12px; font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Student Time Manager</h1>
-    <p class="subtitle">Apna timetable set karo • Data save rehta hai</p>
+    <p class="subtitle">Timetable + Alarm • Kodular ready</p>
+
+    <div class="alarm-banner" id="alarmBanner">Alarm is ON • Page open rakho for in-app alarm</div>
 
     <div class="card">
       <div class="card-title">Add New Slot</div>
-
       <div class="success-msg" id="successMsg">Saved successfully!</div>
+
+      <div class="switch-row">
+        <span>Slot Alarm</span>
+        <label>
+          <input type="checkbox" id="alarmToggle" checked>
+          Enable
+        </label>
+      </div>
 
       <div class="form-group">
         <label>Day</label>
@@ -209,7 +129,7 @@
 
     <div class="card">
       <div class="card-title">My Timetable</div>
-      <div class="timetable" id="timetable">
+      <div id="timetable">
         <div class="empty">Abhi koi slot nahi hai.<br>Upar se add karo.</div>
       </div>
       <button class="btn clear-btn" id="clearBtn">Clear All Timetable</button>
@@ -217,91 +137,136 @@
   </div>
 
   <script>
-    const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    var DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    var STORAGE_KEY = "student_timetable_v2";
+    var triggeredAlarms = {};
 
-    function getTimetable() {
+    function sendToKodular(msg) {
       try {
-        const data = localStorage.getItem("student_timetable");
-        return data ? JSON.parse(data) : [];
-      } catch (e) {
-        return [];
-      }
+        if (window.Kodular && window.Kodular.setWebViewString) {
+          window.Kodular.setWebViewString(msg);
+          return;
+        }
+        if (window.AppInventor && window.AppInventor.setWebViewString) {
+          window.AppInventor.setWebViewString(msg);
+        }
+      } catch (e) {}
     }
 
-    function saveTimetable(data) {
-      localStorage.setItem("student_timetable", JSON.stringify(data));
+    function getFromKodular() {
+      try {
+        if (window.Kodular && window.Kodular.getWebViewString) {
+          return window.Kodular.getWebViewString() || "";
+        }
+        if (window.AppInventor && window.AppInventor.getWebViewString) {
+          return window.AppInventor.getWebViewString() || "";
+        }
+      } catch (e) {}
+      return "";
+    }
+
+    function getTimetable() {
+      // 1) localStorage
+      try {
+        var data = localStorage.getItem(STORAGE_KEY);
+        if (data) return JSON.parse(data);
+      } catch (e) {}
+
+      // 2) Kodular se restore (format: RESTORE|[json])
+      try {
+        var wv = getFromKodular();
+        if (wv.indexOf("RESTORE|") === 0) {
+          var json = wv.substring(8);
+          var arr = JSON.parse(json);
+          if (Array.isArray(arr)) {
+            saveTimetable(arr, true);
+            return arr;
+          }
+        }
+      } catch (e) {}
+
+      return [];
+    }
+
+    function saveTimetable(data, skipKodular) {
+      var json = JSON.stringify(data);
+
+      // localStorage try
+      try {
+        localStorage.setItem(STORAGE_KEY, json);
+      } catch (e) {}
+
+      // Kodular TinyDB backup
+      if (!skipKodular) {
+        sendToKodular("SAVE_TIMETABLE|" + json);
+      }
     }
 
     function formatTime(time) {
       if (!time) return "";
-      const parts = time.split(":");
-      let hour = parseInt(parts[0]);
-      const min = parts[1];
-      const ampm = hour >= 12 ? "PM" : "AM";
-      hour = hour % 12 || 12;
+      var parts = time.split(":");
+      var hour = parseInt(parts[0], 10);
+      var min = parts[1];
+      var ampm = hour >= 12 ? "PM" : "AM";
+      hour = hour % 12;
+      if (hour === 0) hour = 12;
       return hour + ":" + min + " " + ampm;
     }
 
     function renderTimetable() {
-      const container = document.getElementById("timetable");
-      const timetable = getTimetable();
+      var container = document.getElementById("timetable");
+      var timetable = getTimetable();
 
       if (timetable.length === 0) {
         container.innerHTML = '<div class="empty">Abhi koi slot nahi hai.<br>Upar se add karo.</div>';
         return;
       }
 
-      const grouped = {};
-      DAYS.forEach(function(d) {
-        grouped[d] = [];
-      });
+      var grouped = {};
+      for (var i = 0; i < DAYS.length; i++) grouped[DAYS[i]] = [];
 
-      timetable.forEach(function(item) {
-        if (grouped[item.day]) {
-          grouped[item.day].push(item);
-        }
-      });
+      for (var j = 0; j < timetable.length; j++) {
+        var item = timetable[j];
+        if (grouped[item.day]) grouped[item.day].push(item);
+      }
 
-      let html = "";
-
-      DAYS.forEach(function(day) {
-        if (grouped[day].length === 0) return;
+      var html = "";
+      for (var d = 0; d < DAYS.length; d++) {
+        var day = DAYS[d];
+        if (grouped[day].length === 0) continue;
 
         html += '<div class="day-section"><div class="day-title">' + day + '</div>';
 
-        grouped[day].forEach(function(item) {
+        for (var s = 0; s < grouped[day].length; s++) {
+          var slot = grouped[day][s];
           html += '<div class="slot">';
           html += '<div class="slot-info">';
-          html += '<div class="slot-time">' + formatTime(item.fromTime) + ' - ' + formatTime(item.toTime) + '</div>';
-          html += '<div class="slot-subject">' + item.subject + '</div>';
-          if (item.note) {
-            html += '<div class="slot-note">' + item.note + '</div>';
-          }
+          html += '<div class="slot-time">' + formatTime(slot.fromTime) + ' - ' + formatTime(slot.toTime);
+          if (slot.alarm !== false) html += ' 🔔';
           html += '</div>';
-          html += '<button class="btn btn-danger" data-id="' + item.id + '">Delete</button>';
+          html += '<div class="slot-subject">' + slot.subject + '</div>';
+          if (slot.note) html += '<div class="slot-note">' + slot.note + '</div>';
           html += '</div>';
-        });
-
+          html += '<button class="btn btn-danger" data-id="' + slot.id + '">Delete</button>';
+          html += '</div>';
+        }
         html += '</div>';
-      });
+      }
 
       container.innerHTML = html;
 
-      // Attach delete events
-      const deleteButtons = container.querySelectorAll(".btn-danger");
-      deleteButtons.forEach(function(btn) {
-        btn.addEventListener("click", function() {
-          const id = Number(btn.getAttribute("data-id"));
+      var deleteButtons = container.querySelectorAll(".btn-danger");
+      for (var b = 0; b < deleteButtons.length; b++) {
+        deleteButtons[b].addEventListener("click", function() {
+          var id = Number(this.getAttribute("data-id"));
           deleteSlot(id);
         });
-      });
+      }
     }
 
     function deleteSlot(id) {
       if (!confirm("Delete this slot?")) return;
-
-      let timetable = getTimetable();
-      timetable = timetable.filter(function(item) {
+      var timetable = getTimetable().filter(function(item) {
         return item.id !== id;
       });
       saveTimetable(timetable);
@@ -310,16 +275,19 @@
 
     function clearAll() {
       if (!confirm("Poora timetable delete karna hai?")) return;
-      localStorage.removeItem("student_timetable");
+      try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+      saveTimetable([]);
+      sendToKodular("CLEAR_TIMETABLE");
       renderTimetable();
     }
 
     function addSlot() {
-      const day = document.getElementById("day").value;
-      const fromTime = document.getElementById("fromTime").value;
-      const toTime = document.getElementById("toTime").value;
-      const subject = document.getElementById("subject").value.trim();
-      const note = document.getElementById("note").value.trim();
+      var day = document.getElementById("day").value;
+      var fromTime = document.getElementById("fromTime").value;
+      var toTime = document.getElementById("toTime").value;
+      var subject = document.getElementById("subject").value.trim();
+      var note = document.getElementById("note").value.trim();
+      var alarmOn = document.getElementById("alarmToggle").checked;
 
       if (!fromTime || !toTime) {
         alert("Please select From and To time");
@@ -330,49 +298,110 @@
         return;
       }
 
-      let timetable = getTimetable();
-
-      const newSlot = {
+      var timetable = getTimetable();
+      timetable.push({
         id: Date.now(),
         day: day,
         fromTime: fromTime,
         toTime: toTime,
         subject: subject,
-        note: note
-      };
-
-      timetable.push(newSlot);
+        note: note,
+        alarm: alarmOn
+      });
 
       timetable.sort(function(a, b) {
-        const dayDiff = DAYS.indexOf(a.day) - DAYS.indexOf(b.day);
+        var dayDiff = DAYS.indexOf(a.day) - DAYS.indexOf(b.day);
         if (dayDiff !== 0) return dayDiff;
-        return a.fromTime.localeCompare(b.fromTime);
+        return a.fromTime < b.fromTime ? -1 : 1;
       });
 
       saveTimetable(timetable);
 
-      // Clear fields
       document.getElementById("fromTime").value = "";
       document.getElementById("toTime").value = "";
       document.getElementById("subject").value = "";
       document.getElementById("note").value = "";
 
-      // Show success
-      const msg = document.getElementById("successMsg");
+      var msg = document.getElementById("successMsg");
       msg.style.display = "block";
-      setTimeout(function() {
-        msg.style.display = "none";
-      }, 2000);
+      setTimeout(function() { msg.style.display = "none"; }, 2000);
 
       renderTimetable();
     }
 
-    // Event Listeners (important)
+    // ===== ALARM =====
+    function getTodayName() {
+      return DAYS[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1];
+    }
+
+    function getNowHHMM() {
+      var n = new Date();
+      var h = n.getHours();
+      var m = n.getMinutes();
+      return (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m;
+    }
+
+    function playBeep() {
+      try {
+        var ctx = new (window.AudioContext || window.webkitAudioContext)();
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = 880;
+        gain.gain.value = 0.2;
+        osc.start();
+        setTimeout(function() {
+          osc.stop();
+          ctx.close();
+        }, 700);
+      } catch (e) {}
+    }
+
+    function checkAlarms() {
+      var today = getTodayName();
+      var now = getNowHHMM();
+      var list = getTimetable();
+
+      for (var i = 0; i < list.length; i++) {
+        var slot = list[i];
+        if (slot.alarm === false) continue;
+        if (slot.day !== today) continue;
+        if (slot.fromTime !== now) continue;
+
+        var key = slot.id + "_" + now;
+        if (triggeredAlarms[key]) continue;
+        triggeredAlarms[key] = true;
+
+        playBeep();
+        sendToKodular("ALARM|" + slot.subject + "|" + slot.fromTime + "|" + (slot.note || ""));
+        alert("⏰ Alarm\n" + slot.subject + "\n" + formatTime(slot.fromTime));
+      }
+    }
+
+    // Kodular se data wapas lene ke liye poll
+    function tryRestoreFromKodular() {
+      var wv = getFromKodular();
+      if (wv.indexOf("RESTORE|") === 0) {
+        try {
+          var arr = JSON.parse(wv.substring(8));
+          if (Array.isArray(arr)) {
+            saveTimetable(arr, true);
+            renderTimetable();
+          }
+        } catch (e) {}
+      }
+    }
+
     document.getElementById("addBtn").addEventListener("click", addSlot);
     document.getElementById("clearBtn").addEventListener("click", clearAll);
 
-    // Load on start
+    document.getElementById("alarmBanner").classList.add("show");
+
     renderTimetable();
+    setInterval(checkAlarms, 15000);      // har 15 sec
+    setInterval(tryRestoreFromKodular, 800);
+    setTimeout(tryRestoreFromKodular, 500);
   </script>
 </body>
 </html>

@@ -313,7 +313,7 @@
                 description: "Find better words fast",
                 icon: "📚",
                 color: "color-2",
-                link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/FLASH%20CARD"
+                link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Ant%20and%20syn%20finder"
             },
             {
                 id: "calculator",

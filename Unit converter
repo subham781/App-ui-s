@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Unit Converter</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background: #f5f7fb; min-height: 100vh; padding: 16px; color: #0f172a; }
+    .header { text-align: center; margin-bottom: 18px; }
+    .header h1 { font-size: 1.4rem; font-weight: 700; }
+    .header p { color: #64748b; font-size: 0.9rem; margin-top: 4px; }
+    .categories { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 16px; }
+    .categories::-webkit-scrollbar { display: none; }
+    .cat-btn {
+      flex-shrink: 0; padding: 8px 14px; border-radius: 20px; border: 1px solid #e2e8f0;
+      background: white; font-size: 0.85rem; font-weight: 500; color: #475569; cursor: pointer;
+    }
+    .cat-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+    .card {
+      background: white; border-radius: 18px; padding: 18px; border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 0.82rem; color: #64748b; margin-bottom: 6px; font-weight: 500; }
+    input, select {
+      width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0;
+      font-size: 1rem; outline: none; background: #f8fafc; color: #0f172a;
+    }
+    input:focus, select:focus { border-color: #3b82f6; background: white; }
+    .swap-btn {
+      width: 44px; height: 44px; border-radius: 50%; border: 1px solid #e2e8f0; background: white;
+      display: flex; align-items: center; justify-content: center; margin: 4px auto 14px;
+      font-size: 18px; cursor: pointer;
+    }
+    .result-box {
+      margin-top: 8px; padding: 14px; border-radius: 12px; background: #eff6ff;
+      border: 1px solid #bfdbfe; text-align: center;
+    }
+    .result-box .label { font-size: 0.8rem; color: #64748b; margin-bottom: 4px; }
+    .result-box .value { font-size: 1.25rem; font-weight: 700; color: #1d4ed8; word-break: break-all; }
+    .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+    .quick-item {
+      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center;
+    }
+    .quick-item .q-label { font-size: 0.75rem; color: #64748b; margin-bottom: 4px; }
+    .quick-item .q-value { font-size: 0.95rem; font-weight: 600; color: #0f172a; word-break: break-all; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Unit Converter</h1>
+    <p>Convert length, weight, temperature and more</p>
+  </div>
+
+  <div class="categories" id="categories"></div>
+
+  <div class="card">
+    <div class="field">
+      <label>From</label>
+      <select id="fromUnit"></select>
+    </div>
+
+    <div class="field">
+      <label>Value</label>
+      <input id="inputValue" type="number" placeholder="Enter value" value="1">
+    </div>
+
+    <button class="swap-btn" onclick="swapUnits()">⇅</button>
+
+    <div class="field">
+      <label>To</label>
+      <select id="toUnit"></select>
+    </div>
+
+    <div class="result-box">
+      <div class="label">Result</div>
+      <div class="value" id="resultValue">0</div>
+    </div>
+
+    <div class="quick-grid" id="quickGrid"></div>
+  </div>
+
+  <script>
+    var units = {
+      Length: {
+        Meter: 1,
+        Kilometer: 1000,
+        Centimeter: 0.01,
+        Millimeter: 0.001,
+        Mile: 1609.34,
+        Yard: 0.9144,
+        Foot: 0.3048,
+        Inch: 0.0254
+      },
+      Weight: {
+        Kilogram: 1,
+        Gram: 0.001,
+        Milligram: 0.000001,
+        Pound: 0.453592,
+        Ounce: 0.0283495,
+        Ton: 1000
+      },
+      Temperature: {
+        Celsius: "C",
+        Fahrenheit: "F",
+        Kelvin: "K"
+      },
+      Volume: {
+        Liter: 1,
+        Milliliter: 0.001,
+        "Cubic Meter": 1000,
+        Gallon: 3.78541,
+        Pint: 0.473176,
+        Cup: 0.24
+      },
+      Area: {
+        "Square Meter": 1,
+        "Square Kilometer": 1000000,
+        "Square Foot": 0.092903,
+        "Square Inch": 0.00064516,
+        Acre: 4046.86,
+        Hectare: 10000
+      },
+      Speed: {
+        "m/s": 1,
+        "km/h": 0.277778,
+        mph: 0.44704,
+        Knot: 0.514444
+      },
+      Time: {
+        Second: 1,
+        Minute: 60,
+        Hour: 3600,
+        Day: 86400,
+        Week: 604800
+      },
+      Data: {
+        Byte: 1,
+        KB: 1024,
+        MB: 1048576,
+        GB: 1073741824,
+        TB: 1099511627776
+      }
+    };
+
+    var currentCategory = "Length";
+    var categoriesEl = document.getElementById("categories");
+    var fromUnit = document.getElementById("fromUnit");
+    var toUnit = document.getElementById("toUnit");
+    var inputValue = document.getElementById("inputValue");
+    var resultValue = document.getElementById("resultValue");
+    var quickGrid = document.getElementById("quickGrid");
+
+    var catNames = Object.keys(units);
+    for (var i = 0; i < catNames.length; i++) {
+      var cat = catNames[i];
+      var btn = document.createElement("button");
+      btn.className = "cat-btn";
+      if (i === 0) btn.className = "cat-btn active";
+      btn.textContent = cat;
+      btn.setAttribute("data-cat", cat);
+      btn.onclick = function() {
+        selectCategory(this.getAttribute("data-cat"), this);
+      };
+      categoriesEl.appendChild(btn);
+    }
+
+    function selectCategory(cat, btn) {
+      currentCategory = cat;
+      var all = document.querySelectorAll(".cat-btn");
+      for (var i = 0; i < all.length; i++) all[i].classList.remove("active");
+      btn.classList.add("active");
+      populateUnits();
+      convert();
+    }
+
+    function populateUnits() {
+      var list = Object.keys(units[currentCategory]);
+      fromUnit.innerHTML = "";
+      toUnit.innerHTML = "";
+
+      for (var i = 0; i < list.length; i++) {
+        var opt1 = document.createElement("option");
+        opt1.value = list[i];
+        opt1.textContent = list[i];
+        fromUnit.appendChild(opt1);
+
+        var opt2 = document.createElement("option");
+        opt2.value = list[i];
+        opt2.textContent = list[i];
+        toUnit.appendChild(opt2);
+      }
+
+      if (list.length > 1) toUnit.selectedIndex = 1;
+    }
+
+    function convertTemperature(value, from, to) {
+      var celsius = 0;
+
+      if (from === "Celsius") celsius = value;
+      else if (from === "Fahrenheit") celsius = (value - 32) * 5 / 9;
+      else celsius = value - 273.15;
+
+      if (to === "Celsius") return celsius;
+      if (to === "Fahrenheit") return (celsius * 9 / 5) + 32;
+      return celsius + 273.15;
+    }
+
+    function formatNumber(num) {
+      if (typeof num !== "number" || !isFinite(num)) return "0";
+      if (Math.abs(num) >= 1000000 || (Math.abs(num) < 0.001 && num !== 0)) {
+        return num.toExponential(4);
+      }
+      return String(Number(num.toFixed(6)));
+    }
+
+    function convert() {
+      var raw = inputValue.value;
+      var value = parseFloat(raw);
+      var from = fromUnit.value;
+      var to = toUnit.value;
+
+      if (raw === "" || isNaN(value) || !from || !to) {
+        resultValue.textContent = "0";
+        quickGrid.innerHTML = "";
+        return;
+      }
+
+      var result = 0;
+
+      if (currentCategory === "Temperature") {
+        result = convertTemperature(value, from, to);
+      } else {
+        var fromFactor = units[currentCategory][from];
+        var toFactor = units[currentCategory][to];
+        if (typeof fromFactor !== "number" || typeof toFactor !== "number" || toFactor === 0) {
+          resultValue.textContent = "0";
+          return;
+        }
+        result = value * fromFactor / toFactor;
+      }
+
+      resultValue.textContent = formatNumber(result) + " " + to;
+      showQuick(value, from);
+    }
+
+    function showQuick(value, from) {
+      quickGrid.innerHTML = "";
+      var list = Object.keys(units[currentCategory]);
+
+      for (var i = 0; i < list.length; i++) {
+        var unit = list[i];
+        if (unit === from) continue;
+
+        var converted = 0;
+        if (currentCategory === "Temperature") {
+          converted = convertTemperature(value, from, unit);
+        } else {
+          converted = value * units[currentCategory][from] / units[currentCategory][unit];
+        }
+
+        var div = document.createElement("div");
+        div.className = "quick-item";
+
+        var label = document.createElement("div");
+        label.className = "q-label";
+        label.textContent = unit;
+
+        var val = document.createElement("div");
+        val.className = "q-value";
+        val.textContent = formatNumber(converted);
+
+        div.appendChild(label);
+        div.appendChild(val);
+        quickGrid.appendChild(div);
+      }
+    }
+
+    function swapUnits() {
+      var temp = fromUnit.value;
+      fromUnit.value = toUnit.value;
+      toUnit.value = temp;
+      convert();
+    }
+
+    inputValue.addEventListener("input", convert);
+    fromUnit.addEventListener("change", convert);
+    toUnit.addEventListener("change", convert);
+
+    populateUnits();
+    convert();
+  </script>
+</body>
+</html>

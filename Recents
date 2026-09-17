@@ -305,7 +305,7 @@
                 description: "Plot math graphs easily",
                 icon: "📈",
                 color: "color-1",
-                link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Recents"
+                link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/GRAPH%20PLOTER"
             },
             {
                 id: "synonyms_finder",
@@ -313,7 +313,7 @@
                 description: "Find better words fast",
                 icon: "📚",
                 color: "color-2",
-                link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Recents"
+                link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/FLASH%20CARD"
             },
             {
                 id: "calculator",
@@ -337,7 +337,7 @@
                 description: "All important formulas",
                 icon: "📝",
                 color: "color-5",
-                link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Recents"
+                link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/FLASH%20CARD"
             },
             {
                 id: "quiz",

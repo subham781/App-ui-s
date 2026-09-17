@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Synonyms & Antonyms</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: #f5f7fb;
+      min-height: 100vh;
+      padding: 16px;
+      color: #0f172a;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .header p {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    #wordInput {
+      flex: 1;
+      padding: 14px 16px;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      font-size: 1rem;
+      outline: none;
+      background: white;
+    }
+
+    #wordInput:focus {
+      border-color: #3b82f6;
+    }
+
+    #searchBtn {
+      padding: 0 18px;
+      border: none;
+      border-radius: 14px;
+      background: #3b82f6;
+      color: white;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    #searchBtn:disabled {
+      background: #94a3b8;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    }
+
+    .card h2 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .syn h2 { color: #16a34a; }
+    .ant h2 { color: #dc2626; }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 0.88rem;
+      border: 1px solid #e2e8f0;
+      cursor: pointer; /* Added for better UX */
+    }
+
+    .syn .tag {
+      background: #dcfce7;
+      border-color: #bbf7d0;
+      color: #166534;
+    }
+
+    .ant .tag {
+      background: #fee2e2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+
+    .empty {
+      color: #94a3b8;
+      font-size: 0.9rem;
+    }
+
+    .status {
+      text-align: center;
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 14px;
+      min-height: 20px;
+    }
+
+    .word-title {
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Synonyms & Antonyms</h1>
+    <p>Type a word and find related words</p>
+  </div>
+
+  <div class="search-box">
+    <input id="wordInput" type="text" placeholder="Enter a word (e.g. happy)" />
+    <button id="searchBtn" onclick="searchWord()">Find</button>
+  </div>
+
+  <div class="status" id="status"></div>
+  <div class="word-title" id="wordTitle"></div>
+
+  <div class="card syn">
+    <h2>🟢 Synonyms</h2>
+    <div class="tags" id="synonyms">
+      <div class="empty">Search a word to see synonyms</div>
+    </div>
+  </div>
+
+  <div class="card ant">
+    <h2>🔴 Antonyms</h2>
+    <div class="tags" id="antonyms">
+      <div class="empty">Search a word to see antonyms</div>
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById("wordInput");
+    const status = document.getElementById("status");
+    const wordTitle = document.getElementById("wordTitle");
+    const synBox = document.getElementById("synonyms");
+    const antBox = document.getElementById("antonyms");
+    const btn = document.getElementById("searchBtn");
+
+    input.addEventListener("keydown", function(e) {
+      if (e.key === "Enter") searchWord();
+    });
+
+    async function searchWord() {
+      const word = input.value.trim().toLowerCase();
+      if (!word) {
+        status.innerText = "Please enter a word";
+        return;
+      }
+
+      btn.disabled = true;
+      status.innerText = "Searching...";
+      synBox.innerHTML = `<div class="empty">Loading...</div>`;
+      antBox.innerHTML = `<div class="empty">Loading...</div>`;
+      wordTitle.style.display = "none";
+
+      try {
+        const [synRes, antRes] = await Promise.all([
+          fetch("https://api.datamuse.com/words?rel_syn=" + encodeURIComponent(word) + "&max=30"),
+          fetch("https://api.datamuse.com/words?rel_ant=" + encodeURIComponent(word) + "&max=30")
+        ]);
+
+        const synonyms = await synRes.json();
+        const antonyms = await antRes.json();
+
+        wordTitle.style.display = "block";
+        wordTitle.innerText = word;
+
+        // Synonyms
+        if (synonyms.length === 0) {
+          synBox.innerHTML = `<div class="empty">No synonyms found</div>`;
+        } else {
+          synBox.innerHTML = synonyms
+            .map(item => `<span class="tag" onclick="quickSearch('${item.word}')">${item.word}</span>`)
+            .join("");
+        }
+
+        // Antonyms
+        if (antonyms.length === 0) {
+          antBox.innerHTML = `<div class="empty">No antonyms found</div>`;
+        } else {
+          antBox.innerHTML = antonyms
+            .map(item => `<span class="tag" onclick="quickSearch('${item.word}')">${item.word}</span>`)
+            .join("");
+        }
+
+        status.innerText = "";
+      } catch (err) {
+        status.innerText = "Network error. Check internet.";
+        synBox.innerHTML = `<div class="empty">Failed to load</div>`;
+        antBox.innerHTML = `<div class="empty">Failed to load</div>`;
+      }
+
+      btn.disabled = false;
+    }
+
+    function quickSearch(word) {
+      input.value = word;
+      searchWord();
+    }
+  </script>
+</body>
+</html>
+

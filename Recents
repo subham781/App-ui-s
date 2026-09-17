@@ -325,7 +325,7 @@
             },
             {
                 id: "unit_converter",
-                title: "Unit Converter",
+                title: "Unit Convertor",
                 description: "Length, weight & more",
                 icon: "🔄",
                 color: "color-4",
@@ -333,7 +333,7 @@
             },
             {
                 id: "formula_sheet",
-                title: "Formula Sheet",
+                title: "Flash Card",
                 description: "All important formulas",
                 icon: "📝",
                 color: "color-5",

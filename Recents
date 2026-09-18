@@ -321,7 +321,7 @@
                 description: "Scientific calculator",
                 icon: "🧮",
                 color: "color-3",
-                link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/GRAPH%20PLOTER"
+                link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Smart%20calculator"
             },
             {
                 id: "unit_converter",

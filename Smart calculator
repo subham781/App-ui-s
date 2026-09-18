@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Smart Calculator</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body {
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 12px;
+      color: #0f172a;
+    }
+    .app { width: 100%; max-width: 400px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h1 { font-size: 1.25rem; font-weight: 700; }
+    .header p { font-size: 0.8rem; color: #64748b; margin-top: 2px; }
+    .calc {
+      background: white;
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      border: 1px solid #e5e7eb;
+    }
+    .display-box {
+      background: #f8fafc;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid #e2e8f0;
+      min-height: 90px;
+    }
+    .expression {
+      font-size: 0.9rem;
+      color: #64748b;
+      min-height: 20px;
+      text-align: right;
+      word-break: break-all;
+    }
+    .result {
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: right;
+      margin-top: 6px;
+      word-break: break-all;
+    }
+    .mode-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .mode-btn {
+      flex: 1; border: 1px solid #e2e8f0; background: #f8fafc; color: #475569;
+      border-radius: 10px; padding: 8px; font-size: 0.82rem; font-weight: 600;
+    }
+    .mode-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+    .keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .key {
+      border: none; border-radius: 14px; padding: 16px 8px;
+      font-size: 1.05rem; font-weight: 600; background: #f1f5f9; color: #0f172a;
+    }
+    .key:active { transform: scale(0.97); }
+    .key.op { background: #e0edff; color: #1d4ed8; }
+    .key.fn { background: #eef2ff; color: #4338ca; font-size: 0.82rem; }
+    .key.eq { background: #3b82f6; color: white; }
+    .key.ac { background: #fee2e2; color: #b91c1c; }
+    .key.del { background: #ffedd5; color: #c2410c; }
+    .sci { display: none; margin-bottom: 8px; }
+    .sci.show { display: grid; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <h1>Smart Calculator</h1>
+      <p>Basic • Scientific</p>
+    </div>
+
+    <div class="calc">
+      <div class="display-box">
+        <div class="expression" id="expression"></div>
+        <div class="result" id="result">0</div>
+      </div>
+
+      <div class="mode-row">
+        <button class="mode-btn active" id="basicMode" onclick="setMode('basic')">Basic</button>
+        <button class="mode-btn" id="sciMode" onclick="setMode('sci')">Scientific</button>
+      </div>
+
+      <div class="keys sci" id="sciKeys">
+        <button class="key fn" onclick="science('sin')">sin</button>
+        <button class="key fn" onclick="science('cos')">cos</button>
+        <button class="key fn" onclick="science('tan')">tan</button>
+        <button class="key fn" onclick="science('sqrt')">√</button>
+        <button class="key fn" onclick="science('log')">log</button>
+        <button class="key fn" onclick="science('ln')">ln</button>
+        <button class="key fn" onclick="science('square')">x²</button>
+        <button class="key fn" onclick="insertConst('pi')">π</button>
+        <button class="key fn" onclick="insertConst('e')">e</button>
+        <button class="key fn" onclick="science('inv')">1/x</button>
+        <button class="key fn" onclick="science('abs')">|x|</button>
+        <button class="key fn" onclick="percent()">%</button>
+      </div>
+
+      <div class="keys">
+        <button class="key ac" onclick="clearAll()">AC</button>
+        <button class="key del" onclick="backspace()">⌫</button>
+        <button class="key op" onclick="setOp('/')">÷</button>
+        <button class="key op" onclick="setOp('*')">×</button>
+
+        <button class="key" onclick="inputNum('7')">7</button>
+        <button class="key" onclick="inputNum('8')">8</button>
+        <button class="key" onclick="inputNum('9')">9</button>
+        <button class="key op" onclick="setOp('-')">−</button>
+
+        <button class="key" onclick="inputNum('4')">4</button>
+        <button class="key" onclick="inputNum('5')">5</button>
+        <button class="key" onclick="inputNum('6')">6</button>
+        <button class="key op" onclick="setOp('+')">+</button>
+
+        <button class="key" onclick="inputNum('1')">1</button>
+        <button class="key" onclick="inputNum('2')">2</button>
+        <button class="key" onclick="inputNum('3')">3</button>
+        <button class="key eq" onclick="equals()">=</button>
+
+        <button class="key" onclick="inputNum('0')" style="grid-column: span 2;">0</button>
+        <button class="key" onclick="inputNum('.')">.</button>
+        <button class="key op" onclick="setOp('^')">xʸ</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var current = "0";
+    var previous = null;
+    var operator = null;
+    var resetNext = false;
+
+    function updateDisplay() {
+      document.getElementById("result").textContent = current;
+      var exp = "";
+      if (previous !== null && operator) {
+        exp = previous + " " + symbol(operator);
+      }
+      document.getElementById("expression").textContent = exp;
+    }
+
+    function symbol(op) {
+      if (op === "*") return "×";
+      if (op === "/") return "÷";
+      if (op === "^") return "^";
+      return op;
+    }
+
+    function setMode(mode) {
+      var sci = document.getElementById("sciKeys");
+      var bBtn = document.getElementById("basicMode");
+      var sBtn = document.getElementById("sciMode");
+      if (mode === "sci") {
+        sci.classList.add("show");
+        sBtn.classList.add("active");
+        bBtn.classList.remove("active");
+      } else {
+        sci.classList.remove("show");
+        bBtn.classList.add("active");
+        sBtn.classList.remove("active");
+      }
+    }
+
+    function inputNum(n) {
+      if (resetNext) {
+        current = "0";
+        resetNext = false;
+      }
+      if (n === "." && current.indexOf(".") !== -1) return;
+      if (current === "0" && n !== ".") current = n;
+      else current += n;
+      updateDisplay();
+    }
+
+    function clearAll() {
+      current = "0";
+      previous = null;
+      operator = null;
+      resetNext = false;
+      updateDisplay();
+    }
+
+    function backspace() {
+      if (resetNext) return;
+      if (current.length <= 1) current = "0";
+      else current = current.slice(0, -1);
+      updateDisplay();
+    }
+
+    function setOp(op) {
+      var value = parseFloat(current);
+      if (isNaN(value)) {
+        current = "0";
+        updateDisplay();
+        return;
+      }
+      if (previous !== null && operator && !resetNext) {
+        current = String(compute(previous, value, operator));
+      }
+      previous = parseFloat(current);
+      operator = op;
+      resetNext = true;
+      updateDisplay();
+    }
+
+    function compute(a, b, op) {
+      if (op === "+") return a + b;
+      if (op === "-") return a - b;
+      if (op === "*") return a * b;
+      if (op === "/") return b === 0 ? NaN : a / b;
+      if (op === "^") return Math.pow(a, b);
+      return b;
+    }
+
+    function equals() {
+      if (operator === null || previous === null) return;
+      var value = parseFloat(current);
+      var ans = compute(previous, value, operator);
+      if (!isFinite(ans)) {
+        current = "Error";
+      } else {
+        current = clean(ans);
+      }
+      previous = null;
+      operator = null;
+      resetNext = true;
+      updateDisplay();
+    }
+
+    function clean(n) {
+      if (typeof n !== "number" || !isFinite(n)) return "Error";
+      return String(Number(n.toPrecision(12)));
+    }
+
+    function science(fn) {
+      var x = parseFloat(current);
+      if (isNaN(x)) return;
+      var ans = 0;
+      if (fn === "sin") ans = Math.sin(x * Math.PI / 180);
+      else if (fn === "cos") ans = Math.cos(x * Math.PI / 180);
+      else if (fn === "tan") ans = Math.tan(x * Math.PI / 180);
+      else if (fn === "sqrt") ans = x < 0 ? NaN : Math.sqrt(x);
+      else if (fn === "log") ans = x <= 0 ? NaN : Math.log10(x);
+      else if (fn === "ln") ans = x <= 0 ? NaN : Math.log(x);
+      else if (fn === "square") ans = x * x;
+      else if (fn === "inv") ans = x === 0 ? NaN : 1 / x;
+      else if (fn === "abs") ans = Math.abs(x);
+
+      current = clean(ans);
+      resetNext = true;
+      updateDisplay();
+    }
+
+    function insertConst(name) {
+      if (name === "pi") current = String(Math.PI);
+      if (name === "e") current = String(Math.E);
+      resetNext = true;
+      updateDisplay();
+    }
+
+    function percent() {
+      var x = parseFloat(current);
+      if (isNaN(x)) return;
+      current = clean(x / 100);
+      resetNext = true;
+      updateDisplay();
+    }
+
+    updateDisplay();
+  </script>
+</body>
+</html>

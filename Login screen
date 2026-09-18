@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>PrepExam Login</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:Arial,sans-serif;
+    background:#f5f7fb;
+}
+
+.card{
+    width:90%;
+    max-width:380px;
+    background:white;
+    padding:30px 22px;
+    border-radius:20px;
+    text-align:center;
+    box-shadow:0 8px 30px rgba(0,0,0,.10);
+}
+
+.logo{
+    font-size:32px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.subtitle{
+    color:#777;
+    margin-bottom:30px;
+}
+
+.googleBtn{
+    width:100%;
+    border:1px solid #ddd;
+    background:white;
+    padding:14px;
+    border-radius:12px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.googleBtn:active{
+    transform:scale(.98);
+}
+
+.googleIcon{
+    margin-right:10px;
+}
+
+#loading{
+    display:none;
+    margin-top:18px;
+    color:#666;
+}
+
+#error{
+    display:none;
+    margin-top:15px;
+    color:#d93025;
+    font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <div class="logo">PrepExam</div>
+
+    <div class="subtitle">
+        Login to continue
+    </div>
+
+    <button id="googleBtn" class="googleBtn">
+        <span class="googleIcon">G</span>
+        Continue with Google
+    </button>
+
+    <div id="loading">
+        Logging in...
+    </div>
+
+    <div id="error"></div>
+
+</div>
+
+
+<!-- Firebase -->
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithRedirect,
+    getRedirectResult,
+    onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+    getDatabase,
+    ref,
+    get,
+    set,
+    update
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+
+/* =====================================================
+   1. REPLACE THIS FIREBASE CONFIG
+   ===================================================== */
+
+const firebaseConfig = {
+
+    apiKey: "YOUR_API_KEY",
+
+    authDomain:
+        "YOUR_PROJECT_ID.firebaseapp.com",
+
+    databaseURL:
+        "YOUR_DATABASE_URL",
+
+    projectId:
+        "YOUR_PROJECT_ID",
+
+    storageBucket:
+        "YOUR_STORAGE_BUCKET",
+
+    messagingSenderId:
+        "YOUR_MESSAGING_SENDER_ID",
+
+    appId:
+        "YOUR_APP_ID"
+};
+
+
+/* =====================================================
+   2. FIREBASE INITIALIZE
+   ===================================================== */
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const database = getDatabase(app);
+
+const provider = new GoogleAuthProvider();
+
+
+/* =====================================================
+   UI
+   ===================================================== */
+
+const googleBtn =
+    document.getElementById("googleBtn");
+
+const loading =
+    document.getElementById("loading");
+
+const errorBox =
+    document.getElementById("error");
+
+
+function showLoading(){
+
+    googleBtn.style.display = "none";
+
+    loading.style.display = "block";
+
+}
+
+
+function showError(message){
+
+    googleBtn.style.display = "block";
+
+    loading.style.display = "none";
+
+    errorBox.style.display = "block";
+
+    errorBox.innerText = message;
+
+}
+
+
+/* =====================================================
+   3. GOOGLE LOGIN
+   ===================================================== */
+
+googleBtn.addEventListener("click", async () => {
+
+    try{
+
+        showLoading();
+
+        await signInWithRedirect(
+            auth,
+            provider
+        );
+
+    }
+
+    catch(error){
+
+        console.log(error);
+
+        showError(
+            "Login failed. Please try again."
+        );
+
+    }
+
+});
+
+
+/* =====================================================
+   4. CHECK REDIRECT LOGIN RESULT
+   ===================================================== */
+
+async function checkRedirectLogin(){
+
+    try{
+
+        const result =
+            await getRedirectResult(auth);
+
+        if(result){
+
+            console.log(
+                "Google login successful"
+            );
+
+        }
+
+    }
+
+    catch(error){
+
+        console.log(error);
+
+        showError(
+            "Google login failed."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   5. USER LOGIN STATE
+   ===================================================== */
+
+onAuthStateChanged(auth, async (user) => {
+
+    if(!user){
+
+        googleBtn.style.display = "block";
+
+        loading.style.display = "none";
+
+        return;
+
+    }
+
+
+    try{
+
+        showLoading();
+
+        const uid = user.uid;
+
+
+        /* ==========================================
+           USER PROFILE
+           ========================================== */
+
+        const userRef =
+            ref(database, "users/" + uid);
+
+        const snapshot =
+            await get(userRef);
+
+
+        /* ==========================================
+           NEW USER
+           ========================================== */
+
+        if(!snapshot.exists()){
+
+            const today =
+                new Date()
+                .toISOString()
+                .split("T")[0];
+
+
+            const newUserData = {
+
+                profile: {
+
+                    name:
+                        user.displayName || "",
+
+                    email:
+                        user.email || "",
+
+                    photo:
+                        user.photoURL || "",
+
+                    joined:
+                        today,
+
+                    bio:
+                        "",
+
+                    loginType:
+                        "google"
+                },
+
+
+                settings: {
+
+                    darkMode:
+                        false,
+
+                    notification:
+                        true,
+
+                    language:
+                        "hi",
+
+                    alarmEnabled:
+                        true
+                },
+
+
+                postedQuestions: {},
+
+
+                publicStats: {
+
+                    questionsPosted:
+                        0,
+
+                    totalLikesReceived:
+                        0,
+
+                    totalSavesReceived:
+                        0,
+
+                    totalCommentsReceived:
+                        0
+                },
+
+
+                analysis: {
+
+                    allTime: {
+
+                        attempted:
+                            0,
+
+                        correct:
+                            0,
+
+                        wrong:
+                            0,
+
+                        accuracy:
+                            0,
+
+                        streak:
+                            0,
+
+                        lastActiveDate:
+                            today
+                    },
+
+
+                    today: {
+
+                        date:
+                            today,
+
+                        attempted:
+                            0,
+
+                        correct:
+                            0,
+
+                        wrong:
+                            0,
+
+                        accuracy:
+                            0
+                    },
+
+
+                    yesterday: {
+
+                        date:
+                            "",
+
+                        accuracy:
+                            0
+                    },
+
+
+                    history: {},
+
+
+                    subjects: {}
+
+                },
+
+
+                savedQuestions: {},
+
+
+                alarms: {},
+
+
+                timetable: {},
+
+
+                attempts: {},
+
+
+                lastSync:
+                    new Date().toISOString()
+
+            };
+
+
+            await set(
+                userRef,
+                newUserData
+            );
+
+        }
+
+
+        /* ==========================================
+           EXISTING USER
+           ========================================== */
+
+        else{
+
+            await update(
+                userRef,
+                {
+
+                    "profile/name":
+                        user.displayName || "",
+
+                    "profile/email":
+                        user.email || "",
+
+                    "profile/photo":
+                        user.photoURL || "",
+
+                    "profile/loginType":
+                        "google",
+
+                    lastSync:
+                        new Date().toISOString()
+
+                }
+            );
+
+        }
+
+
+        /* ==========================================
+           SEND UID TO KODULAR
+           ========================================== */
+
+        sendToKodular(uid);
+
+
+    }
+
+    catch(error){
+
+        console.log(error);
+
+        showError(
+            "Account data save nahi ho paya."
+        );
+
+    }
+
+});
+
+
+/* =====================================================
+   6. SEND LOGIN SUCCESS TO KODULAR
+   ===================================================== */
+
+function sendToKodular(uid){
+
+    const message =
+        "LOGIN_SUCCESS|" + uid;
+
+
+    /*
+       Kodular / App Inventor WebViewer
+    */
+
+    try{
+
+        if(
+            window.Kodular &&
+            window.Kodular.setWebViewString
+        ){
+
+            window.Kodular.setWebViewString(
+                message
+            );
+
+            return;
+
+        }
+
+    }
+
+    catch(e){
+
+        console.log(e);
+
+    }
+
+
+    /*
+       MIT App Inventor compatible
+    */
+
+    try{
+
+        if(
+            window.AppInventor &&
+            window.AppInventor.setWebViewString
+        ){
+
+            window.AppInventor.setWebViewString(
+                message
+            );
+
+            return;
+
+        }
+
+    }
+
+    catch(e){
+
+        console.log(e);
+
+    }
+
+
+    /*
+       Fallback
+    */
+
+    console.log(
+        "KODULAR_LOGIN:",
+        message
+    );
+
+}
+
+
+/* =====================================================
+   START
+   ===================================================== */
+
+checkRedirectLogin();
+
+</script>
+
+</body>
+</html>

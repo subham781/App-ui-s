@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Study Materials</title>
 
 <style>
@@ -125,12 +125,6 @@ body{
     margin-bottom:15px;
 }
 
-.chapter-list{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-}
-
 .chapter{
     display:flex;
     align-items:center;
@@ -139,6 +133,7 @@ body{
     padding:15px;
     border:1px solid #e8ebf1;
     border-radius:13px;
+    margin-bottom:10px;
 }
 
 .chapter-info{
@@ -168,20 +163,37 @@ body{
     font-weight:600;
 }
 
+/* FULLSCREEN VIEWER */
 #viewer{
     display:none;
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    background:#ffffff;
+    flex-direction:column;
+}
+
+#viewer.active{
+    display:flex;
 }
 
 .viewer-top{
     display:flex;
     align-items:center;
     gap:12px;
-    margin-bottom:18px;
+    padding:12px 14px;
+    border-bottom:1px solid #e5e7eb;
+    background:#ffffff;
+    flex-shrink:0;
 }
 
 .viewer-title{
-    font-size:20px;
+    font-size:16px;
     font-weight:700;
+    flex:1;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
 
 .close-btn{
@@ -192,11 +204,21 @@ body{
     border-radius:9px;
     cursor:pointer;
     font-weight:600;
+    flex-shrink:0;
 }
 
 #renderArea{
+    flex:1;
     width:100%;
-    overflow:auto;
+    overflow:hidden;
+    background:#f8fafc;
+}
+
+#renderArea iframe{
+    width:100%;
+    height:100%;
+    border:0;
+    display:block;
 }
 
 .loading{
@@ -235,1050 +257,393 @@ body{
     display:none!important;
 }
 
+body.viewer-open{
+    overflow:hidden;
+}
+
+body.viewer-open .header,
+body.viewer-open .container{
+    display:none;
+}
+
 @media(max-width:600px){
-
-    .header h1{
-        font-size:23px;
-    }
-
-    .card{
-        padding:17px;
-    }
-
-    .grid{
-        grid-template-columns:1fr 1fr;
-    }
-
-    .chapter{
-        align-items:flex-start;
-    }
+    .header h1{ font-size:23px; }
+    .card{ padding:17px; }
+    .grid{ grid-template-columns:1fr 1fr; }
 }
 
 @media(max-width:380px){
-
-    .grid{
-        grid-template-columns:1fr;
-    }
-
-    .chapter{
-        flex-direction:column;
-    }
-
-    .open-btn{
-        width:100%;
-    }
+    .grid{ grid-template-columns:1fr; }
+    .chapter{ flex-direction:column; }
+    .open-btn{ width:100%; }
 }
 </style>
 </head>
 
 <body>
 
-<header class="header">
+<header class="header" id="appHeader">
     <div class="header-inner">
         <h1>📚 Study Materials</h1>
         <p>Select your exam, subject and chapter</p>
     </div>
 </header>
 
-<main class="container">
-
-<!-- LOADING -->
+<main class="container" id="appContainer">
 
 <div id="loading" class="card loading">
     <div class="spinner"></div>
     <p>Loading exams...</p>
 </div>
 
-
-<!-- ERROR -->
-
 <div id="error" class="card error hidden">
     <h3>Firebase Error</h3>
     <p id="errorText"></p>
 </div>
 
-
-<!-- EXAMS -->
-
 <section id="examSection" class="card hidden">
-
-    <div class="title">
-        🎯 Select Exam
-    </div>
-
+    <div class="title">🎯 Select Exam</div>
     <div id="examGrid" class="grid"></div>
-
 </section>
-
-
-<!-- SUBJECTS -->
 
 <section id="subjectSection" class="card hidden">
-
     <div class="breadcrumb">
-        Exam:
-        <span id="selectedExam"></span>
+        Exam: <span id="selectedExam"></span>
     </div>
-
-    <button class="back-btn" onclick="backToExams()">
-        ← Change Exam
-    </button>
-
-    <div class="title">
-        📖 Select Subject
-    </div>
-
+    <button class="back-btn" onclick="backToExams()">← Change Exam</button>
+    <div class="title">📖 Select Subject</div>
     <div id="subjectGrid" class="grid"></div>
-
 </section>
-
-
-<!-- CHAPTERS -->
 
 <section id="chapterSection" class="card hidden">
-
     <div class="breadcrumb">
-        <span id="breadcrumbExam"></span>
-        →
+        <span id="breadcrumbExam"></span> →
         <span id="breadcrumbSubject"></span>
     </div>
-
-    <button class="back-btn" onclick="backToSubjects()">
-        ← Change Subject
-    </button>
-
-    <div class="title">
-        📑 Select Chapter
-    </div>
-
-    <input
-        id="search"
-        class="search"
-        type="text"
-        placeholder="Search chapter..."
-        oninput="searchChapters()"
-    >
-
+    <button class="back-btn" onclick="backToSubjects()">← Change Subject</button>
+    <div class="title">📑 Select Chapter</div>
+    <input id="search" class="search" type="text" placeholder="Search chapter..." oninput="searchChapters()">
     <div id="chapterList"></div>
-
-</section>
-
-
-<!-- HTML VIEWER -->
-
-<section id="viewer" class="card">
-
-    <div class="viewer-top">
-
-        <button class="close-btn" onclick="closeViewer()">
-            ← Back
-        </button>
-
-        <div id="viewerTitle" class="viewer-title">
-            Study Material
-        </div>
-
-    </div>
-
-    <div id="renderArea"></div>
-
 </section>
 
 </main>
 
+<!-- FULLSCREEN VIEWER -->
+<section id="viewer">
+    <div class="viewer-top">
+        <button class="close-btn" onclick="closeViewer(true)">← Back</button>
+        <div id="viewerTitle" class="viewer-title">Study Material</div>
+    </div>
+    <div id="renderArea"></div>
+</section>
 
 <script>
-
-/* =========================================
-   FIREBASE
-========================================= */
-
-const DATABASE_URL =
-"https://prepexam-f98bf-default-rtdb.firebaseio.com";
-
-const DATABASE_PATH =
-"/Exams.json";
-
-
-/* =========================================
-   VARIABLES
-========================================= */
+const DATABASE_URL = "https://prepexam-f98bf-default-rtdb.firebaseio.com";
+const DATABASE_PATH = "/Exams.json";
 
 let examsData = {};
 let selectedExam = "";
 let selectedSubject = "";
 let chapters = [];
+let viewerOpen = false;
 
-
-/* =========================================
-   ELEMENTS
-========================================= */
-
-const loading =
-document.getElementById("loading");
-
-const errorBox =
-document.getElementById("error");
-
-const errorText =
-document.getElementById("errorText");
-
-const examSection =
-document.getElementById("examSection");
-
-const subjectSection =
-document.getElementById("subjectSection");
-
-const chapterSection =
-document.getElementById("chapterSection");
-
-const viewer =
-document.getElementById("viewer");
-
-const examGrid =
-document.getElementById("examGrid");
-
-const subjectGrid =
-document.getElementById("subjectGrid");
-
-const chapterList =
-document.getElementById("chapterList");
-
-const renderArea =
-document.getElementById("renderArea");
-
-
-/* =========================================
-   LOAD FIREBASE
-========================================= */
+const loading = document.getElementById("loading");
+const errorBox = document.getElementById("error");
+const errorText = document.getElementById("errorText");
+const examSection = document.getElementById("examSection");
+const subjectSection = document.getElementById("subjectSection");
+const chapterSection = document.getElementById("chapterSection");
+const viewer = document.getElementById("viewer");
+const examGrid = document.getElementById("examGrid");
+const subjectGrid = document.getElementById("subjectGrid");
+const chapterList = document.getElementById("chapterList");
+const renderArea = document.getElementById("renderArea");
 
 async function loadFirebase(){
-
-    console.log(
-        "Fetching:",
-        DATABASE_URL + DATABASE_PATH
-    );
-
     try{
-
-        const response =
-        await fetch(
-            DATABASE_URL + DATABASE_PATH,
-            {
-                method:"GET",
-                cache:"no-cache"
-            }
-        );
-
-
-        console.log(
-            "Firebase HTTP status:",
-            response.status
-        );
-
+        const response = await fetch(DATABASE_URL + DATABASE_PATH, {
+            method:"GET",
+            cache:"no-cache"
+        });
 
         if(!response.ok){
-
-            throw new Error(
-                "Firebase returned HTTP " +
-                response.status
-            );
-
+            throw new Error("Firebase returned HTTP " + response.status);
         }
 
-
-        const data =
-        await response.json();
-
-
-        console.log(
-            "Firebase data:",
-            data
-        );
-
+        const data = await response.json();
 
         if(data === null){
-
-            throw new Error(
-                "Firebase returned null. " +
-                "Check that your database has an 'Exams' node " +
-                "and that your Firebase rules allow read access."
-            );
-
+            throw new Error("Firebase returned null. Check Exams node and read rules.");
         }
-
 
         if(typeof data !== "object"){
-
-            throw new Error(
-                "Exams data is not an object."
-            );
-
+            throw new Error("Exams data is not an object.");
         }
-
 
         examsData = data;
-
-
-        loading.classList.add(
-            "hidden"
-        );
-
-
+        loading.classList.add("hidden");
         renderExams();
 
-
     }catch(err){
-
-        console.error(
-            "Firebase loading error:",
-            err
-        );
-
-
-        loading.classList.add(
-            "hidden"
-        );
-
-
-        errorBox.classList.remove(
-            "hidden"
-        );
-
-
-        errorText.innerHTML =
-        escapeHTML(err.message);
-
+        console.error(err);
+        loading.classList.add("hidden");
+        errorBox.classList.remove("hidden");
+        errorText.textContent = err.message;
     }
-
 }
-
-
-/* =========================================
-   RENDER EXAMS
-========================================= */
 
 function renderExams(){
-
     examGrid.innerHTML = "";
-
-
-    /*
-       IMPORTANT:
-
-       We are reading:
-
-       Exams
-       ├── Nda
-       ├── ...
-       */
-
-    const exams =
-    Object.keys(examsData);
-
-
-    console.log(
-        "Exams found:",
-        exams
-    );
-
+    const exams = Object.keys(examsData);
 
     if(exams.length === 0){
-
-        examGrid.innerHTML = `
-            <div class="empty">
-                No exams found inside Firebase.
-            </div>
-        `;
-
-        examSection.classList.remove(
-            "hidden"
-        );
-
+        examGrid.innerHTML = '<div class="empty">No exams found.</div>';
+        examSection.classList.remove("hidden");
         return;
     }
 
+    exams.forEach(function(exam){
+        const button = document.createElement("button");
+        button.className = "select-card";
+        button.innerHTML = '<div class="icon">🎓</div>' + escapeHTML(exam);
+        button.onclick = function(){ selectExam(exam); };
+        examGrid.appendChild(button);
+    });
 
-    exams.forEach(
-        (exam) => {
-
-            const button =
-            document.createElement("button");
-
-
-            button.className =
-            "select-card";
-
-
-            button.innerHTML = `
-                <div class="icon">
-                    🎓
-                </div>
-
-                ${escapeHTML(exam)}
-            `;
-
-
-            button.onclick =
-            function(){
-
-                selectExam(exam);
-
-            };
-
-
-            examGrid.appendChild(
-                button
-            );
-
-        }
-    );
-
-
-    examSection.classList.remove(
-        "hidden"
-    );
-
+    examSection.classList.remove("hidden");
 }
-
-
-/* =========================================
-   SELECT EXAM
-========================================= */
 
 function selectExam(exam){
-
     selectedExam = exam;
-
-
-    document.getElementById(
-        "selectedExam"
-    ).textContent = exam;
-
-
-    examSection.classList.add(
-        "hidden"
-    );
-
-
+    document.getElementById("selectedExam").textContent = exam;
+    examSection.classList.add("hidden");
     renderSubjects();
-
-
-    subjectSection.classList.remove(
-        "hidden"
-    );
-
-
+    subjectSection.classList.remove("hidden");
+    history.pushState({ page: "subjects" }, "", "#subjects");
     goTop();
-
 }
-
-
-/* =========================================
-   SUBJECTS
-========================================= */
 
 function renderSubjects(){
-
     subjectGrid.innerHTML = "";
+    const examData = examsData[selectedExam];
 
-
-    const examData =
-    examsData[selectedExam];
-
-
-    console.log(
-        "Selected exam data:",
-        examData
-    );
-
-
-    if(
-        !examData ||
-        typeof examData !== "object"
-    ){
-
-        subjectGrid.innerHTML = `
-            <div class="empty">
-                No subjects found.
-            </div>
-        `;
-
+    if(!examData || typeof examData !== "object"){
+        subjectGrid.innerHTML = '<div class="empty">No subjects found.</div>';
         return;
     }
 
-
-    Object.keys(examData)
-    .forEach(
-        subject => {
-
-            const button =
-            document.createElement("button");
-
-
-            button.className =
-            "select-card";
-
-
-            button.innerHTML = `
-                <div class="icon">
-                    📘
-                </div>
-
-                ${escapeHTML(subject)}
-            `;
-
-
-            button.onclick =
-            () => selectSubject(subject);
-
-
-            subjectGrid.appendChild(
-                button
-            );
-
-        }
-    );
-
+    Object.keys(examData).forEach(function(subject){
+        const button = document.createElement("button");
+        button.className = "select-card";
+        button.innerHTML = '<div class="icon">📘</div>' + escapeHTML(subject);
+        button.onclick = function(){ selectSubject(subject); };
+        subjectGrid.appendChild(button);
+    });
 }
-
-
-/* =========================================
-   SELECT SUBJECT
-========================================= */
 
 function selectSubject(subject){
-
     selectedSubject = subject;
-
-
-    document.getElementById(
-        "breadcrumbExam"
-    ).textContent =
-        selectedExam;
-
-
-    document.getElementById(
-        "breadcrumbSubject"
-    ).textContent =
-        selectedSubject;
-
-
-    subjectSection.classList.add(
-        "hidden"
-    );
-
-
-    document.getElementById(
-        "search"
-    ).value = "";
-
-
+    document.getElementById("breadcrumbExam").textContent = selectedExam;
+    document.getElementById("breadcrumbSubject").textContent = selectedSubject;
+    subjectSection.classList.add("hidden");
+    document.getElementById("search").value = "";
     renderChapters();
-
-
-    chapterSection.classList.remove(
-        "hidden"
-    );
-
-
+    chapterSection.classList.remove("hidden");
+    history.pushState({ page: "chapters" }, "", "#chapters");
     goTop();
-
 }
-
-
-/* =========================================
-   CHAPTERS
-========================================= */
 
 function renderChapters(){
+    const subjectData = examsData[selectedExam][selectedSubject];
 
-    const subjectData =
-    examsData[selectedExam]
-    [selectedSubject];
-
-
-    console.log(
-        "Subject data:",
-        subjectData
-    );
-
-
-    if(
-        !subjectData ||
-        typeof subjectData !== "object"
-    ){
-
+    if(!subjectData || typeof subjectData !== "object"){
         chapters = [];
-
         displayChapters([]);
-
         return;
-
     }
 
-
-    chapters =
-    Object.entries(subjectData);
-
-
-    displayChapters(
-        chapters
-    );
-
+    chapters = Object.entries(subjectData);
+    displayChapters(chapters);
 }
-
-
-/* =========================================
-   DISPLAY CHAPTERS
-========================================= */
 
 function displayChapters(list){
-
     chapterList.innerHTML = "";
 
-
     if(list.length === 0){
-
-        chapterList.innerHTML = `
-            <div class="empty">
-                No chapters found.
-            </div>
-        `;
-
+        chapterList.innerHTML = '<div class="empty">No chapters found.</div>';
         return;
     }
 
+    list.forEach(function(entry, index){
+        var chapterName = entry[0];
+        var link = entry[1];
 
-    list.forEach(
-        ([chapterName, link], index) => {
+        var row = document.createElement("div");
+        row.className = "chapter";
+        row.innerHTML =
+            '<div class="chapter-info">' +
+            '<div class="chapter-number">' + (index + 1) + '</div>' +
+            '<div class="chapter-name">' + escapeHTML(chapterName) + '</div>' +
+            '</div>' +
+            '<button class="open-btn">Open →</button>';
 
-            const row =
-            document.createElement("div");
+        row.querySelector(".open-btn").onclick = function(){
+            openChapter(chapterName, link);
+        };
 
-
-            row.className =
-            "chapter";
-
-
-            row.innerHTML = `
-
-                <div class="chapter-info">
-
-                    <div class="chapter-number">
-                        ${index + 1}
-                    </div>
-
-                    <div class="chapter-name">
-                        ${escapeHTML(chapterName)}
-                    </div>
-
-                </div>
-
-                <button class="open-btn">
-                    Open →
-                </button>
-
-            `;
-
-
-            const button =
-            row.querySelector(
-                ".open-btn"
-            );
-
-
-            button.onclick =
-            () => openChapter(
-                chapterName,
-                link
-            );
-
-
-            chapterList.appendChild(
-                row
-            );
-
-        }
-    );
-
+        chapterList.appendChild(row);
+    });
 }
 
-
-/* =========================================
-   OPEN CHAPTER
-========================================= */
-
-async function openChapter(
-    chapterName,
-    link
-){
-
-    console.log(
-        "Opening chapter:",
-        chapterName
-    );
-
-    console.log(
-        "Chapter URL:",
-        link
-    );
-
-
-    if(
-        typeof link !== "string" ||
-        !link.trim()
-    ){
-
-        alert(
-            "This chapter has no valid link."
-        );
-
+async function openChapter(chapterName, link){
+    if(typeof link !== "string" || !link.trim()){
+        alert("This chapter has no valid link.");
         return;
     }
 
+    examSection.classList.add("hidden");
+    subjectSection.classList.add("hidden");
+    chapterSection.classList.add("hidden");
 
-    examSection.classList.add(
-        "hidden"
-    );
+    viewer.classList.add("active");
+    document.body.classList.add("viewer-open");
+    viewerOpen = true;
 
-    subjectSection.classList.add(
-        "hidden"
-    );
+    document.getElementById("viewerTitle").textContent = chapterName;
 
-    chapterSection.classList.add(
-        "hidden"
-    );
+    renderArea.innerHTML =
+        '<div class="loading"><div class="spinner"></div><p>Loading...</p></div>';
 
-
-    viewer.style.display =
-        "block";
-
-
-    document.getElementById(
-        "viewerTitle"
-    ).textContent =
-        chapterName;
-
-
-    renderArea.innerHTML = `
-        <div class="loading">
-            <div class="spinner"></div>
-            <p>
-                Loading ${escapeHTML(chapterName)}...
-            </p>
-        </div>
-    `;
-
-
-    goTop();
-
+    history.pushState({ page: "viewer" }, "", "#viewer");
 
     try{
-
-        /*
-          Fetch HTML TEXT
-        */
-
-        const response =
-        await fetch(
-            link,
-            {
-                method:"GET",
-                cache:"no-cache"
-            }
-        );
-
+        const response = await fetch(link, {
+            method:"GET",
+            cache:"no-cache"
+        });
 
         if(!response.ok){
-
-            throw new Error(
-                "Chapter server returned HTTP " +
-                response.status
-            );
-
+            throw new Error("Chapter server returned HTTP " + response.status);
         }
 
-
-        /*
-          Get HTML as text
-        */
-
-        const html =
-        await response.text();
-
-
-        console.log(
-            "HTML received:",
-            html.substring(0,500)
-        );
-
+        const html = await response.text();
 
         if(!html.trim()){
-
-            throw new Error(
-                "The HTML page is empty."
-            );
-
+            throw new Error("The HTML page is empty.");
         }
 
+        renderHTML(html);
 
-        /*
-          Render HTML
-        */
-
-        renderHTML(
-            html
-        );
-
+    }catch(err){
+        console.error(err);
+        renderArea.innerHTML =
+            '<div class="error"><h3>HTML load nahi ho saka</h3>' +
+            '<p style="margin-top:10px;">' + escapeHTML(err.message) + '</p></div>';
     }
-    catch(err){
-
-        console.error(
-            "Chapter error:",
-            err
-        );
-
-
-        renderArea.innerHTML = `
-
-            <div class="error">
-
-                <h3>
-                    HTML load nahi ho saka
-                </h3>
-
-                <p style="margin-top:10px;">
-                    ${escapeHTML(err.message)}
-                </p>
-
-                <p style="
-                    margin-top:15px;
-                    color:#555;
-                ">
-                    Agar yahan CORS error aa raha hai,
-                    to jis server par chapter HTML hai
-                    us server ko cross-origin requests
-                    allow karni hongi.
-                </p>
-
-            </div>
-        `;
-
-    }
-
 }
 
-
-/* =========================================
-   RENDER HTML
-========================================= */
-
 function renderHTML(html){
-
-    /*
-       HTML ko iframe ke andar
-       render karenge.
-
-       Isse chapter ka CSS/JS
-       main app ke CSS/JS se
-       conflict nahi karega.
-    */
-
-    const iframe =
-    document.createElement(
-        "iframe"
-    );
-
-
-    iframe.style.width =
-        "100%";
-
-
-    iframe.style.minHeight =
-        "750px";
-
-
-    iframe.style.border =
-        "0";
-
-
-    iframe.style.display =
-        "block";
-
-
-    iframe.style.borderRadius =
-        "12px";
-
-
-    /*
-       Fetched HTML directly
-       iframe mein jayega.
-    */
-
-    iframe.srcdoc =
-        html;
-
-
-    /*
-       HTML ke JavaScript ko
-       run karne ki permission.
-
-       Forms/popups bhi allow.
-    */
-
+    const iframe = document.createElement("iframe");
+    iframe.srcdoc = html;
     iframe.setAttribute(
         "sandbox",
         "allow-scripts allow-forms allow-modals allow-popups allow-same-origin"
     );
-
-
     renderArea.innerHTML = "";
-
-
-    renderArea.appendChild(
-        iframe
-    );
-
+    renderArea.appendChild(iframe);
 }
-
-
-/* =========================================
-   SEARCH
-========================================= */
 
 function searchChapters(){
-
-    const text =
-    document.getElementById(
-        "search"
-    ).value
-    .toLowerCase()
-    .trim();
-
-
-    const filtered =
-    chapters.filter(
-        ([name]) =>
-            name.toLowerCase()
-            .includes(text)
-    );
-
-
-    displayChapters(
-        filtered
-    );
-
+    const text = document.getElementById("search").value.toLowerCase().trim();
+    const filtered = chapters.filter(function(item){
+        return item[0].toLowerCase().includes(text);
+    });
+    displayChapters(filtered);
 }
-
-
-/* =========================================
-   BACK
-========================================= */
 
 function backToExams(){
-
-    subjectSection.classList.add(
-        "hidden"
-    );
-
-    chapterSection.classList.add(
-        "hidden"
-    );
-
-    viewer.style.display =
-        "none";
-
-
-    examSection.classList.remove(
-        "hidden"
-    );
-
-
+    subjectSection.classList.add("hidden");
+    chapterSection.classList.add("hidden");
+    closeViewer(false);
+    examSection.classList.remove("hidden");
+    history.pushState({ page: "exams" }, "", "#exams");
     goTop();
-
 }
-
 
 function backToSubjects(){
-
-    chapterSection.classList.add(
-        "hidden"
-    );
-
-    viewer.style.display =
-        "none";
-
-
-    subjectSection.classList.remove(
-        "hidden"
-    );
-
-
+    chapterSection.classList.add("hidden");
+    closeViewer(false);
+    subjectSection.classList.remove("hidden");
+    history.pushState({ page: "subjects" }, "", "#subjects");
     goTop();
-
 }
 
-
-/* =========================================
-   CLOSE VIEWER
-========================================= */
-
-function closeViewer(){
-
+function closeViewer(pushHistory){
     renderArea.innerHTML = "";
+    viewer.classList.remove("active");
+    document.body.classList.remove("viewer-open");
+    viewerOpen = false;
 
-    viewer.style.display =
-        "none";
-
-    chapterSection.classList.remove(
-        "hidden"
-    );
-
-    goTop();
-
+    if(pushHistory !== false){
+        chapterSection.classList.remove("hidden");
+        history.pushState({ page: "chapters" }, "", "#chapters");
+    }
 }
-
-
-/* =========================================
-   SECURITY
-========================================= */
 
 function escapeHTML(value){
-
     return String(value)
         .replace(/&/g,"&amp;")
         .replace(/</g,"&lt;")
         .replace(/>/g,"&gt;")
         .replace(/"/g,"&quot;")
         .replace(/'/g,"&#039;");
-
 }
-
-
-/* =========================================
-   TOP
-========================================= */
 
 function goTop(){
-
-    window.scrollTo({
-        top:0,
-        behavior:"smooth"
-    });
-
+    window.scrollTo(0, 0);
 }
 
+/* Phone / browser back button */
+window.addEventListener("popstate", function(e){
+    if(viewerOpen){
+        renderArea.innerHTML = "";
+        viewer.classList.remove("active");
+        document.body.classList.remove("viewer-open");
+        viewerOpen = false;
+        chapterSection.classList.remove("hidden");
+        return;
+    }
 
-/* =========================================
-   START
-========================================= */
+    if(!chapterSection.classList.contains("hidden")){
+        chapterSection.classList.add("hidden");
+        subjectSection.classList.remove("hidden");
+        return;
+    }
+
+    if(!subjectSection.classList.contains("hidden")){
+        subjectSection.classList.add("hidden");
+        examSection.classList.remove("hidden");
+        return;
+    }
+});
+
+/* Kodular WebViewString back support (optional) */
+setInterval(function(){
+    try{
+        var s = "";
+        if(window.Kodular && window.Kodular.getWebViewString) s = window.Kodular.getWebViewString();
+        else if(window.AppInventor && window.AppInventor.getWebViewString) s = window.AppInventor.getWebViewString();
+
+        if(s === "BACK"){
+            if(window.Kodular && window.Kodular.setWebViewString) window.Kodular.setWebViewString("");
+            if(window.AppInventor && window.AppInventor.setWebViewString) window.AppInventor.setWebViewString("");
+            history.back();
+        }
+    }catch(err){}
+}, 400);
 
 loadFirebase();
-
 </script>
 
 </body>
 </html>
-
-

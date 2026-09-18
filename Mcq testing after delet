@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>PrepExam Practice</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:Arial,sans-serif;
+  background:#f0f2f5;
+  color:#111;
+}
+
+#feed{
+  padding:12px;
+  padding-bottom:20px;
+}
+
+.post-card{
+  background:#fff;
+  border-radius:12px;
+  padding:15px;
+  margin-bottom:12px;
+  box-shadow:0 1px 3px rgba(0,0,0,.08);
+}
+
+.post-header{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.avatar{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:#e4e6eb;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  color:#555;
+}
+
+.channel-info{
+  flex:1;
+}
+
+.channel-info h3{
+  font-size:15px;
+  margin-bottom:4px;
+}
+
+.channel-info p{
+  font-size:12px;
+  color:#65676b;
+}
+
+.meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:12px;
+}
+
+.label{
+  background:#f0f2f5;
+  border-radius:20px;
+  padding:5px 9px;
+  font-size:11px;
+  color:#444;
+}
+
+.question-text{
+  font-size:16px;
+  line-height:1.5;
+  font-weight:600;
+  margin-bottom:14px;
+}
+
+.options{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.option{
+  border:1.5px solid #ccd0d5;
+  border-radius:8px;
+  padding:12px;
+  background:white;
+  font-size:14px;
+  cursor:pointer;
+}
+
+.option.correct{
+  background:#e7f6ec;
+  border-color:#31a24c;
+  color:#188038;
+  font-weight:bold;
+}
+
+.option.wrong{
+  background:#fde8e8;
+  border-color:#e41e3f;
+  color:#d93025;
+}
+
+.option.disabled{
+  pointer-events:none;
+}
+
+.post-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px solid #e4e6eb;
+}
+
+.like-info{
+  font-size:13px;
+  color:#65676b;
+}
+
+.actions{
+  display:flex;
+  gap:12px;
+}
+
+.action-btn{
+  border:none;
+  background:#f0f2f5;
+  border-radius:20px;
+  padding:7px 12px;
+  font-size:14px;
+  cursor:pointer;
+}
+
+.action-btn.liked{
+  background:#ffe5e8;
+  color:#e41e3f;
+}
+
+.action-btn.saved{
+  background:#e7f0ff;
+  color:#1877f2;
+}
+
+.loading{
+  text-align:center;
+  padding:50px 20px;
+  color:#65676b;
+}
+
+.error{
+  text-align:center;
+  padding:50px 20px;
+  color:#e41e3f;
+}
+</style>
+</head>
+
+<body>
+
+<div id="feed">
+  <div class="loading">Loading questions...</div>
+</div>
+
+<script>
+
+/* =====================================================
+   CONFIG
+===================================================== */
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbw3EXbBLQ4WfGFxw3ZyQQ3-9osVbj_FcAwFRWMIfC5mdEW2u-x0UltiaZ2gevEpdjNI/exec";
+
+/*
+  APNA ACTUAL FIREBASE DATABASE URL YAHAN DAALO
+
+  Example:
+  https://your-project-default-rtdb.firebaseio.com
+*/
+const FIREBASE_URL =
+"YOUR_FIREBASE_DATABASE_URL";
+
+
+/* =====================================================
+   USER ID FROM KODULAR
+===================================================== */
+
+let USER_ID = "";
+
+/*
+  Kodular WebViewer me WebViewString set hone ke baad
+  ye value read karega.
+
+  Agar Kodular WebViewString me directly User ID bhej raha hai,
+  to isi format me milegi.
+*/
+
+function getKodularUserId(){
+
+  try{
+
+    if(typeof window.WebViewString !== "undefined"){
+      return String(window.WebViewString || "").trim();
+    }
+
+  }catch(e){}
+
+  return "";
+}
+
+
+/* =====================================================
+   FIREBASE HELPERS
+===================================================== */
+
+function firebasePath(path){
+
+  return FIREBASE_URL.replace(/\/$/,"") +
+         "/" +
+         path.split("/").map(encodeURIComponent).join("/") +
+         ".json";
+}
+
+
+async function firebaseGet(path){
+
+  const response = await fetch(firebasePath(path));
+
+  if(!response.ok){
+    throw new Error("Firebase GET failed");
+  }
+
+  return await response.json();
+}
+
+
+async function firebasePut(path,data){
+
+  const response = await fetch(firebasePath(path),{
+    method:"PUT",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify(data)
+  });
+
+  if(!response.ok){
+    throw new Error("Firebase PUT failed");
+  }
+
+  return await response.json();
+}
+
+
+async function firebasePatch(path,data){
+
+  const response = await fetch(firebasePath(path),{
+    method:"PATCH",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify(data)
+  });
+
+  if(!response.ok){
+    throw new Error("Firebase PATCH failed");
+  }
+
+  return await response.json();
+}
+
+
+/* =====================================================
+   USER DATA
+===================================================== */
+
+let userData = null;
+
+async function loadUserData(){
+
+  if(!USER_ID){
+    console.log("User ID not received from Kodular");
+    return;
+  }
+
+  try{
+
+    userData = await firebaseGet(
+      "accounts/" + USER_ID
+    );
+
+    if(!userData){
+      userData = {};
+    }
+
+  }catch(error){
+
+    console.error("Firebase user load:",error);
+
+    userData = {};
+  }
+}
+
+
+/* =====================================================
+   SAVED QUESTIONS
+===================================================== */
+
+function isSaved(qid){
+
+  if(!userData) return false;
+
+  return !!(
+    userData.savedQuestions &&
+    userData.savedQuestions[qid]
+  );
+}
+
+
+async function toggleSave(index,button){
+
+  const item = allQuestions[index];
+
+  if(!item || !item.uid || !USER_ID){
+    return;
+  }
+
+  const qid = item.uid;
+
+  try{
+
+    if(isSaved(qid)){
+
+      /*
+        Firebase DELETE
+      */
+
+      await firebasePut(
+        "accounts/" +
+        USER_ID +
+        "/savedQuestions/" +
+        qid,
+        null
+      );
+
+      if(userData.savedQuestions){
+        delete userData.savedQuestions[qid];
+      }
+
+      button.classList.remove("saved");
+      button.textContent = "🔖 Save";
+
+    }else{
+
+      const saveObject = {
+        ts: Math.floor(Date.now()/1000)
+      };
+
+      await firebasePut(
+        "accounts/" +
+        USER_ID +
+        "/savedQuestions/" +
+        qid,
+        saveObject
+      );
+
+      if(!userData.savedQuestions){
+        userData.savedQuestions = {};
+      }
+
+      userData.savedQuestions[qid] = saveObject;
+
+      button.classList.add("saved");
+      button.textContent = "🔖 Saved";
+    }
+
+  }catch(error){
+
+    console.error("Save error:",error);
+  }
+}
+
+
+/* =====================================================
+   LIKE
+===================================================== */
+
+/*
+  User ka like Firebase me store hoga:
+
+  accounts/
+    USER_ID/
+      likedQuestions/
+        QID: true
+
+  Aur total Like Count Sheet me Apps Script
+  ke through update hoga.
+*/
+
+function isLiked(qid){
+
+  return !!(
+    userData &&
+    userData.likedQuestions &&
+    userData.likedQuestions[qid]
+  );
+}
+
+
+async function toggleLike(index,button){
+
+  const item = allQuestions[index];
+
+  if(!item || !item.uid || !USER_ID){
+    return;
+  }
+
+  const qid = item.uid;
+
+  try{
+
+    const alreadyLiked = isLiked(qid);
+
+    /*
+      Firebase user-like state
+    */
+
+    await firebasePut(
+      "accounts/" +
+      USER_ID +
+      "/likedQuestions/" +
+      qid,
+      alreadyLiked ? null : true
+    );
+
+
+    if(!userData.likedQuestions){
+      userData.likedQuestions = {};
+    }
+
+
+    /*
+      Apps Script Sheet LikeCount update
+    */
+
+    const delta = alreadyLiked ? -1 : 1;
+
+    const likeURL =
+      API_URL +
+      "?action=like" +
+      "&uid=" +
+      encodeURIComponent(qid) +
+      "&delta=" +
+      delta;
+
+
+    const response = await fetch(likeURL);
+
+    const result = await response.json();
+
+
+    if(!result.success){
+
+      console.error("Like update failed:",result.error);
+
+      /*
+        Firebase state rollback
+      */
+
+      await firebasePut(
+        "accounts/" +
+        USER_ID +
+        "/likedQuestions/" +
+        qid,
+        alreadyLiked ? true : null
+      );
+
+      return;
+    }
+
+
+    /*
+      Update local runtime data
+    */
+
+    if(alreadyLiked){
+
+      delete userData.likedQuestions[qid];
+
+    }else{
+
+      userData.likedQuestions[qid] = true;
+    }
+
+
+    /*
+      Update UI
+    */
+
+    item.likes = Number(result.likes || 0);
+
+    const likeCount =
+      button.parentElement
+      .parentElement
+      .querySelector(".like-info");
+
+    if(likeCount){
+
+      likeCount.textContent =
+        "👍 " + item.likes;
+    }
+
+
+    if(alreadyLiked){
+
+      button.classList.remove("liked");
+      button.textContent = "👍 Like";
+
+    }else{
+
+      button.classList.add("liked");
+      button.textContent = "❤️ Liked";
+    }
+
+  }catch(error){
+
+    console.error("Like error:",error);
+  }
+}
+
+
+/* =====================================================
+   QUESTIONS
+===================================================== */
+
+let allQuestions = [];
+
+
+async function loadQuestions(){
+
+  const feed =
+    document.getElementById("feed");
+
+  feed.innerHTML =
+    '<div class="loading">Loading 50 questions...</div>';
+
+
+  try{
+
+    /*
+      count=50
+
+      Apps Script every request par
+      different random 50 return karega.
+    */
+
+    const response =
+      await fetch(API_URL + "?count=50");
+
+
+    const data =
+      await response.json();
+
+
+    if(!Array.isArray(data) || data.length === 0){
+
+      throw new Error(
+        "No questions received"
+      );
+    }
+
+
+    allQuestions = data;
+
+    renderFeed();
+
+  }catch(error){
+
+    console.error(error);
+
+    feed.innerHTML =
+      '<div class="error">' +
+      'Failed to load questions.<br>' +
+      '<small>' +
+      error.message +
+      '</small>' +
+      '</div>';
+  }
+}
+
+
+/* =====================================================
+   RENDER QUESTIONS
+===================================================== */
+
+function renderFeed(){
+
+  const feed =
+    document.getElementById("feed");
+
+  feed.innerHTML = "";
+
+
+  allQuestions.forEach(
+    (item,index)=>{
+
+      const card =
+        document.createElement("div");
+
+      card.className =
+        "post-card";
+
+
+      /* HEADER */
+
+      const header =
+        document.createElement("div");
+
+      header.className =
+        "post-header";
+
+
+      const avatar =
+        document.createElement("div");
+
+      avatar.className =
+        "avatar";
+
+      avatar.textContent =
+        (item.username || "E")
+        .charAt(0)
+        .toUpperCase();
+
+
+      const info =
+        document.createElement("div");
+
+      info.className =
+        "channel-info";
+
+
+      const username =
+        document.createElement("h3");
+
+      username.textContent =
+        item.username || "Educator";
+
+
+      const small =
+        document.createElement("p");
+
+      small.textContent =
+        "Question ID: " +
+        (item.uid || "—");
+
+
+      info.appendChild(username);
+      info.appendChild(small);
+
+      header.appendChild(avatar);
+      header.appendChild(info);
+
+      card.appendChild(header);
+
+
+      /* META LABELS */
+
+      const meta =
+        document.createElement("div");
+
+      meta.className =
+        "meta";
+
+
+      addLabel(
+        meta,
+        "📚 Subject: " +
+        (item.subject || "General")
+      );
+
+      addLabel(
+        meta,
+        "📖 Chapter: " +
+        (item.chapter || "General")
+      );
+
+      addLabel(
+        meta,
+        "🎯 Level: " +
+        (item.level || "—")
+      );
+
+      addLabel(
+        meta,
+        "⚡ Difficulty: " +
+        (item.difficulty || "—")
+      );
+
+
+      card.appendChild(meta);
+
+
+      /* QUESTION */
+
+      const question =
+        document.createElement("div");
+
+      question.className =
+        "question-text";
+
+      question.textContent =
+        item.q || "";
+
+      card.appendChild(question);
+
+
+      /* OPTIONS */
+
+      const options =
+        document.createElement("div");
+
+      options.className =
+        "options";
+
+      options.id =
+        "options-" + index;
+
+
+      (item.options || [])
+      .forEach(
+        (opt,optIndex)=>{
+
+          const option =
+            document.createElement("div");
+
+          option.className =
+            "option";
+
+          option.textContent =
+            opt || "—";
+
+
+          option.onclick =
+            function(){
+
+              selectOption(
+                index,
+                optIndex
+              );
+            };
+
+
+          options.appendChild(option);
+        }
+      );
+
+
+      card.appendChild(options);
+
+
+      /* FOOTER */
+
+      const footer =
+        document.createElement("div");
+
+      footer.className =
+        "post-footer";
+
+
+      const likeInfo =
+        document.createElement("div");
+
+      likeInfo.className =
+        "like-info";
+
+      likeInfo.textContent =
+        "👍 " +
+        Number(item.likes || 0);
+
+
+      footer.appendChild(likeInfo);
+
+
+      const actions =
+        document.createElement("div");
+
+      actions.className =
+        "actions";
+
+
+      /* LIKE BUTTON */
+
+      const likeBtn =
+        document.createElement("button");
+
+      likeBtn.className =
+        "action-btn";
+
+      likeBtn.textContent =
+        isLiked(item.uid)
+        ? "❤️ Liked"
+        : "👍 Like";
+
+
+      if(isLiked(item.uid)){
+        likeBtn.classList.add("liked");
+      }
+
+
+      likeBtn.onclick =
+        function(){
+
+          toggleLike(
+            index,
+            likeBtn
+          );
+        };
+
+
+      actions.appendChild(likeBtn);
+
+
+      /* SAVE BUTTON */
+
+      const saveBtn =
+        document.createElement("button");
+
+      saveBtn.className =
+        "action-btn";
+
+      saveBtn.textContent =
+        isSaved(item.uid)
+        ? "🔖 Saved"
+        : "🔖 Save";
+
+
+      if(isSaved(item.uid)){
+        saveBtn.classList.add("saved");
+      }
+
+
+      saveBtn.onclick =
+        function(){
+
+          toggleSave(
+            index,
+            saveBtn
+          );
+        };
+
+
+      actions.appendChild(saveBtn);
+
+
+      footer.appendChild(actions);
+
+      card.appendChild(footer);
+
+      feed.appendChild(card);
+
+    }
+  );
+}
+
+
+/* =====================================================
+   LABEL
+===================================================== */
+
+function addLabel(container,text){
+
+  const label =
+    document.createElement("div");
+
+  label.className =
+    "label";
+
+  label.textContent =
+    text;
+
+  container.appendChild(label);
+}
+
+
+/* =====================================================
+   ANSWER
+===================================================== */
+
+async function selectOption(
+  qIndex,
+  selected
+){
+
+  const item =
+    allQuestions[qIndex];
+
+  if(!item) return;
+
+
+  const options =
+    document.querySelectorAll(
+      "#options-" +
+      qIndex +
+      " .option"
+    );
+
+
+  /*
+    Prevent double answer
+  */
+
+  if(
+    options.length &&
+    options[0].classList.contains("disabled")
+  ){
+
+    return;
+  }
+
+
+  options.forEach(
+    (opt,i)=>{
+
+      opt.classList.add("disabled");
+
+
+      if(i === Number(item.correct)){
+
+        opt.classList.add("correct");
+      }
+
+
+      if(
+        i === selected &&
+        selected !== Number(item.correct)
+      ){
+
+        opt.classList.add("wrong");
+      }
+
+    }
+  );
+
+
+  /*
+    Firebase Analysis
+  */
+
+  if(!USER_ID) return;
+
+
+  const correct =
+    selected === Number(item.correct);
+
+
+  try{
+
+    await updateAnalysis(
+      item,
+      correct
+    );
+
+  }catch(error){
+
+    console.error(
+      "Analysis error:",
+      error
+    );
+  }
+}
+
+
+/* =====================================================
+   ANALYSIS
+===================================================== */
+
+async function updateAnalysis(
+  item,
+  correct
+){
+
+  if(!userData){
+    userData = {};
+  }
+
+
+  if(!userData.analysis){
+    userData.analysis = {};
+  }
+
+
+  if(!userData.analysis.allTime){
+
+    userData.analysis.allTime = {
+      attempted:0,
+      correct:0,
+      wrong:0,
+      accuracy:0,
+      streak:0,
+      lastActiveDate:""
+    };
+  }
+
+
+  const allTime =
+    userData.analysis.allTime;
+
+
+  allTime.attempted =
+    Number(allTime.attempted || 0) + 1;
+
+
+  if(correct){
+
+    allTime.correct =
+      Number(allTime.correct || 0) + 1;
+
+  }else{
+
+    allTime.wrong =
+      Number(allTime.wrong || 0) + 1;
+  }
+
+
+  allTime.accuracy =
+    Math.round(
+      (
+        allTime.correct /
+        allTime.attempted
+      ) * 100
+    );
+
+
+  allTime.lastActiveDate =
+    new Date()
+    .toISOString()
+    .split("T")[0];
+
+
+  /*
+    Subject analysis
+  */
+
+  if(!userData.analysis.subjects){
+
+    userData.analysis.subjects = {};
+  }
+
+
+  const subject =
+    item.subject || "General";
+
+
+  if(
+    !userData.analysis.subjects[subject]
+  ){
+
+    userData.analysis.subjects[subject] = {
+      attempted:0,
+      correct:0,
+      accuracy:0
+    };
+  }
+
+
+  const sub =
+    userData.analysis.subjects[subject];
+
+
+  sub.attempted++;
+
+
+  if(correct){
+    sub.correct++;
+  }
+
+
+  sub.accuracy =
+    Math.round(
+      (
+        sub.correct /
+        sub.attempted
+      ) * 100
+    );
+
+
+  /*
+    Firebase update
+  */
+
+  await firebasePatch(
+    "accounts/" +
+    USER_ID +
+    "/analysis",
+    userData.analysis
+  );
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+async function startApp(){
+
+  /*
+    First Kodular User ID
+  */
+
+  USER_ID =
+    getKodularUserId();
+
+
+  console.log(
+    "Kodular User ID:",
+    USER_ID
+  );
+
+
+  /*
+    Firebase user data
+  */
+
+  await loadUserData();
+
+
+  /*
+    Then 50 random questions
+  */
+
+  await loadQuestions();
+}
+
+
+startApp();
+
+</script>
+
+</body>
+</html>

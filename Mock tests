@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PrepExam Tests</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+  background:#f4f6fb;color:#0f172a;min-height:100vh;
+}
+header{
+  background:#fff;padding:14px 16px;border-bottom:1px solid #e5e7eb;
+  position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;
+}
+header h2{font-size:1.1rem;font-weight:700;flex:1}
+.timer{
+  background:#eff6ff;color:#1d4ed8;font-weight:700;font-size:.85rem;
+  padding:6px 10px;border-radius:20px;white-space:nowrap;
+}
+.container{padding:14px;max-width:720px;margin:auto;padding-bottom:90px}
+.card{
+  background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;
+  box-shadow:0 4px 16px rgba(15,23,42,.06);border:1px solid #eef2f7;
+}
+.card.clickable{cursor:pointer}
+.card.clickable:active{transform:scale(.99)}
+.title{font-size:1.05rem;font-weight:700;margin-bottom:6px}
+.info{color:#64748b;font-size:.85rem;line-height:1.55}
+.badge{
+  display:inline-block;margin-top:10px;background:#eef2ff;color:#3730a3;
+  padding:6px 10px;border-radius:8px;font-size:.78rem;font-weight:600;
+}
+.row-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.pill{
+  background:#f8fafc;border:1px solid #e2e8f0;color:#334155;
+  padding:5px 9px;border-radius:999px;font-size:.75rem;font-weight:600;
+}
+button{
+  border:0;border-radius:12px;padding:12px 16px;font-size:.92rem;
+  font-weight:700;cursor:pointer;
+}
+.btn{background:#2563eb;color:#fff;width:100%}
+.btn:active{background:#1d4ed8}
+.btn-secondary{background:#e2e8f0;color:#0f172a}
+.back{background:#e9edf5;color:#172033;margin-bottom:12px;width:auto}
+.loading,.empty{text-align:center;padding:40px 16px;color:#64748b}
+.error{
+  background:#fef2f2;color:#b91c1c;padding:14px;border-radius:12px;
+  line-height:1.55;word-break:break-word;
+}
+.q-meta{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:12px;font-size:.82rem;color:#64748b;
+}
+.q-text{font-size:1.05rem;font-weight:600;line-height:1.5;margin-bottom:14px}
+.option{
+  border:1.5px solid #dbe3f0;border-radius:12px;padding:12px 14px;
+  margin-bottom:8px;background:#fff;cursor:pointer;font-size:.95rem;
+}
+.option:active{background:#f8fafc}
+.option.selected{border-color:#2563eb;background:#eff6ff;color:#1d4ed8;font-weight:600}
+.option.correct{border-color:#16a34a;background:#dcfce7;color:#166534;font-weight:600}
+.option.wrong{border-color:#dc2626;background:#fee2e2;color:#991b1b;font-weight:600}
+.footer-actions{
+  position:fixed;left:0;right:0;bottom:0;background:#fff;
+  border-top:1px solid #e5e7eb;padding:10px 14px;display:flex;gap:8px;z-index:30;
+}
+.footer-actions button{flex:1}
+.palette{
+  display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:10px;
+}
+.pal{
+  height:34px;border-radius:8px;border:1px solid #dbe3f0;background:#fff;
+  font-size:.75rem;font-weight:700;color:#334155;
+}
+.pal.answered{background:#dbeafe;border-color:#93c5fd;color:#1d4ed8}
+.pal.current{outline:2px solid #2563eb}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.stat{
+  background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;
+  padding:14px;text-align:center;
+}
+.stat b{display:block;font-size:1.35rem;color:#2563eb;margin-bottom:4px}
+.stat span{font-size:.78rem;color:#64748b}
+.review-item{
+  border-top:1px solid #eef2f7;padding:12px 0;
+}
+.review-item:first-child{border-top:0}
+.ok{color:#16a34a;font-weight:700}
+.bad{color:#dc2626;font-weight:700}
+.skip{color:#d97706;font-weight:700}
+</style>
+</head>
+<body>
+
+<header>
+  <h2 id="pageTitle">PrepExam</h2>
+  <div class="timer" id="timerBox" style="display:none">00:00</div>
+</header>
+
+<div class="container" id="app">
+  <div class="loading">Loading Exams...</div>
+</div>
+
+<div class="footer-actions" id="testFooter" style="display:none">
+  <button class="btn-secondary" id="prevBtn">Previous</button>
+  <button class="btn" id="nextBtn">Next</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCDvOq7CUmM92aDNyEfP7TNXsCLgmDoQxg",
+  authDomain: "prepexam-f98bf.firebaseapp.com",
+  databaseURL: "https://prepexam-f98bf-default-rtdb.firebaseio.com",
+  projectId: "prepexam-f98bf",
+  storageBucket: "prepexam-f98bf.firebasestorage.app",
+  messagingSenderId: "570075784084",
+  appId: "1:570075784084:web:0ebdbef4a887ce777aa581"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const appBox = document.getElementById("app");
+const pageTitle = document.getElementById("pageTitle");
+const timerBox = document.getElementById("timerBox");
+const testFooter = document.getElementById("testFooter");
+
+let examData = null;
+let currentTestMeta = null;
+let questions = [];
+let answers = {};
+let currentIndex = 0;
+let timer = null;
+let remainingSec = 0;
+let testFinished = false;
+
+function hideTestUI(){
+  testFooter.style.display = "none";
+  timerBox.style.display = "none";
+  if(timer){ clearInterval(timer); timer = null; }
+}
+
+async function loadExams(){
+  hideTestUI();
+  appBox.innerHTML = '<div class="loading">Loading Exams...</div>';
+  try{
+    const snapshot = await get(ref(db,"exams"));
+    if(!snapshot.exists()){
+      appBox.innerHTML = '<div class="empty"><h3>No Exams Found</h3></div>';
+      return;
+    }
+    examData = snapshot.val();
+    showExams();
+  }catch(error){
+    appBox.innerHTML = '<div class="error"><b>Firebase Error</b><br><br>' + error.message + '</div>';
+  }
+}
+
+function showExams(){
+  hideTestUI();
+  pageTitle.innerText = "Exams";
+  appBox.innerHTML = "";
+  const exams = Object.keys(examData || {});
+  if(!exams.length){
+    appBox.innerHTML = '<div class="empty">No Exams Available</div>';
+    return;
+  }
+  exams.forEach(examId=>{
+    const exam = examData[examId];
+    const card = document.createElement("div");
+    card.className = "card clickable";
+    card.innerHTML =
+      '<div class="title">' + (exam.name || examId) + '</div>' +
+      '<div class="info">Full length and subject-wise mock tests</div>' +
+      '<span class="badge">Open →</span>';
+    card.onclick = ()=> showExam(examId);
+    appBox.appendChild(card);
+  });
+}
+
+function showExam(examId){
+  hideTestUI();
+  const exam = examData[examId];
+  pageTitle.innerText = exam.name || examId;
+  appBox.innerHTML =
+    '<button class="back" id="backExams">← Back</button>' +
+    '<div class="card clickable" id="fullCard"><div class="title">Full Length</div><div class="info">Complete mock tests</div><span class="badge">View tests →</span></div>' +
+    '<div class="card clickable" id="subCard"><div class="title">Subject Wise</div><div class="info">Practice subject and chapter wise</div><span class="badge">View subjects →</span></div>';
+  document.getElementById("backExams").onclick = showExams;
+  document.getElementById("fullCard").onclick = ()=> showFullLength(examId);
+  document.getElementById("subCard").onclick = ()=> showSubjectWise(examId);
+}
+
+function createTestCard(test, testId){
+  const card = document.createElement("div");
+  card.className = "card clickable";
+  card.innerHTML =
+    '<div class="title">' + (test.title || testId) + '</div>' +
+    '<div class="info">' +
+      'Questions: ' + (test.questions ?? "-") + '<br>' +
+      'Duration: ' + (test.duration ?? "-") + ' min<br>' +
+      'Marks: ' + (test.marks ?? "-") + '<br>' +
+      'Negative: ' + (test.negativeMarks ?? "-") +
+    '</div><div class="row-badges"><span class="pill">Start Test</span></div>';
+  return card;
+}
+
+function showFullLength(examId){
+  hideTestUI();
+  pageTitle.innerText = "Full Length";
+  appBox.innerHTML = '<button class="back" id="backExam">← Back</button>';
+  document.getElementById("backExam").onclick = ()=> showExam(examId);
+
+  const tests = (examData[examId] && examData[examId].fullLength) || {};
+  const ids = Object.keys(tests);
+  if(!ids.length){
+    appBox.innerHTML += '<div class="empty">No Full Length Tests Available</div>';
+    return;
+  }
+  ids.forEach(testId=>{
+    const test = tests[testId];
+    const card = createTestCard(test, testId);
+    card.onclick = ()=> openTestIntro(test, examId, "full");
+    appBox.appendChild(card);
+  });
+}
+
+function showSubjectWise(examId){
+  hideTestUI();
+  pageTitle.innerText = "Subjects";
+  appBox.innerHTML = '<button class="back" id="backExam">← Back</button>';
+  document.getElementById("backExam").onclick = ()=> showExam(examId);
+
+  const subjects = (examData[examId] && examData[examId].subjectWise) || {};
+  const subjectIds = Object.keys(subjects);
+  if(!subjectIds.length){
+    appBox.innerHTML += '<div class="empty">No Subjects Available</div>';
+    return;
+  }
+  subjectIds.forEach(subjectId=>{
+    const card = document.createElement("div");
+    card.className = "card clickable";
+    card.innerHTML = '<div class="title">' + subjectId + '</div><div class="info">View chapters</div><span class="badge">Open →</span>';
+    card.onclick = ()=> showChapters(examId, subjectId);
+    appBox.appendChild(card);
+  });
+}
+
+function showChapters(examId, subjectId){
+  hideTestUI();
+  pageTitle.innerText = subjectId;
+  appBox.innerHTML = '<button class="back" id="backSub">← Back</button>';
+  document.getElementById("backSub").onclick = ()=> showSubjectWise(examId);
+
+  const subject = examData[examId].subjectWise[subjectId] || {};
+  const chapters = Object.keys(subject);
+  if(!chapters.length){
+    appBox.innerHTML += '<div class="empty">No Chapters Available</div>';
+    return;
+  }
+  chapters.forEach(chapterId=>{
+    const card = document.createElement("div");
+    card.className = "card clickable";
+    card.innerHTML = '<div class="title">' + chapterId + '</div><div class="info">View tests</div><span class="badge">Open →</span>';
+    card.onclick = ()=> showChapterTests(examId, subjectId, chapterId);
+    appBox.appendChild(card);
+  });
+}
+
+function showChapterTests(examId, subjectId, chapterId){
+  hideTestUI();
+  pageTitle.innerText = chapterId;
+  appBox.innerHTML = '<button class="back" id="backCh">← Back</button>';
+  document.getElementById("backCh").onclick = ()=> showChapters(examId, subjectId);
+
+  const tests = examData[examId].subjectWise[subjectId][chapterId] || {};
+  const testIds = Object.keys(tests);
+  if(!testIds.length){
+    appBox.innerHTML += '<div class="empty">No Tests Available</div>';
+    return;
+  }
+  testIds.forEach(testId=>{
+    const test = tests[testId];
+    const card = createTestCard(test, testId);
+    card.onclick = ()=> openTestIntro(test, examId, "chapter");
+    appBox.appendChild(card);
+  });
+}
+
+function openTestIntro(test){
+  hideTestUI();
+  currentTestMeta = test;
+  pageTitle.innerText = test.title || "Test";
+  appBox.innerHTML =
+    '<button class="back" id="backHome">← Back</button>' +
+    '<div class="card">' +
+      '<div class="title">' + (test.title || "Mock Test") + '</div>' +
+      '<div class="info">' +
+        'Questions: ' + (test.questions ?? "-") + '<br>' +
+        'Duration: ' + (test.duration ?? "-") + ' minutes<br>' +
+        'Marks: ' + (test.marks ?? "-") + '<br>' +
+        'Negative Marks: ' + (test.negativeMarks ?? "-") +
+      '</div>' +
+      '<br><button class="btn" id="startBtn">Start Test</button>' +
+    '</div>';
+  document.getElementById("backHome").onclick = showExams;
+  document.getElementById("startBtn").onclick = ()=> startTestFromUrl(test.jsonUrl, test);
+}
+
+async function startTestFromUrl(url, meta){
+  if(!url){
+    alert("JSON URL missing");
+    return;
+  }
+  appBox.innerHTML = '<div class="loading">Loading Questions...</div>';
+  try{
+    const res = await fetch(url);
+    if(!res.ok) throw new Error("GitHub JSON HTTP Error: " + res.status);
+    const data = await res.json();
+
+    questions = Array.isArray(data.questions) ? data.questions : [];
+    if(!questions.length) throw new Error("No questions found in JSON");
+
+    // normalize
+    questions = questions.map((q,i)=>({
+      id: q.id || ("q" + (i+1)),
+      subject: q.subject || "",
+      question: q.question || q.q || "",
+      options: q.options || [],
+      correct: typeof q.correct === "number" ? q.correct : 0,
+      explanation: q.explanation || ""
+    }));
+
+    currentTestMeta = {
+      title: data.title || (meta && meta.title) || "Mock Test",
+      duration: data.duration || (meta && meta.duration) || 60,
+      marksPerQuestion: data.marksPerQuestion || 4,
+      negativeMarks: data.negativeMarks || (meta && meta.negativeMarks) || 0,
+      jsonUrl: url
+    };
+
+    answers = {};
+    currentIndex = 0;
+    testFinished = false;
+    remainingSec = Number(currentTestMeta.duration) * 60;
+    startTimer();
+    renderQuestion();
+  }catch(err){
+    appBox.innerHTML = '<div class="error"><b>Question JSON Error</b><br><br>' + err.message + '</div>';
+  }
+}
+
+function startTimer(){
+  timerBox.style.display = "block";
+  updateTimerText();
+  if(timer) clearInterval(timer);
+  timer = setInterval(function(){
+    remainingSec--;
+    if(remainingSec <= 0){
+      remainingSec = 0;
+      updateTimerText();
+      finishTest(true);
+      return;
+    }
+    updateTimerText();
+  }, 1000);
+}
+
+function updateTimerText(){
+  var m = Math.floor(remainingSec / 60);
+  var s = remainingSec % 60;
+  timerBox.textContent = (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function renderQuestion(){
+  testFooter.style.display = "flex";
+  pageTitle.innerText = currentTestMeta.title || "Mock Test";
+
+  var q = questions[currentIndex];
+  var selected = answers[q.id];
+
+  var opts = "";
+  for(var i=0;i<q.options.length;i++){
+    var cls = "option";
+    if(selected === i) cls += " selected";
+    opts += '<div class="' + cls + '" data-i="' + i + '">' +
+      String.fromCharCode(65+i) + ". " + q.options[i] +
+      '</div>';
+  }
+
+  var palette = "";
+  for(var p=0;p<questions.length;p++){
+    var id = questions[p].id;
+    var pcls = "pal";
+    if(p === currentIndex) pcls += " current";
+    if(answers[id] !== undefined) pcls += " answered";
+    palette += '<button class="' + pcls + '" data-p="' + p + '">' + (p+1) + '</button>';
+  }
+
+  appBox.innerHTML =
+    '<div class="card">' +
+      '<div class="q-meta"><span>Q ' + (currentIndex+1) + ' / ' + questions.length + '</span><span>' + (q.subject || "") + '</span></div>' +
+      '<div class="q-text">' + q.question + '</div>' +
+      opts +
+    '</div>' +
+    '<div class="card"><div class="title">Question Palette</div><div class="palette">' + palette + '</div>' +
+      '<br><button class="btn" id="submitTestBtn">Submit Test</button>' +
+    '</div>';
+
+  var optionNodes = appBox.querySelectorAll(".option");
+  optionNodes.forEach(function(node){
+    node.onclick = function(){
+      if(testFinished) return;
+      answers[q.id] = Number(node.getAttribute("data-i"));
+      renderQuestion();
+    };
+  });
+
+  var palNodes = appBox.querySelectorAll(".pal");
+  palNodes.forEach(function(node){
+    node.onclick = function(){
+      currentIndex = Number(node.getAttribute("data-p"));
+      renderQuestion();
+    };
+  });
+
+  document.getElementById("submitTestBtn").onclick = function(){
+    if(confirm("Submit test now?")) finishTest(false);
+  };
+
+  document.getElementById("prevBtn").onclick = function(){
+    if(currentIndex > 0){ currentIndex--; renderQuestion(); }
+  };
+  document.getElementById("nextBtn").onclick = function(){
+    if(currentIndex < questions.length - 1){ currentIndex++; renderQuestion(); }
+    else if(confirm("This is last question. Submit test?")) finishTest(false);
+  };
+}
+
+function finishTest(auto){
+  if(testFinished) return;
+  testFinished = true;
+  if(timer){ clearInterval(timer); timer = null; }
+  testFooter.style.display = "none";
+  showAnalysis(auto);
+}
+
+function showAnalysis(auto){
+  pageTitle.innerText = "Result";
+  timerBox.style.display = "none";
+
+  var correct = 0, wrong = 0, skipped = 0;
+  var perSubject = {};
+  var marksPerQ = Number(currentTestMeta.marksPerQuestion || 4);
+  var neg = Number(currentTestMeta.negativeMarks || 0);
+
+  questions.forEach(function(q){
+    var sub = q.subject || "General";
+    if(!perSubject[sub]) perSubject[sub] = {attempted:0, correct:0, wrong:0, skipped:0};
+    var ans = answers[q.id];
+    if(ans === undefined){
+      skipped++;
+      perSubject[sub].skipped++;
+    }else if(ans === q.correct){
+      correct++;
+      perSubject[sub].attempted++;
+      perSubject[sub].correct++;
+    }else{
+      wrong++;
+      perSubject[sub].attempted++;
+      perSubject[sub].wrong++;
+    }
+  });
+
+  var score = (correct * marksPerQ) - (wrong * neg);
+  var accuracy = questions.length ? Math.round((correct / questions.length) * 100) : 0;
+
+  var subHtml = "";
+  Object.keys(perSubject).forEach(function(sub){
+    var s = perSubject[sub];
+    var acc = (s.correct + s.wrong) ? Math.round((s.correct / (s.correct + s.wrong)) * 100) : 0;
+    subHtml += '<div class="review-item"><b>' + sub + '</b><div class="info">C: ' + s.correct + ' | W: ' + s.wrong + ' | S: ' + s.skipped + ' | Acc: ' + acc + '%</div></div>';
+  });
+
+  var review = "";
+  questions.forEach(function(q, idx){
+    var ans = answers[q.id];
+    var status = "skip";
+    var statusText = "Skipped";
+    if(ans === undefined){ status = "skip"; statusText = "Skipped"; }
+    else if(ans === q.correct){ status = "ok"; statusText = "Correct"; }
+    else { status = "bad"; statusText = "Wrong"; }
+
+    review +=
+      '<div class="review-item">' +
+        '<div><b>Q' + (idx+1) + '.</b> ' + q.question + '</div>' +
+        '<div class="info" style="margin-top:6px">' +
+          'Your answer: ' + (ans === undefined ? "—" : (q.options[ans] || "—")) + '<br>' +
+          'Correct: ' + (q.options[q.correct] || "—") + '<br>' +
+          '<span class="' + status + '">' + statusText + '</span>' +
+          (q.explanation ? '<br>Explanation: ' + q.explanation : '') +
+        '</div>' +
+      '</div>';
+  });
+
+  appBox.innerHTML =
+    '<div class="card">' +
+      '<div class="title">' + (currentTestMeta.title || "Mock Test") + '</div>' +
+      '<div class="info">' + (auto ? "Time up! Auto submitted." : "Test submitted successfully.") + '</div>' +
+      '<div class="stats-grid">' +
+        '<div class="stat"><b>' + score + '</b><span>Score</span></div>' +
+        '<div class="stat"><b>' + accuracy + '%</b><span>Accuracy</span></div>' +
+        '<div class="stat"><b>' + correct + '</b><span>Correct</span></div>' +
+        '<div class="stat"><b>' + wrong + '</b><span>Wrong</span></div>' +
+        '<div class="stat"><b>' + skipped + '</b><span>Skipped</span></div>' +
+        '<div class="stat"><b>' + questions.length + '</b><span>Total</span></div>' +
+      '</div>' +
+      '<br><button class="btn" id="homeBtn">Back to Exams</button>' +
+    '</div>' +
+    '<div class="card"><div class="title">Subject Analysis</div>' + subHtml + '</div>' +
+    '<div class="card"><div class="title">Answer Review</div>' + review + '</div>';
+
+  document.getElementById("homeBtn").onclick = showExams;
+}
+
+loadExams();
+</script>
+</body>
+</html>

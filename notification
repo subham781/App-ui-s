@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Notifications</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#f5f7fb;
+  color:#222;
+  font-family:Arial,Helvetica,sans-serif;
+}
+.app{
+  min-height:100vh;
+  max-width:700px;
+  margin:auto;
+  padding:14px;
+}
+.top-row{
+  display:flex;
+  justify-content:flex-end;
+  margin-bottom:12px;
+}
+.refresh{
+  width:36px;height:36px;border:0;border-radius:10px;
+  background:#fff;color:#555;font-size:17px;
+  border:1px solid #e8e8e8;
+}
+.refresh:active{transform:scale(.94)}
+.notification{
+  background:#fff;
+  border:1px solid #e8e8e8;
+  border-radius:15px;
+  padding:14px;
+  margin-bottom:11px;
+  cursor:pointer;
+}
+.notification:active{background:#f8fbfc;transform:scale(.99)}
+.category{
+  display:inline-block;
+  font-size:10px;font-weight:700;color:#159ac4;
+  background:#eef9fc;padding:5px 9px;border-radius:7px;
+  margin-bottom:9px;
+}
+.title{font-size:15px;font-weight:700;color:#222;line-height:1.4}
+.subtitle{margin-top:6px;font-size:12px;line-height:1.55;color:#777}
+.date{
+  margin-top:11px;padding-top:9px;border-top:1px solid #f0f0f0;
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:10px;color:#999;
+}
+.time{color:#159ac4;font-weight:700}
+.expired-tag{
+  display:inline-block;margin-left:6px;
+  background:#fff1f1;color:#c0392b;
+  font-size:10px;font-weight:700;padding:3px 7px;border-radius:6px;
+}
+.loading,.empty{text-align:center;padding:50px 20px;color:#888;font-size:13px}
+.spinner{
+  width:27px;height:27px;margin:0 auto 12px;
+  border:3px solid #eee;border-top-color:#159ac4;border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error{
+  background:#fff5f5;border:1px solid #f1d4d4;border-radius:12px;
+  padding:13px;color:#a44;font-size:11px;line-height:1.5;
+}
+.toast{
+  position:fixed;bottom:25px;left:50%;
+  transform:translate(-50%,20px);
+  background:#222;color:#fff;padding:10px 15px;border-radius:10px;
+  font-size:11px;opacity:0;pointer-events:none;transition:.25s;z-index:100;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top-row">
+    <button class="refresh" onclick="loadNotifications()">↻</button>
+  </div>
+  <div id="notificationList">
+    <div class="loading">
+      <div class="spinner"></div>
+      Loading notifications...
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast">Notification selected</div>
+
+<script>
+const CSV_URL = "https://raw.githubusercontent.com/subham781/Formulas1/refs/heads/main/sdf";
+
+document.addEventListener("DOMContentLoaded", loadNotifications);
+
+async function loadNotifications(){
+  const container = document.getElementById("notificationList");
+  container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading notifications...</div>';
+
+  try{
+    const response = await fetch(CSV_URL + (CSV_URL.indexOf("?") >= 0 ? "&" : "?") + "t=" + Date.now());
+    if(!response.ok) throw new Error("HTTP Error: " + response.status);
+
+    const csv = await response.text();
+    if(!csv.trim()) throw new Error("CSV file is empty.");
+
+    const rows = parseCSV(csv);
+    if(rows.length < 2){
+      showEmpty();
+      return;
+    }
+
+    const headers = rows[0].map(function(h){ return String(h || "").trim().toLowerCase(); });
+
+    var categoryIndex = findHeader(headers, ["category"]);
+    var titleIndex = findHeader(headers, ["title"]);
+    var subtitleIndex = findHeader(headers, ["subtitle", "description", "message"]);
+    var dateIndex = findHeader(headers, ["offer end date", "end date", "date", "expiry"]);
+
+    if(titleIndex === -1){
+      throw new Error("CSV me Title column nahi mila.");
+    }
+
+    const notifications = [];
+
+    for(var i = 1; i < rows.length; i++){
+      var row = rows[i];
+      if(!row || !row.length) continue;
+
+      var category = categoryIndex >= 0 ? clean(row[categoryIndex]) : "";
+      var title = clean(row[titleIndex]);
+      var subtitle = subtitleIndex >= 0 ? clean(row[subtitleIndex]) : "";
+      var endDate = dateIndex >= 0 ? clean(row[dateIndex]) : "";
+
+      // empty row skip
+      if(!title && !subtitle && !category) continue;
+
+      var expired = false;
+      if(endDate){
+        var expiry = parseDate(endDate);
+        if(expiry && expiry.getTime() <= Date.now()){
+          expired = true;
+        }
+      }
+
+      notifications.push({
+        category: category || "Update",
+        title: title,
+        subtitle: subtitle,
+        endDate: endDate,
+        expired: expired
+      });
+    }
+
+    // newest / non-expired first
+    notifications.sort(function(a, b){
+      if(a.expired !== b.expired) return a.expired ? 1 : -1;
+      var da = parseDate(a.endDate);
+      var db = parseDate(b.endDate);
+      if(da && db) return db.getTime() - da.getTime();
+      return 0;
+    });
+
+    displayNotifications(notifications);
+  }catch(error){
+    console.error(error);
+    container.innerHTML =
+      '<div class="error"><b>Unable to load notifications.</b><br><br>' +
+      escapeHTML(error.message) +
+      '</div>';
+  }
+}
+
+function findHeader(headers, names){
+  for(var i = 0; i < names.length; i++){
+    var idx = headers.indexOf(names[i]);
+    if(idx !== -1) return idx;
+  }
+  return -1;
+}
+
+function clean(v){
+  return String(v == null ? "" : v).trim();
+}
+
+function displayNotifications(notifications){
+  const container = document.getElementById("notificationList");
+  if(!notifications.length){
+    showEmpty();
+    return;
+  }
+
+  container.innerHTML = "";
+
+  notifications.forEach(function(item){
+    const card = document.createElement("div");
+    card.className = "notification";
+    card.onclick = function(){ notificationClicked(item); };
+
+    var dateHTML = "";
+    if(item.endDate){
+      dateHTML =
+        '<div class="date"><span>Offer ends</span><span class="time">' +
+        escapeHTML(formatDate(item.endDate)) +
+        (item.expired ? '<span class="expired-tag">Expired</span>' : '') +
+        '</span></div>';
+    }
+
+    card.innerHTML =
+      '<div class="category">' + escapeHTML(item.category) + '</div>' +
+      '<div class="title">' + escapeHTML(item.title) + '</div>' +
+      '<div class="subtitle">' + escapeHTML(item.subtitle) + '</div>' +
+      dateHTML;
+
+    container.appendChild(card);
+  });
+}
+
+function notificationClicked(item){
+  var value = "NOTIFICATION|" + item.title + "|" + item.subtitle + "|" + item.category;
+  sendToKodular(value);
+  showToast(item.title || "Notification");
+}
+
+function sendToKodular(value){
+  try{
+    if(window.Kodular && typeof window.Kodular.setWebViewString === "function"){
+      window.Kodular.setWebViewString(value);
+    }
+    if(window.AppInventor && typeof window.AppInventor.setWebViewString === "function"){
+      window.AppInventor.setWebViewString(value);
+    }
+  }catch(e){}
+}
+
+function showEmpty(){
+  document.getElementById("notificationList").innerHTML =
+    '<div class="empty"><div style="font-size:35px;margin-bottom:10px">🔔</div>' +
+    '<div style="font-weight:700;color:#444">No notifications</div></div>';
+}
+
+function parseCSV(csv){
+  const rows = [];
+  let row = [];
+  let field = "";
+  let insideQuotes = false;
+
+  for(let i = 0; i < csv.length; i++){
+    const char = csv[i];
+    const next = csv[i + 1];
+
+    if(char === '"'){
+      if(insideQuotes && next === '"'){
+        field += '"';
+        i++;
+      }else{
+        insideQuotes = !insideQuotes;
+      }
+    }else if(char === "," && !insideQuotes){
+      row.push(field);
+      field = "";
+    }else if((char === "\n" || char === "\r") && !insideQuotes){
+      if(char === "\r" && next === "\n") i++;
+      row.push(field);
+      rows.push(row);
+      row = [];
+      field = "";
+    }else{
+      field += char;
+    }
+  }
+
+  if(field.length > 0 || row.length > 0){
+    row.push(field);
+    rows.push(row);
+  }
+  return rows;
+}
+
+function parseDate(value){
+  if(!value) return null;
+  var normalized = String(value).trim().replace(" ", "T");
+  var date = new Date(normalized);
+  if(isNaN(date.getTime())) return null;
+  return date;
+}
+
+function formatDate(value){
+  var date = parseDate(value);
+  if(!date) return value;
+  return date.toLocaleString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+function escapeHTML(value){
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+var toastTimer;
+function showToast(text){
+  var toast = document.getElementById("toast");
+  toast.textContent = text;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){
+    toast.classList.remove("show");
+  }, 1800);
+}
+</script>
+</body>
+</html>

@@ -3,321 +3,247 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Notifications</title>
+<title>Plans</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{margin:0;padding:0;box-sizing:border-box}
 body{
-  background:#f5f7fb;
-  color:#222;
-  font-family:Arial,Helvetica,sans-serif;
-}
-.app{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+  background:#f3f6fb;
+  color:#0f172a;
   min-height:100vh;
-  max-width:700px;
-  margin:auto;
-  padding:14px;
 }
-.top-row{
-  display:flex;
-  justify-content:flex-end;
-  margin-bottom:12px;
+.wrap{
+  max-width:480px;
+  margin:0 auto;
+  padding:18px 16px 40px;
 }
-.refresh{
-  width:36px;height:36px;border:0;border-radius:10px;
-  background:#fff;color:#555;font-size:17px;
-  border:1px solid #e8e8e8;
+.hero{
+  text-align:center;
+  margin-bottom:18px;
 }
-.refresh:active{transform:scale(.94)}
-.notification{
+.hero h1{
+  font-size:1.45rem;
+  font-weight:800;
+  letter-spacing:-0.3px;
+}
+.hero p{
+  margin-top:6px;
+  color:#64748b;
+  font-size:0.9rem;
+  line-height:1.5;
+}
+.plan{
   background:#fff;
-  border:1px solid #e8e8e8;
-  border-radius:15px;
+  border:1px solid #e7eef8;
+  border-radius:22px;
+  padding:18px;
+  margin-bottom:14px;
+  box-shadow:0 10px 28px rgba(15,23,42,0.06);
+  position:relative;
+  overflow:hidden;
+}
+.plan.popular{
+  border:2px solid #2563eb;
+  background:linear-gradient(180deg,#ffffff 0%,#f8fbff 100%);
+}
+.tag{
+  position:absolute;
+  top:14px;
+  right:14px;
+  background:#2563eb;
+  color:#fff;
+  font-size:0.7rem;
+  font-weight:700;
+  padding:5px 9px;
+  border-radius:999px;
+}
+.plan-name{
+  font-size:1.05rem;
+  font-weight:800;
+  margin-bottom:4px;
+}
+.plan-desc{
+  color:#64748b;
+  font-size:0.82rem;
+  margin-bottom:14px;
+}
+.price-row{
+  display:flex;
+  align-items:flex-end;
+  gap:6px;
+  margin-bottom:4px;
+}
+.price{
+  font-size:2rem;
+  font-weight:800;
+  color:#0f172a;
+  line-height:1;
+}
+.period{
+  color:#64748b;
+  font-size:0.85rem;
+  margin-bottom:4px;
+}
+.old-price{
+  color:#94a3b8;
+  text-decoration:line-through;
+  font-size:0.85rem;
+  margin-bottom:14px;
+}
+.features{
+  list-style:none;
+  margin:14px 0 16px;
+}
+.features li{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  padding:8px 0;
+  font-size:0.9rem;
+  color:#334155;
+  border-top:1px solid #f1f5f9;
+}
+.features li:first-child{border-top:0}
+.check{
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#e8f9ee;
+  color:#16a34a;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  font-weight:700;
+  flex-shrink:0;
+  margin-top:1px;
+}
+.btn{
+  width:100%;
+  border:0;
+  border-radius:14px;
   padding:14px;
-  margin-bottom:11px;
+  font-size:0.95rem;
+  font-weight:700;
   cursor:pointer;
 }
-.notification:active{background:#f8fbfc;transform:scale(.99)}
-.category{
-  display:inline-block;
-  font-size:10px;font-weight:700;color:#159ac4;
-  background:#eef9fc;padding:5px 9px;border-radius:7px;
-  margin-bottom:9px;
+.btn-primary{
+  background:linear-gradient(135deg,#2563eb,#4f46e5);
+  color:#fff;
+  box-shadow:0 8px 18px rgba(37,99,235,0.25);
 }
-.title{font-size:15px;font-weight:700;color:#222;line-height:1.4}
-.subtitle{margin-top:6px;font-size:12px;line-height:1.55;color:#777}
-.date{
-  margin-top:11px;padding-top:9px;border-top:1px solid #f0f0f0;
-  display:flex;justify-content:space-between;align-items:center;
-  font-size:10px;color:#999;
+.btn-soft{
+  background:#f1f5f9;
+  color:#0f172a;
 }
-.time{color:#159ac4;font-weight:700}
-.expired-tag{
-  display:inline-block;margin-left:6px;
-  background:#fff1f1;color:#c0392b;
-  font-size:10px;font-weight:700;padding:3px 7px;border-radius:6px;
+.btn:active{transform:scale(0.98)}
+.note{
+  text-align:center;
+  margin-top:10px;
+  color:#94a3b8;
+  font-size:0.78rem;
 }
-.loading,.empty{text-align:center;padding:50px 20px;color:#888;font-size:13px}
-.spinner{
-  width:27px;height:27px;margin:0 auto 12px;
-  border:3px solid #eee;border-top-color:#159ac4;border-radius:50%;
-  animation:spin .8s linear infinite;
+.free-banner{
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  color:#fff;
+  border-radius:22px;
+  padding:18px;
+  margin-bottom:14px;
 }
-@keyframes spin{to{transform:rotate(360deg)}}
-.error{
-  background:#fff5f5;border:1px solid #f1d4d4;border-radius:12px;
-  padding:13px;color:#a44;font-size:11px;line-height:1.5;
+.free-banner h3{
+  font-size:1.05rem;
+  margin-bottom:6px;
 }
-.toast{
-  position:fixed;bottom:25px;left:50%;
-  transform:translate(-50%,20px);
-  background:#222;color:#fff;padding:10px 15px;border-radius:10px;
-  font-size:11px;opacity:0;pointer-events:none;transition:.25s;z-index:100;
+.free-banner p{
+  color:#cbd5e1;
+  font-size:0.84rem;
+  line-height:1.5;
+  margin-bottom:14px;
 }
-.toast.show{opacity:1;transform:translate(-50%,0)}
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="top-row">
-    <button class="refresh" onclick="loadNotifications()">↻</button>
+<div class="wrap">
+
+  <div class="hero">
+    <h1>Choose Your Plan</h1>
+    <p>Unlock mock tests, analysis and premium study tools</p>
   </div>
-  <div id="notificationList">
-    <div class="loading">
-      <div class="spinner"></div>
-      Loading notifications...
+
+  <div class="free-banner">
+    <h3>Free Starter</h3>
+    <p>Practice limited tests, basic analysis and free tools. Upgrade anytime.</p>
+    <button class="btn btn-soft" onclick="selectPlan('free')">Continue Free</button>
+  </div>
+
+  <div class="plan">
+    <div class="plan-name">Monthly</div>
+    <div class="plan-desc">Best for short-term exam prep</div>
+    <div class="price-row">
+      <div class="price">₹99</div>
+      <div class="period">/ month</div>
     </div>
+    <div class="old-price">₹199</div>
+    <ul class="features">
+      <li><span class="check">✓</span><span>Full length mock tests</span></li>
+      <li><span class="check">✓</span><span>Subject-wise practice</span></li>
+      <li><span class="check">✓</span><span>Performance analysis</span></li>
+      <li><span class="check">✓</span><span>Saved questions sync</span></li>
+    </ul>
+    <button class="btn btn-primary" onclick="selectPlan('monthly')">Get Monthly</button>
   </div>
+
+  <div class="plan popular">
+    <div class="tag">Most Popular</div>
+    <div class="plan-name">Yearly</div>
+    <div class="plan-desc">Best value for serious aspirants</div>
+    <div class="price-row">
+      <div class="price">₹499</div>
+      <div class="period">/ year</div>
+    </div>
+    <div class="old-price">₹1199</div>
+    <ul class="features">
+      <li><span class="check">✓</span><span>Everything in Monthly</span></li>
+      <li><span class="check">✓</span><span>Priority new mock tests</span></li>
+      <li><span class="check">✓</span><span>Advanced analysis insights</span></li>
+      <li><span class="check">✓</span><span>Ad-free experience</span></li>
+      <li><span class="check">✓</span><span>Save more than 60%</span></li>
+    </ul>
+    <button class="btn btn-primary" onclick="selectPlan('yearly')">Get Yearly</button>
+  </div>
+
+  <div class="plan">
+    <div class="plan-name">Lifetime</div>
+    <div class="plan-desc">One-time payment, lifetime access</div>
+    <div class="price-row">
+      <div class="price">₹999</div>
+      <div class="period">one time</div>
+    </div>
+    <div class="old-price">₹2499</div>
+    <ul class="features">
+      <li><span class="check">✓</span><span>All premium features forever</span></li>
+      <li><span class="check">✓</span><span>Future content included</span></li>
+      <li><span class="check">✓</span><span>No recurring payment</span></li>
+      <li><span class="check">✓</span><span>Best for long-term use</span></li>
+    </ul>
+    <button class="btn btn-primary" onclick="selectPlan('lifetime')">Get Lifetime</button>
+  </div>
+
+  <p class="note">Cancel anytime on monthly plan • Secure payment</p>
 </div>
 
-<div id="toast" class="toast">Notification selected</div>
-
 <script>
-const CSV_URL = "https://raw.githubusercontent.com/subham781/Formulas1/refs/heads/main/sdf";
-
-document.addEventListener("DOMContentLoaded", loadNotifications);
-
-async function loadNotifications(){
-  const container = document.getElementById("notificationList");
-  container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading notifications...</div>';
-
+function selectPlan(plan){
+  var msg = "PLAN|" + plan;
   try{
-    const response = await fetch(CSV_URL + (CSV_URL.indexOf("?") >= 0 ? "&" : "?") + "t=" + Date.now());
-    if(!response.ok) throw new Error("HTTP Error: " + response.status);
-
-    const csv = await response.text();
-    if(!csv.trim()) throw new Error("CSV file is empty.");
-
-    const rows = parseCSV(csv);
-    if(rows.length < 2){
-      showEmpty();
-      return;
+    if(window.Kodular && window.Kodular.setWebViewString){
+      window.Kodular.setWebViewString(msg);
     }
-
-    const headers = rows[0].map(function(h){ return String(h || "").trim().toLowerCase(); });
-
-    var categoryIndex = findHeader(headers, ["category"]);
-    var titleIndex = findHeader(headers, ["title"]);
-    var subtitleIndex = findHeader(headers, ["subtitle", "description", "message"]);
-    var dateIndex = findHeader(headers, ["offer end date", "end date", "date", "expiry"]);
-
-    if(titleIndex === -1){
-      throw new Error("CSV me Title column nahi mila.");
-    }
-
-    const notifications = [];
-
-    for(var i = 1; i < rows.length; i++){
-      var row = rows[i];
-      if(!row || !row.length) continue;
-
-      var category = categoryIndex >= 0 ? clean(row[categoryIndex]) : "";
-      var title = clean(row[titleIndex]);
-      var subtitle = subtitleIndex >= 0 ? clean(row[subtitleIndex]) : "";
-      var endDate = dateIndex >= 0 ? clean(row[dateIndex]) : "";
-
-      // empty row skip
-      if(!title && !subtitle && !category) continue;
-
-      var expired = false;
-      if(endDate){
-        var expiry = parseDate(endDate);
-        if(expiry && expiry.getTime() <= Date.now()){
-          expired = true;
-        }
-      }
-
-      notifications.push({
-        category: category || "Update",
-        title: title,
-        subtitle: subtitle,
-        endDate: endDate,
-        expired: expired
-      });
-    }
-
-    // newest / non-expired first
-    notifications.sort(function(a, b){
-      if(a.expired !== b.expired) return a.expired ? 1 : -1;
-      var da = parseDate(a.endDate);
-      var db = parseDate(b.endDate);
-      if(da && db) return db.getTime() - da.getTime();
-      return 0;
-    });
-
-    displayNotifications(notifications);
-  }catch(error){
-    console.error(error);
-    container.innerHTML =
-      '<div class="error"><b>Unable to load notifications.</b><br><br>' +
-      escapeHTML(error.message) +
-      '</div>';
-  }
-}
-
-function findHeader(headers, names){
-  for(var i = 0; i < names.length; i++){
-    var idx = headers.indexOf(names[i]);
-    if(idx !== -1) return idx;
-  }
-  return -1;
-}
-
-function clean(v){
-  return String(v == null ? "" : v).trim();
-}
-
-function displayNotifications(notifications){
-  const container = document.getElementById("notificationList");
-  if(!notifications.length){
-    showEmpty();
-    return;
-  }
-
-  container.innerHTML = "";
-
-  notifications.forEach(function(item){
-    const card = document.createElement("div");
-    card.className = "notification";
-    card.onclick = function(){ notificationClicked(item); };
-
-    var dateHTML = "";
-    if(item.endDate){
-      dateHTML =
-        '<div class="date"><span>Offer ends</span><span class="time">' +
-        escapeHTML(formatDate(item.endDate)) +
-        (item.expired ? '<span class="expired-tag">Expired</span>' : '') +
-        '</span></div>';
-    }
-
-    card.innerHTML =
-      '<div class="category">' + escapeHTML(item.category) + '</div>' +
-      '<div class="title">' + escapeHTML(item.title) + '</div>' +
-      '<div class="subtitle">' + escapeHTML(item.subtitle) + '</div>' +
-      dateHTML;
-
-    container.appendChild(card);
-  });
-}
-
-function notificationClicked(item){
-  var value = "NOTIFICATION|" + item.title + "|" + item.subtitle + "|" + item.category;
-  sendToKodular(value);
-  showToast(item.title || "Notification");
-}
-
-function sendToKodular(value){
-  try{
-    if(window.Kodular && typeof window.Kodular.setWebViewString === "function"){
-      window.Kodular.setWebViewString(value);
-    }
-    if(window.AppInventor && typeof window.AppInventor.setWebViewString === "function"){
-      window.AppInventor.setWebViewString(value);
+    if(window.AppInventor && window.AppInventor.setWebViewString){
+      window.AppInventor.setWebViewString(msg);
     }
   }catch(e){}
-}
-
-function showEmpty(){
-  document.getElementById("notificationList").innerHTML =
-    '<div class="empty"><div style="font-size:35px;margin-bottom:10px">🔔</div>' +
-    '<div style="font-weight:700;color:#444">No notifications</div></div>';
-}
-
-function parseCSV(csv){
-  const rows = [];
-  let row = [];
-  let field = "";
-  let insideQuotes = false;
-
-  for(let i = 0; i < csv.length; i++){
-    const char = csv[i];
-    const next = csv[i + 1];
-
-    if(char === '"'){
-      if(insideQuotes && next === '"'){
-        field += '"';
-        i++;
-      }else{
-        insideQuotes = !insideQuotes;
-      }
-    }else if(char === "," && !insideQuotes){
-      row.push(field);
-      field = "";
-    }else if((char === "\n" || char === "\r") && !insideQuotes){
-      if(char === "\r" && next === "\n") i++;
-      row.push(field);
-      rows.push(row);
-      row = [];
-      field = "";
-    }else{
-      field += char;
-    }
-  }
-
-  if(field.length > 0 || row.length > 0){
-    row.push(field);
-    rows.push(row);
-  }
-  return rows;
-}
-
-function parseDate(value){
-  if(!value) return null;
-  var normalized = String(value).trim().replace(" ", "T");
-  var date = new Date(normalized);
-  if(isNaN(date.getTime())) return null;
-  return date;
-}
-
-function formatDate(value){
-  var date = parseDate(value);
-  if(!date) return value;
-  return date.toLocaleString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit"
-  });
-}
-
-function escapeHTML(value){
-  return String(value || "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-var toastTimer;
-function showToast(text){
-  var toast = document.getElementById("toast");
-  toast.textContent = text;
-  toast.classList.add("show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(function(){
-    toast.classList.remove("show");
-  }, 1800);
+  alert("Selected: " + plan);
 }
 </script>
 </body>

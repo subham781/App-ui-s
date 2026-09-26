@@ -20,6 +20,39 @@
       flex-direction: column;
       background: #f0f2f5;
     }
+    .top-bar {
+      background: #fff;
+      border-bottom: 1px solid #e4e6eb;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .top-bar h1 {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .lang-switch {
+      display: flex;
+      background: #f0f2f5;
+      border-radius: 10px;
+      padding: 3px;
+      gap: 2px;
+    }
+    .lang-btn {
+      border: 0;
+      background: transparent;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #65676b;
+      cursor: pointer;
+    }
+    .lang-btn.active {
+      background: #1877f2;
+      color: #fff;
+    }
     .feed {
       flex: 1;
       overflow-y: auto;
@@ -101,36 +134,178 @@
     }
     .action-btn.liked { color: #e41e3f; }
     .action-btn.saved { color: #1877f2; }
-    .loading {
+    .loading { text-align: center; padding: 40px; color: #65676b; }
+
+    /* Insight */
+    .insight-wrap {
+      display: none;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #e4e6eb;
+    }
+    .insight-wrap.show { display: block; }
+    .insight-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #1877f2;
+      margin-bottom: 8px;
+    }
+    .insight-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .insight-scroll::-webkit-scrollbar { display: none; }
+    .insight-card {
+      min-width: 220px;
+      max-width: 240px;
+      background: #f0f7ff;
+      border: 1px solid #dbeafe;
+      border-radius: 12px;
+      padding: 12px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .insight-card:active { transform: scale(0.98); }
+    .insight-card h4 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #0f172a;
+    }
+    .insight-card p {
+      font-size: 0.78rem;
+      line-height: 1.4;
+      color: #4b5563;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .insight-card .open-hint {
+      margin-top: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #1877f2;
+    }
+    .insight-loading { font-size: 0.82rem; color: #65676b; padding: 6px 0; }
+
+    /* Bottom sheet */
+    .sheet-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 1000;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .sheet-overlay.show { display: flex; }
+    .sheet {
+      width: 100%;
+      max-width: 700px;
+      height: 85vh;
+      background: #fff;
+      border-radius: 18px 18px 0 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: sheetUp 0.25s ease;
+    }
+    @keyframes sheetUp {
+      from { transform: translateY(40px); opacity: 0.6; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .sheet-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e4e6eb;
+      background: #f8fafc;
+    }
+    .sheet-header h3 {
+      flex: 1;
+      font-size: 0.95rem;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sheet-close {
+      border: 0;
+      background: #e4e6eb;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .sheet-frame {
+      flex: 1;
+      width: 100%;
+      border: 0;
+    }
+    .sheet-loading {
+      padding: 20px;
       text-align: center;
-      padding: 40px;
       color: #65676b;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
   <div id="feedPage">
+    <div class="top-bar">
+      <h1>MCQ Practice</h1>
+      <div class="lang-switch">
+        <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" id="btn-hi" onclick="setLang('hi')">हिं</button>
+      </div>
+    </div>
+
     <div class="feed" id="feed">
       <div class="loading">Loading questions...</div>
+    </div>
+  </div>
+
+  <!-- Bottom sheet for full Wikipedia -->
+  <div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet(event)">
+    <div class="sheet" onclick="event.stopPropagation()">
+      <div class="sheet-header">
+        <h3 id="sheetTitle">Topic</h3>
+        <button class="sheet-close" onclick="hideSheet()">✕</button>
+      </div>
+      <div class="sheet-loading" id="sheetLoading">Opening full page...</div>
+      <iframe class="sheet-frame" id="sheetFrame" style="display:none;"></iframe>
     </div>
   </div>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyICNHxGGgvd7TBcgSxjQm3obJqDOGtHHiwiwUoXnxiNurmqmWDfwOXo5x9rfQqnXs/exec";
     let allQuestions = [];
+    let wikiLang = "en"; // en | hi
 
-    function getData(key) {
-      try {
-        return JSON.parse(localStorage.getItem(key) || "[]");
-      } catch (e) {
-        return [];
-      }
+    function setLang(lang) {
+      wikiLang = lang;
+      document.getElementById("btn-en").classList.toggle("active", lang === "en");
+      document.getElementById("btn-hi").classList.toggle("active", lang === "hi");
     }
 
+    function wikiHost() {
+      return wikiLang === "hi" ? "https://hi.wikipedia.org" : "https://en.wikipedia.org";
+    }
+
+    function getData(key) {
+      try { return JSON.parse(localStorage.getItem(key) || "[]"); }
+      catch (e) { return []; }
+    }
     function setData(key, data) {
       localStorage.setItem(key, JSON.stringify(data));
     }
-
     function getStats() {
       try {
         return JSON.parse(localStorage.getItem("mcq_stats") || '{"attempted":0,"correct":0,"streak":0,"lastDate":"","subjects":{}}');
@@ -138,9 +313,139 @@
         return {attempted:0, correct:0, streak:0, lastDate:"", subjects:{}};
       }
     }
-
     function saveStats(stats) {
       localStorage.setItem("mcq_stats", JSON.stringify(stats));
+    }
+
+    /* Competitive-focused search query */
+    function buildSearchQuery(item) {
+      var chapter = (item.chapter || "").trim();
+      var subject = (item.subject || "").trim();
+      var exam = (item.exam || "").trim();
+      var q = (item.q || "").replace(/[^\w\s\u0900-\u097F]/g, " ");
+      var words = q.split(/\s+/).filter(function (w) { return w.length > 3; }).slice(0, 6).join(" ");
+
+      // Priority for exam students: chapter > subject keywords > question words
+      if (chapter.length > 2) return chapter + (subject ? " " + subject : "");
+      if (subject.length > 2) return subject + " " + words;
+      return words || exam || "general knowledge";
+    }
+
+    async function fetchWikipediaInsights(query) {
+      var host = wikiHost();
+      var searchUrl = host + "/w/api.php?action=query&list=search&srsearch=" +
+        encodeURIComponent(query) + "&srlimit=5&format=json&origin=*";
+
+      var searchRes = await fetch(searchUrl);
+      if (!searchRes.ok) throw new Error("Wiki search failed");
+      var searchData = await searchRes.json();
+      var results = (searchData.query && searchData.query.search) || [];
+      if (!results.length) return [];
+
+      var cards = [];
+      for (var i = 0; i < Math.min(5, results.length); i++) {
+        var title = results[i].title;
+        try {
+          var sumUrl = host + "/api/rest_v1/page/summary/" + encodeURIComponent(title);
+          var sumRes = await fetch(sumUrl);
+          if (!sumRes.ok) continue;
+          var sum = await sumRes.json();
+          if (sum.type === "disambiguation") continue;
+
+          cards.push({
+            t: sum.title || title,
+            d: sum.extract || (results[i].snippet || "").replace(/<[^>]+>/g, ""),
+            pageUrl: host + "/wiki/" + encodeURIComponent(title.replace(/ /g, "_"))
+          });
+        } catch (e) {}
+      }
+      return cards;
+    }
+
+    async function showTopicInsight(qIndex, item) {
+      var box = document.getElementById("insight-" + qIndex);
+      if (!box || box.dataset.loaded === "1") return;
+
+      box.classList.add("show");
+      box.innerHTML = '<div class="insight-loading">' +
+        (wikiLang === "hi" ? "विषय सार लोड हो रहा है..." : "Loading exam-focused topic briefs...") +
+        "</div>";
+
+      try {
+        var query = buildSearchQuery(item);
+        var cards = await fetchWikipediaInsights(query);
+
+        if (!cards.length) {
+          box.innerHTML = '<div class="insight-title">📚 Topic Insight</div>' +
+            '<div class="insight-loading">' +
+            (wikiLang === "hi" ? "संबंधित विषय नहीं मिला।" : "No related topic found.") +
+            "</div>";
+          return;
+        }
+
+        var title = wikiLang === "hi" ? "📚 परीक्षा नोट्स (संक्षेप)" : "📚 Exam notes (brief)";
+        var openTxt = wikiLang === "hi" ? "पूरा पेज खोलें →" : "Open full page →";
+
+        var html = '<div class="insight-title">' + title + '</div><div class="insight-scroll">';
+        cards.forEach(function (c, idx) {
+          html +=
+            '<div class="insight-card" data-url="' + escapeAttr(c.pageUrl) + '" data-title="' + escapeAttr(c.t) + '" id="ic-' + qIndex + '-' + idx + '">' +
+              '<h4>' + escapeHTML(c.t) + '</h4>' +
+              '<p>' + escapeHTML(c.d) + '</p>' +
+              '<div class="open-hint">' + openTxt + '</div>' +
+            '</div>';
+        });
+        html += '</div>';
+        box.innerHTML = html;
+        box.dataset.loaded = "1";
+
+        cards.forEach(function (c, idx) {
+          var el = document.getElementById("ic-" + qIndex + "-" + idx);
+          if (el) {
+            el.onclick = function () {
+              openSheet(c.t, c.pageUrl);
+            };
+          }
+        });
+      } catch (err) {
+        console.error(err);
+        box.innerHTML = '<div class="insight-title">📚 Topic Insight</div>' +
+          '<div class="insight-loading">' +
+          (wikiLang === "hi" ? "Wikipedia लोड नहीं हुआ। Internet check करें।" : "Could not load Wikipedia. Check internet.") +
+          "</div>";
+      }
+    }
+
+    function openSheet(title, url) {
+      document.getElementById("sheetTitle").textContent = title;
+      document.getElementById("sheetOverlay").classList.add("show");
+      var frame = document.getElementById("sheetFrame");
+      var loading = document.getElementById("sheetLoading");
+      loading.style.display = "block";
+      frame.style.display = "none";
+      frame.onload = function () {
+        loading.style.display = "none";
+        frame.style.display = "block";
+      };
+      frame.src = url;
+    }
+
+    function hideSheet() {
+      document.getElementById("sheetOverlay").classList.remove("show");
+      document.getElementById("sheetFrame").src = "about:blank";
+    }
+
+    function closeSheet(e) {
+      if (e.target.id === "sheetOverlay") hideSheet();
+    }
+
+    function escapeHTML(v) {
+      return String(v || "")
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+    function escapeAttr(v) {
+      return escapeHTML(v).replace(/'/g, "&#039;");
     }
 
     async function loadQuestions() {
@@ -149,13 +454,10 @@
       try {
         const res = await fetch(API_URL);
         const data = await res.json();
-        if (!Array.isArray(data) || data.length === 0) {
-          throw new Error("No questions received");
-        }
+        if (!Array.isArray(data) || data.length === 0) throw new Error("No questions received");
         allQuestions = data;
         renderFeed();
       } catch (err) {
-        console.error(err);
         feed.innerHTML = '<div class="loading">Failed to load questions.<br><small>' + err.message + '</small></div>';
       }
     }
@@ -190,7 +492,6 @@
         const optionsDiv = document.createElement("div");
         optionsDiv.className = "options";
         optionsDiv.id = "options-" + index;
-
         (item.options || []).forEach((opt, i) => {
           const optDiv = document.createElement("div");
           optDiv.className = "option";
@@ -200,11 +501,17 @@
         });
         card.appendChild(optionsDiv);
 
+        const insight = document.createElement("div");
+        insight.className = "insight-wrap";
+        insight.id = "insight-" + index;
+        card.appendChild(insight);
+
         const footer = document.createElement("div");
         footer.className = "post-footer";
 
         const answered = document.createElement("div");
         answered.className = "answered";
+        answered.id = "answered-" + index;
         answered.textContent = "Tap option to answer";
         footer.appendChild(answered);
 
@@ -239,34 +546,28 @@
         if (i === selected && selected !== item.correct) opt.classList.add("wrong");
       });
 
+      var ans = document.getElementById("answered-" + qIndex);
+      if (ans) ans.textContent = (selected === item.correct) ? "Correct ✓" : "Wrong ✗";
+
+      showTopicInsight(qIndex, item);
+
       const stats = getStats();
       stats.attempted = (stats.attempted || 0) + 1;
-      if (selected === item.correct) {
-        stats.correct = (stats.correct || 0) + 1;
-      }
+      if (selected === item.correct) stats.correct = (stats.correct || 0) + 1;
 
       const subject = item.subject || "General";
       if (!stats.subjects) stats.subjects = {};
-      if (!stats.subjects[subject]) {
-        stats.subjects[subject] = { attempted: 0, correct: 0 };
-      }
+      if (!stats.subjects[subject]) stats.subjects[subject] = { attempted: 0, correct: 0 };
       stats.subjects[subject].attempted++;
-      if (selected === item.correct) {
-        stats.subjects[subject].correct++;
-      }
+      if (selected === item.correct) stats.subjects[subject].correct++;
 
       const today = new Date().toDateString();
       if (stats.lastDate !== today) {
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
-        if (stats.lastDate === yesterday.toDateString()) {
-          stats.streak = (stats.streak || 0) + 1;
-        } else {
-          stats.streak = 1;
-        }
+        stats.streak = (stats.lastDate === yesterday.toDateString()) ? (stats.streak || 0) + 1 : 1;
         stats.lastDate = today;
       }
-
       saveStats(stats);
     }
 
@@ -291,11 +592,8 @@
         btn.classList.remove("saved");
       } else {
         saved.push({
-          q: item.q,
-          subject: item.subject,
-          difficulty: item.difficulty,
-          uid: item.uid,
-          username: item.username
+          q: item.q, subject: item.subject, difficulty: item.difficulty,
+          uid: item.uid, username: item.username
         });
         btn.classList.add("saved");
       }

@@ -1,414 +1,859 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>My Profile</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    }
+body{
+  font-family:Inter,system-ui,sans-serif;
+  background:#f0f2f5;
+  color:#0f172a;
+  min-height:100vh;
+  padding:16px;
+  padding-bottom:40px;
+}
 
-    body {
-      background: #f8fafc;
-      color: #0f172a;
-      padding-bottom: 40px;
-    }
+.wrap{max-width:480px;margin:0 auto}
 
-    .profile-header {
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      padding: 30px 20px 50px;
-      text-align: center;
-      color: white;
-    }
+.card{
+  background:#fff;
+  border-radius:18px;
+  border:1px solid #e4e6eb;
+  box-shadow:0 4px 16px rgba(0,0,0,.05);
+  padding:18px;
+  margin-bottom:12px;
+}
 
-    .avatar {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      background: white;
-      color: #3b82f6;
-      font-size: 36px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 12px;
-      border: 4px solid rgba(255,255,255,0.3);
-    }
+.profile-top{text-align:center;padding-top:8px}
 
-    .name {
-      font-size: 1.4rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
+.avatar{
+  width:84px;
+  height:84px;
+  border-radius:50%;
+  object-fit:cover;
+  border:3px solid #e8f0fe;
+  background:#e4e6eb;
+  margin:0 auto 10px;
+  display:block;
+}
 
-    .user-id {
-      font-size: 0.85rem;
-      opacity: 0.9;
-    }
+.avatar-fallback{
+  width:84px;
+  height:84px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#1877f2,#4f46e5);
+  color:#fff;
+  font-size:2rem;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 10px;
+}
 
-    .stats {
-      display: flex;
-      background: white;
-      margin: -30px 16px 20px;
-      border-radius: 16px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-      overflow: hidden;
-    }
+.name{font-size:1.25rem;font-weight:700}
 
-    .stat-item {
-      flex: 1;
-      text-align: center;
-      padding: 16px 8px;
-    }
+.channel{
+  color:#1877f2;
+  font-size:.9rem;
+  font-weight:600;
+  margin-top:2px;
+}
 
-    .stat-item:not(:last-child) {
-      border-right: 1px solid #f1f5f9;
-    }
+.bio{
+  color:#65676b;
+  font-size:.86rem;
+  margin-top:8px;
+  line-height:1.4;
+}
 
-    .stat-num {
-      font-size: 1.3rem;
-      font-weight: 700;
-    }
+.tags{
+  display:flex;
+  gap:6px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
 
-    .stat-label {
-      font-size: 0.75rem;
-      color: #64748b;
-      margin-top: 2px;
-    }
+.tag{
+  background:#f0f2f5;
+  border-radius:999px;
+  padding:5px 10px;
+  font-size:.72rem;
+  font-weight:600;
+  color:#4b5563;
+}
 
-    .section {
-      background: white;
-      margin: 0 16px 16px;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-    }
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-top:14px;
+  padding-top:14px;
+  border-top:1px solid #f1f5f9;
+}
 
-    .section-title {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+.stat{text-align:center}
 
-    .analysis-item {
-      margin-bottom: 14px;
-    }
+.stat b{
+  display:block;
+  font-size:1rem;
+}
 
-    .analysis-header {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.85rem;
-      margin-bottom: 6px;
-    }
+.stat span{
+  font-size:.68rem;
+  color:#65676b;
+}
 
-    .bar-bg {
-      height: 8px;
-      background: #e2e8f0;
-      border-radius: 10px;
-      overflow: hidden;
-    }
+.section-title{
+  font-size:.78rem;
+  font-weight:700;
+  color:#1877f2;
+  text-transform:uppercase;
+  letter-spacing:.4px;
+  margin-bottom:10px;
+}
 
-    .bar-fill {
-      height: 100%;
-      border-radius: 10px;
-      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-    }
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:8px 0;
+  border-bottom:1px solid #f8fafc;
+  font-size:.88rem;
+}
 
-    .question-card {
-      background: #f8fafc;
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 10px;
-      border: 1px solid #e2e8f0;
-    }
+.row:last-child{border-bottom:0}
 
-    .q-text {
-      font-size: 0.9rem;
-      font-weight: 500;
-      margin-bottom: 6px;
-      line-height: 1.4;
-    }
+.row span{color:#65676b}
 
-    .q-meta {
-      font-size: 0.75rem;
-      color: #64748b;
-      display: flex;
-      justify-content: space-between;
-    }
+.row b{color:#0f172a}
 
-    .correct { color: #10b981; font-weight: 600; }
-    .wrong { color: #ef4444; font-weight: 600; }
+.bar-wrap{margin-top:8px}
 
-    .setting-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid #f1f5f9;
-    }
+.bar-label{
+  display:flex;
+  justify-content:space-between;
+  font-size:.8rem;
+  margin-bottom:4px;
+}
 
-    .setting-item:last-child {
-      border-bottom: none;
-    }
+.bar-bg{
+  height:8px;
+  background:#eef2ff;
+  border-radius:99px;
+  overflow:hidden;
+}
 
-    .toggle {
-      width: 46px;
-      height: 26px;
-      background: #cbd5e1;
-      border-radius: 20px;
-      position: relative;
-      cursor: pointer;
-      transition: 0.2s;
-    }
+.bar-fill{
+  height:100%;
+  background:linear-gradient(90deg,#1877f2,#4f46e5);
+  border-radius:99px;
+}
 
-    .toggle.active {
-      background: #3b82f6;
-    }
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
 
-    .toggle::after {
-      content: '';
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      background: white;
-      border-radius: 50%;
-      top: 3px;
-      left: 3px;
-      transition: 0.2s;
-    }
+.mini{
+  background:#f8fafc;
+  border:1px solid #eef2f7;
+  border-radius:12px;
+  padding:12px;
+  text-align:center;
+}
 
-    .toggle.active::after {
-      left: 23px;
-    }
+.mini b{
+  display:block;
+  font-size:1.1rem;
+}
 
-    .empty, .loading {
-      text-align: center;
-      padding: 20px;
-      color: #94a3b8;
-      font-size: 0.9rem;
-    }
-  </style>
+.mini span{
+  font-size:.72rem;
+  color:#65676b;
+}
+
+.loading,
+.error{
+  text-align:center;
+  padding:40px 16px;
+  color:#65676b;
+  font-size:.92rem;
+}
+
+.error{color:#b91c1c}
+</style>
 </head>
+
 <body>
 
-  <div class="profile-header">
-    <div class="avatar" id="avatar">U</div>
-    <div class="name" id="userName">Loading...</div>
-    <div class="user-id" id="userIdDisplay">ID: Waiting...</div>
+<div class="wrap">
+
+  <div id="app">
+    <div class="loading">Loading profile...</div>
   </div>
 
-  <div class="stats">
-    <div class="stat-item">
-      <div class="stat-num" id="totalAttempted">0</div>
-      <div class="stat-label">Attempted</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num" id="accuracy">0%</div>
-      <div class="stat-label">Accuracy</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num" id="savedCount">0</div>
-      <div class="stat-label">Saved</div>
-    </div>
-  </div>
+</div>
 
-  <div class="section">
-    <div class="section-title">📊 Performance Analysis</div>
-    <div id="analysisContainer">
-      <div class="loading">Waiting for User ID...</div>
-    </div>
-  </div>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
-  <div class="section">
-    <div class="section-title">🔖 Saved Questions</div>
-    <div id="savedContainer">
-      <div class="loading">Waiting for User ID...</div>
-    </div>
-  </div>
+<script>
 
-  <div class="section">
-    <div class="section-title">⚙️ Personal Settings</div>
-    <div class="setting-item">
-      <span>Dark Mode</span>
-      <div class="toggle" id="darkModeToggle" onclick="toggleSetting('darkMode')"></div>
-    </div>
-    <div class="setting-item">
-      <span>Notifications</span>
-      <div class="toggle" id="notifToggle" onclick="toggleSetting('notification')"></div>
-    </div>
-  </div>
+// =====================================================
+// FIREBASE CONFIG
+// =====================================================
 
-  <script>
-    // ==========================================
-    // 🔥 YAHAN APNA FIREBASE CONFIG DALO
-    // ==========================================
-    const firebaseConfig = {
-      apiKey: "AIzaSyCDvOq7CUmM92aDNyEfP7TNXsCLgmDoQxg",
+const firebaseConfig = {
+  apiKey: "AIzaSyCDvOq7CUmM92aDNyEfP7TNXsCLgmDoQxg",
   authDomain: "prepexam-f98bf.firebaseapp.com",
   databaseURL: "https://prepexam-f98bf-default-rtdb.firebaseio.com",
   projectId: "prepexam-f98bf",
   storageBucket: "prepexam-f98bf.firebasestorage.app",
   messagingSenderId: "570075784084",
-  appId: "1:570075784084:web:0ebdbef4a887ce777aa581",
-  measurementId: "G-M11VSKC2FY"
-    };
+  appId: "1:570075784084:web:0ebdbef4a887ce777aa581"
+};
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+// =====================================================
+// FIREBASE START
+// =====================================================
 
-    // ==========================================
-    let currentUserID = "";
+firebase.initializeApp(firebaseConfig);
 
-    // UserID set karne ka function
-    function setUserID(id) {
-      if (!id || id === currentUserID || id.length < 3) return;
+const db = firebase.database();
 
-      currentUserID = id;
-      document.getElementById('userIdDisplay').innerText = "ID: " + id;
-      document.getElementById('avatar').innerText = id.charAt(0).toUpperCase();
-      loadUserData(id);
-    }
 
-    // Firebase se data load
-    function loadUserData(userID) {
-      const userRef = db.ref("accounts/" + userID);
+// =====================================================
+// USERNAME FROM KODULAR
+//
+// Kodular mein:
+// WebViewer.WebViewString = Label5.Text
+//
+// Example:
+// Label5.Text = "Rahul Sharma"
+// WebViewString = "Rahul Sharma"
+// =====================================================
 
-      userRef.once("value")
-        .then(snapshot => {
-          if (!snapshot.exists()) {
-            document.getElementById('userName').innerText = "User not found";
-            document.getElementById('analysisContainer').innerHTML = `<div class="empty">No data found</div>`;
-            document.getElementById('savedContainer').innerHTML = `<div class="empty">No saved questions</div>`;
-            return;
-          }
+function getUserFromKodular(){
 
-          const data = snapshot.val();
+  try{
 
-          // Profile
-          const profile = data.profile || {};
-          document.getElementById('userName').innerText = profile.name || "No Name";
-          if (profile.name) {
-            document.getElementById('avatar').innerText = profile.name.charAt(0).toUpperCase();
-          }
+    // AppInventor / Kodular WebViewer
+    if(
+      window.AppInventor &&
+      window.AppInventor.getWebViewString
+    ){
 
-          // Analysis
-          const analysis = data.analysis || {};
-          document.getElementById('totalAttempted').innerText = analysis.totalAttempted || 0;
-          document.getElementById('accuracy').innerText = (analysis.accuracy || 0) + "%";
+      var s = window.AppInventor.getWebViewString() || "";
 
-          // Subjects
-          const subjects = analysis.subjects || {};
-          const analysisBox = document.getElementById('analysisContainer');
+      s = String(s).trim();
 
-          if (Object.keys(subjects).length === 0) {
-            analysisBox.innerHTML = `<div class="empty">No analysis data</div>`;
-          } else {
-            let html = "";
-            for (let subject in subjects) {
-              const sub = subjects[subject];
-              const percent = sub.attempted > 0 ? Math.round((sub.correct / sub.attempted) * 100) : 0;
-              html += `
-                <div class="analysis-item">
-                  <div class="analysis-header">
-                    <span>${subject}</span>
-                    <span>\( {percent}% ( \){sub.correct}/${sub.attempted})</span>
-                  </div>
-                  <div class="bar-bg">
-                    <div class="bar-fill" style="width: ${percent}%"></div>
-                  </div>
-                </div>
-              `;
-            }
-            analysisBox.innerHTML = html;
-          }
-
-          // Saved Questions
-          const saved = data.saved_questions || {};
-          const savedBox = document.getElementById('savedContainer');
-          const savedKeys = Object.keys(saved);
-
-          document.getElementById('savedCount').innerText = savedKeys.length;
-
-          if (savedKeys.length === 0) {
-            savedBox.innerHTML = `<div class="empty">No saved questions</div>`;
-          } else {
-            let html = "";
-            savedKeys.forEach(key => {
-              const q = saved[key];
-              html += `
-                <div class="question-card">
-                  <div class="q-text">${q.question || "No question"}</div>
-                  <div class="q-meta">
-                    <span>${q.subject || "General"}</span>
-                    <span class="${q.isCorrect ? 'correct' : 'wrong'}">
-                      ${q.isCorrect ? 'Correct' : 'Wrong'} • ${q.userAnswer || "-"}
-                    </span>
-                  </div>
-                </div>
-              `;
-            });
-            savedBox.innerHTML = html;
-          }
-
-          // Settings
-          const settings = data.settings || {};
-          document.getElementById('darkModeToggle').classList.toggle('active', !!settings.darkMode);
-          document.getElementById('notifToggle').classList.toggle('active', settings.notification !== false);
-
-        })
-        .catch(err => {
-          console.error(err);
-          document.getElementById('userName').innerText = "Error loading";
-        });
-    }
-
-    // Settings Toggle
-    function toggleSetting(key) {
-      if (!currentUserID) return;
-
-      const toggleId = key === 'darkMode' ? 'darkModeToggle' : 'notifToggle';
-      const toggle = document.getElementById(toggleId);
-      toggle.classList.toggle('active');
-      const value = toggle.classList.contains('active');
-
-      db.ref("accounts/" + currentUserID + "/settings/" + key).set(value);
-    }
-
-    // ==========================================
-    // WebViewString se UserID lene ka code
-    // ==========================================
-    function getWebViewString() {
-      try {
-        if (window.Kodular && window.Kodular.getWebViewString) {
-          return window.Kodular.getWebViewString();
-        }
-        if (window.AppInventor && window.AppInventor.getWebViewString) {
-          return window.AppInventor.getWebViewString();
-        }
-      } catch (e) {}
-      return "";
-    }
-
-    // Har 400ms mein check karo
-    setInterval(function() {
-      const id = getWebViewString();
-      if (id && id.length > 3) {
-        setUserID(id);
+      if(s.indexOf("USER|") === 0){
+        s = s.substring(5).trim();
       }
-    }, 400);
-  </script>
+
+      if(s){
+        return s;
+      }
+    }
+
+  }catch(e){
+    console.log("AppInventor error:",e);
+  }
+
+
+  // Backup: Kodular object
+  try{
+
+    if(
+      window.Kodular &&
+      window.Kodular.getWebViewString
+    ){
+
+      var s2 = window.Kodular.getWebViewString() || "";
+
+      s2 = String(s2).trim();
+
+      if(s2.indexOf("USER|") === 0){
+        s2 = s2.substring(5).trim();
+      }
+
+      if(s2){
+        return s2;
+      }
+    }
+
+  }catch(e){
+    console.log("Kodular error:",e);
+  }
+
+
+  // Backup for browser testing
+  try{
+
+    var q =
+      new URLSearchParams(location.search).get("user");
+
+    return q ? q.trim() : "";
+
+  }catch(e){
+
+    return "";
+  }
+}
+
+
+// =====================================================
+// HTML ESCAPE
+// =====================================================
+
+function escapeHTML(v){
+
+  return String(v || "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;");
+
+}
+
+
+// =====================================================
+// COUNT OBJECT KEYS
+// =====================================================
+
+function countKeys(obj){
+
+  return obj &&
+         typeof obj === "object"
+         ? Object.keys(obj).length
+         : 0;
+
+}
+
+
+// =====================================================
+// RENDER PROFILE
+// =====================================================
+
+function renderProfile(name,data){
+
+  var p =
+    data.profile || {};
+
+  var stats =
+    data.publicStats || {};
+
+  var analysis =
+    data.analysis || {};
+
+  var allTime =
+    analysis.allTime || {};
+
+  var today =
+    analysis.today || {};
+
+  var subjects =
+    analysis.subjects || {};
+
+  var provide =
+    data.provide || {};
+
+  var consume =
+    data.consume || {};
+
+
+  // PROFILE PHOTO
+
+  var photo =
+    p.photo || "";
+
+
+  // INITIAL
+
+  var initial =
+    (p.name || name || "?")
+    .charAt(0)
+    .toUpperCase();
+
+
+  // =================================================
+  // SUBJECT PERFORMANCE
+  // =================================================
+
+  var subjectHtml = "";
+
+  var subEntries =
+    Object.keys(subjects);
+
+
+  if(!subEntries.length){
+
+    subjectHtml =
+      '<div class="row">' +
+      '<span>No subject data</span>' +
+      '<b>—</b>' +
+      '</div>';
+
+  }else{
+
+    subEntries.forEach(function(key){
+
+      var s =
+        subjects[key] || {};
+
+      var acc =
+        s.accuracy != null
+        ? Number(s.accuracy)
+        : 0;
+
+      subjectHtml +=
+
+        '<div class="bar-wrap">' +
+
+          '<div class="bar-label">' +
+
+            '<span>' +
+              escapeHTML(key) +
+            '</span>' +
+
+            '<b>' +
+              acc +
+              '%' +
+            '</b>' +
+
+          '</div>' +
+
+          '<div class="bar-bg">' +
+
+            '<div class="bar-fill" ' +
+            'style="width:' +
+            Math.min(100,Math.max(0,acc)) +
+            '%"></div>' +
+
+          '</div>' +
+
+        '</div>';
+
+    });
+
+  }
+
+
+  // =================================================
+  // PROFILE HTML
+  // =================================================
+
+  var app =
+    document.getElementById("app");
+
+
+  app.innerHTML =
+
+    // PROFILE CARD
+    '<div class="card profile-top">' +
+
+      (
+        photo
+
+        ?
+
+        '<img class="avatar" ' +
+        'src="' +
+        escapeHTML(photo) +
+        '" alt="photo">'
+
+        :
+
+        '<div class="avatar-fallback">' +
+          escapeHTML(initial) +
+        '</div>'
+      ) +
+
+      '<div class="name">' +
+        escapeHTML(p.name || name) +
+      '</div>' +
+
+      '<div class="channel">' +
+        escapeHTML(
+          p.channelName ||
+          ("@" + name)
+        ) +
+      '</div>' +
+
+      '<div class="bio">' +
+        escapeHTML(p.bio || "") +
+      '</div>' +
+
+      '<div class="tags">' +
+
+        '<span class="tag">' +
+          escapeHTML(
+            p.targetExam || "Exam"
+          ) +
+        '</span>' +
+
+        '<span class="tag">' +
+          escapeHTML(
+            p.targetYear || ""
+          ) +
+        '</span>' +
+
+        '<span class="tag">' +
+          escapeHTML(
+            (data.settings &&
+             data.settings.language) ||
+            "en"
+          ) +
+        '</span>' +
+
+      '</div>' +
+
+      '<div class="stats">' +
+
+        '<div class="stat">' +
+          '<b>' +
+            (stats.mcqPosted || 0) +
+          '</b>' +
+          '<span>MCQ</span>' +
+        '</div>' +
+
+        '<div class="stat">' +
+          '<b>' +
+            (stats.mocksCount || 0) +
+          '</b>' +
+          '<span>Mocks</span>' +
+        '</div>' +
+
+        '<div class="stat">' +
+          '<b>' +
+            (stats.likesReceived || 0) +
+          '</b>' +
+          '<span>Likes</span>' +
+        '</div>' +
+
+        '<div class="stat">' +
+          '<b>' +
+            (stats.followers || 0) +
+          '</b>' +
+          '<span>Followers</span>' +
+        '</div>' +
+
+      '</div>' +
+
+    '</div>' +
+
+
+    // PERFORMANCE
+    '<div class="card">' +
+
+      '<div class="section-title">' +
+        'Performance' +
+      '</div>' +
+
+      '<div class="grid2">' +
+
+        '<div class="mini">' +
+          '<b>' +
+            (
+              allTime.accuracy != null
+              ? allTime.accuracy
+              : 0
+            ) +
+            '%' +
+          '</b>' +
+          '<span>Accuracy</span>' +
+        '</div>' +
+
+        '<div class="mini">' +
+          '<b>' +
+            (allTime.streak || 0) +
+          '</b>' +
+          '<span>Streak</span>' +
+        '</div>' +
+
+        '<div class="mini">' +
+          '<b>' +
+            (allTime.attempted || 0) +
+          '</b>' +
+          '<span>Attempted</span>' +
+        '</div>' +
+
+        '<div class="mini">' +
+          '<b>' +
+            (allTime.bestStreak || 0) +
+          '</b>' +
+          '<span>Best streak</span>' +
+        '</div>' +
+
+      '</div>' +
+
+      '<div class="row" style="margin-top:10px">' +
+
+        '<span>Today accuracy</span>' +
+
+        '<b>' +
+          (
+            today.accuracy != null
+            ? today.accuracy
+            : "—"
+          ) +
+          '%' +
+        '</b>' +
+
+      '</div>' +
+
+      '<div class="row">' +
+
+        '<span>Study minutes</span>' +
+
+        '<b>' +
+          (allTime.studyMinutes || 0) +
+        '</b>' +
+
+      '</div>' +
+
+    '</div>' +
+
+
+    // SUBJECTS
+    '<div class="card">' +
+
+      '<div class="section-title">' +
+        'Subjects' +
+      '</div>' +
+
+      subjectHtml +
+
+    '</div>' +
+
+
+    // PROVIDE
+    '<div class="card">' +
+
+      '<div class="section-title">' +
+        'Provide (uploaded)' +
+      '</div>' +
+
+      '<div class="row">' +
+        '<span>MCQ</span>' +
+        '<b>' +
+          countKeys(provide.mcq) +
+        '</b>' +
+      '</div>' +
+
+      '<div class="row">' +
+        '<span>Posts</span>' +
+        '<b>' +
+          countKeys(provide.posts) +
+        '</b>' +
+      '</div>' +
+
+      '<div class="row">' +
+        '<span>Courses</span>' +
+        '<b>' +
+          countKeys(provide.courses) +
+        '</b>' +
+      '</div>' +
+
+      '<div class="row">' +
+        '<span>Mocks</span>' +
+        '<b>' +
+          countKeys(provide.mocks) +
+        '</b>' +
+      '</div>' +
+
+      '<div class="row">' +
+        '<span>Test series</span>' +
+        '<b>' +
+          countKeys(provide.testSeries) +
+        '</b>' +
+      '</div>' +
+
+    '</div>' +
+
+
+    // CONSUME
+    '<div class="card">' +
+
+      '<div class="section-title">' +
+        'Consume (activity)' +
+      '</div>' +
+
+      '<div class="row">' +
+        '<span>Saved MCQ</span>' +
+        '<b>' +
+          countKeys(consume.savedMcq) +
+        '</b>' +
+      '</div>' +
+
+      '<div class="row">' +
+        '<span>Liked MCQ</span>' +
+        '<b>' +
+          countKeys(consume.likedMcq) +
+        '</b>' +
+      '</div>' +
+
+      '<div class="row">' +
+        '<span>Mocks attempted</span>' +
+        '<b>' +
+          countKeys(consume.attemptedMocks) +
+        '</b>' +
+      '</div>' +
+
+      '<div class="row">' +
+        '<span>Courses purchased</span>' +
+        '<b>' +
+          countKeys(
+            consume.purchased &&
+            consume.purchased.courses
+          ) +
+        '</b>' +
+      '</div>' +
+
+    '</div>';
+
+}
+
+
+// =====================================================
+// LOAD USER FROM FIREBASE
+// =====================================================
+
+function loadUser(name){
+
+  name =
+    String(name || "").trim();
+
+
+  var app =
+    document.getElementById("app");
+
+
+  if(!name){
+
+    app.innerHTML =
+      '<div class="error">' +
+      'Username nahi mila.<br>' +
+      'Kodular WebViewString mein Label5.Text bhejo.' +
+      '</div>';
+
+    return;
+  }
+
+
+  app.innerHTML =
+    '<div class="loading">' +
+    'Loading profile...' +
+    '</div>';
+
+
+  // IMPORTANT:
+  // Firebase path = Users/{Label5.Text}
+
+  db.ref(
+    "Users/" + name
+  )
+
+  .once("value")
+
+  .then(function(snap){
+
+    if(!snap.exists()){
+
+      app.innerHTML =
+        '<div class="error">' +
+
+        'User not found: ' +
+        escapeHTML(name) +
+
+        '<br><br>' +
+
+        'Firebase path:<br>' +
+
+        '<b>Users/' +
+        escapeHTML(name) +
+        '</b>' +
+
+        '</div>';
+
+      return;
+    }
+
+
+    renderProfile(
+      name,
+      snap.val() || {}
+    );
+
+  })
+
+  .catch(function(err){
+
+    app.innerHTML =
+      '<div class="error">' +
+
+      'Firebase error:<br>' +
+
+      escapeHTML(err.message) +
+
+      '</div>';
+
+  });
+
+}
+
+
+// =====================================================
+// START
+// =====================================================
+
+var username =
+  getUserFromKodular();
+
+
+if(username){
+
+  loadUser(username);
+
+}else{
+
+  document.getElementById("app").innerHTML =
+
+    '<div class="loading">' +
+
+      'Waiting for Kodular Label5.Text...' +
+
+      '<br><br>' +
+
+      '<small>' +
+      'WebViewString = Label5.Text' +
+      '</small>' +
+
+    '</div>';
+
+}
+
+</script>
+
 </body>
 </html>
+
+Kodular mein bas ye karna hai:
+
+"WebViewer1.WebViewString = Label5.Text"
+
+Agar "Label5.Text = Rahul Sharma" hai, HTML automatically Firebase se:
+
+"Users/Rahul Sharma"
+
+load karega.
+
+Aur HTML mein koi username textbox nahi hai.

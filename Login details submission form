@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First Time Login - Firebase Sync</title>
+    <!-- Tailwind CSS for modern and premium UI -->
+    <script src="https://jsdelivr.net"></script>
+    <style>
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 flex items-center justify-center min-h-screen p-4 font-sans">
+
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-100">
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold text-slate-800">Complete Your Profile</h2>
+            <p class="text-sm text-slate-500 mt-1">Please fill all details to save your profile.</p>
+        </div>
+
+        <!-- Form Start -->
+        <form id="registrationForm" class="space-y-4">
+            
+            <!-- Gmail Display (Label 2 text from Kodular) -->
+            <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Logged In As (Gmail)</label>
+                <!-- Kodular will inject or display email here -->
+                <div id="label2Txt" class="bg-slate-100 text-slate-600 font-medium px-4 py-3 rounded-lg border border-slate-200 text-sm break-all">
+                    rahul@gmail.com
+                </div>
+            </div>
+
+            <!-- Full Name Input -->
+            <div>
+                <label for="name" class="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+                <input type="text" id="name" required class="w-full px-4 py-2.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none transition-all" placeholder="e.g. Rahul Sharma">
+            </div>
+
+            <!-- Channel Name Input -->
+            <div>
+                <label for="channelName" class="block text-sm font-medium text-slate-700 mb-1">Channel Name</label>
+                <input type="text" id="channelName" required class="w-full px-4 py-2.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none transition-all" placeholder="e.g. Rahul Study">
+            </div>
+
+            <!-- Bio Input -->
+            <div>
+                <label for="bio" class="block text-sm font-medium text-slate-700 mb-1">Bio</label>
+                <textarea id="bio" rows="2" required class="w-full px-4 py-2.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none" placeholder="NDA aspirant"></textarea>
+            </div>
+
+            <!-- Grid for Exam and Year -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="targetExam" class="block text-sm font-medium text-slate-700 mb-1">Target Exam</label>
+                    <input type="text" id="targetExam" required class="w-full px-4 py-2.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none transition-all" placeholder="e.g. NDA">
+                </div>
+                <div>
+                    <label for="targetYear" class="block text-sm font-medium text-slate-700 mb-1">Target Year</label>
+                    <input type="number" id="targetYear" required min="2026" class="w-full px-4 py-2.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none transition-all" placeholder="e.g. 2026">
+                </div>
+            </div>
+
+            <!-- Submit Button (Disabled by default) -->
+            <div class="pt-2">
+                <button type="submit" id="submitBtn" disabled class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg shadow-md transition-all">
+                    Add Details
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Firebase SDK Modules Setup -->
+    <script type="module">
+        import { initializeApp } from "https://gstatic.com";
+        import { getDatabase, ref, set } from "https://gstatic.com";
+
+        // 🔥 APNE FIREBASE PROJECT KI DETAILS YAHAN BHAREIN
+        const firebaseConfig = {
+            apiKey: "AIzaSyCDvOq7CUmM92aDNyEfP7TNXsCLgmDoQxg",
+  authDomain: "prepexam-f98bf.firebaseapp.com",
+  databaseURL: "https://prepexam-f98bf-default-rtdb.firebaseio.com",
+  projectId: "prepexam-f98bf",
+  storageBucket: "prepexam-f98bf.firebasestorage.app",
+  messagingSenderId: "570075784084",
+  appId: "1:570075784084:web:0ebdbef4a887ce777aa581"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // --- Form Live Validation Logic ---
+        const form = document.getElementById('registrationForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const requiredInputs = form.querySelectorAll('input[required], textarea[required]');
+
+        function checkInputs() {
+            let allFilled = true;
+            requiredInputs.forEach(input => {
+                if (input.value.trim() === '') allFilled = false;
+            });
+            submitBtn.disabled = !allFilled;
+        }
+
+        requiredInputs.forEach(input => {
+            input.addEventListener('input', checkInputs);
+        });
+
+        // --- Firebase Data Save Logic ---
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Disable button during saving to prevent double clicks
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Saving Data...";
+
+            const email = document.getElementById('label2Txt').innerText.trim();
+            const cleanGmail = email.replace(/\./g, '_'); // Firebase node compatibility
+
+            // Exact JSON format matching your file structure
+            const userData = {
+                "profile": {
+                    "name": document.getElementById('name').value,
+                    "channelName": document.getElementById('channelName').value,
+                    "bio": document.getElementById('bio').value,
+                    "targetExam": document.getElementById('targetExam').value,
+                    "targetYear": document.getElementById('targetYear').value,
+                    "email": email,
+                    "isCreator": true,
+                    "joined": new Date().toISOString().split('T')[0], // 2026-09-27 format
+                    "loginType": "google",
+                    "photo": "https://pravatar.cc",
+                    "role": "student"
+                },
+                "analysis": {},
+                "consume": {},
+                "payments": {},
+                "provide": {},
+                "publicStats": {},
+                "settings": { "language": "hi" }
+            };
+
+            try {
+                // Direct dynamic Firebase path configuration: Users/gmail_id
+                await set(ref(database, 'Users/' + cleanGmail), userData);
+                alert("Data saved successfully in Firebase! 🎉");
+                
+                // Optional: Signal Kodular app that saving is completed
+                if(window.AppInventor) {
+                    window.AppInventor.setWebViewString("SavedSuccess");
+                }
+            } catch (error) {
+                console.error("Firebase Error: ", error);
+                alert("Error saving data: " + error.message);
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Add Details";
+            }
+        });
+    </script>
+</body>
+</html>

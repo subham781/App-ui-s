@@ -1,608 +1,362 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>MCQ Practice</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #f0f2f5;
-      color: #050505;
-      height: 100vh;
-      overflow: hidden;
-    }
-    #feedPage {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background: #f0f2f5;
-    }
-    .top-bar {
-      background: #fff;
-      border-bottom: 1px solid #e4e6eb;
-      padding: 10px 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-    }
-    .top-bar h1 { font-size: 1rem; font-weight: 700; }
-    .user-chip {
-      font-size: 0.72rem;
-      font-weight: 700;
-      background: #eef2ff;
-      color: #3730a3;
-      padding: 4px 10px;
-      border-radius: 999px;
-      max-width: 120px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .lang-switch {
-      display: flex;
-      background: #f0f2f5;
-      border-radius: 10px;
-      padding: 3px;
-      gap: 2px;
-    }
-    .lang-btn {
-      border: 0;
-      background: transparent;
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #65676b;
-      cursor: pointer;
-    }
-    .lang-btn.active {
-      background: #1877f2;
-      color: #fff;
-    }
-    .feed {
-      flex: 1;
-      overflow-y: auto;
-      padding: 12px;
-      -webkit-overflow-scrolling: touch;
-    }
-    .post-card {
-      background: white;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 12px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
-    }
-    .post-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #e4e6eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      color: #65676b;
-      font-size: 0.9rem;
-    }
-    .channel-info h3 { font-size: 0.95rem; font-weight: 600; }
-    .channel-info p { font-size: 0.78rem; color: #65676b; }
-    .question-text {
-      font-size: 1.05rem;
-      line-height: 1.45;
-      margin-bottom: 14px;
-      font-weight: 500;
-    }
-    .options { display: flex; flex-direction: column; gap: 8px; }
-    .option {
-      border: 1.5px solid #ccd0d5;
-      border-radius: 8px;
-      padding: 12px 14px;
-      font-size: 0.95rem;
-      cursor: pointer;
-      background: white;
-      word-break: break-word;
-    }
-    .option:active { background: #f0f2f5; }
-    .option.correct {
-      background: #e7f6ec;
-      border-color: #31a24c;
-      color: #31a24c;
-      font-weight: 600;
-    }
-    .option.wrong {
-      background: #fde8e8;
-      border-color: #e41e3f;
-      color: #e41e3f;
-    }
-    .option.disabled { pointer-events: none; }
-    .post-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px solid #e4e6eb;
-    }
-    .answered { font-size: 0.82rem; color: #65676b; }
-    .actions { display: flex; gap: 18px; }
-    .action-btn {
-      background: none;
-      border: none;
-      font-size: 1.25rem;
-      cursor: pointer;
-      color: #65676b;
-    }
-    .action-btn.liked { color: #e41e3f; }
-    .action-btn.saved { color: #1877f2; }
-    .loading { text-align: center; padding: 40px; color: #65676b; }
-
-    .insight-wrap {
-      display: none;
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px solid #e4e6eb;
-    }
-    .insight-wrap.show { display: block; }
-    .insight-title {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: #1877f2;
-      margin-bottom: 8px;
-    }
-    .insight-scroll {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding-bottom: 6px;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-    .insight-scroll::-webkit-scrollbar { display: none; }
-    .insight-card {
-      min-width: 220px;
-      max-width: 240px;
-      background: #f0f7ff;
-      border: 1px solid #dbeafe;
-      border-radius: 12px;
-      padding: 12px;
-      flex-shrink: 0;
-      cursor: pointer;
-    }
-    .insight-card:active { transform: scale(0.98); }
-    .insight-card h4 {
-      font-size: 0.88rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-      color: #0f172a;
-    }
-    .insight-card p {
-      font-size: 0.78rem;
-      line-height: 1.4;
-      color: #4b5563;
-      display: -webkit-box;
-      -webkit-line-clamp: 4;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .insight-card .open-hint {
-      margin-top: 8px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: #1877f2;
-    }
-    .insight-loading { font-size: 0.82rem; color: #65676b; padding: 6px 0; }
-
-    .sheet-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      z-index: 1000;
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-    }
-    .sheet-overlay.show { display: flex; }
-    .sheet {
-      width: 100%;
-      max-width: 700px;
-      height: 85vh;
-      background: #fff;
-      border-radius: 18px 18px 0 0;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      animation: sheetUp 0.25s ease;
-    }
-    @keyframes sheetUp {
-      from { transform: translateY(40px); opacity: 0.6; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    .sheet-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
-      border-bottom: 1px solid #e4e6eb;
-      background: #f8fafc;
-    }
-    .sheet-header h3 {
-      flex: 1;
-      font-size: 0.95rem;
-      font-weight: 700;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .sheet-close {
-      border: 0;
-      background: #e4e6eb;
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .sheet-frame {
-      flex: 1;
-      width: 100%;
-      border: 0;
-    }
-    .sheet-loading {
-      padding: 20px;
-      text-align: center;
-      color: #65676b;
-      font-size: 0.9rem;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MCQ Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,sans-serif;background:#f0f2f5;color:#050505;height:100vh;overflow:hidden}
+#feedPage{height:100vh;display:flex;flex-direction:column}
+.top-bar{background:#fff;border-bottom:1px solid #e4e6eb;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.top-bar h1{font-size:1rem;font-weight:700}
+.user-chip{font-size:.72rem;font-weight:700;background:#eef2ff;color:#3730a3;padding:4px 10px;border-radius:999px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lang-switch{display:flex;background:#f0f2f5;border-radius:10px;padding:3px}
+.lang-btn{border:0;background:transparent;padding:6px 12px;border-radius:8px;font-size:.8rem;font-weight:700;color:#65676b}
+.lang-btn.active{background:#1877f2;color:#fff}
+.feed{flex:1;overflow-y:auto;padding:12px;-webkit-overflow-scrolling:touch}
+.post-card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.post-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.avatar{width:40px;height:40px;border-radius:50%;background:#e4e6eb;display:flex;align-items:center;justify-content:center;font-weight:700;color:#65676b}
+.channel-info h3{font-size:.95rem;font-weight:600}
+.channel-info p{font-size:.78rem;color:#65676b}
+.question-text{font-size:1.05rem;line-height:1.45;margin-bottom:14px;font-weight:500}
+.options{display:flex;flex-direction:column;gap:8px}
+.option{border:1.5px solid #ccd0d5;border-radius:8px;padding:12px 14px;font-size:.95rem;cursor:pointer;background:#fff;word-break:break-word}
+.option.correct{background:#e7f6ec;border-color:#31a24c;color:#31a24c;font-weight:600}
+.option.wrong{background:#fde8e8;border-color:#e41e3f;color:#e41e3f}
+.option.disabled{pointer-events:none}
+.post-footer{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid #e4e6eb}
+.answered{font-size:.82rem;color:#65676b}
+.actions{display:flex;gap:18px}
+.action-btn{background:none;border:none;font-size:1.25rem;cursor:pointer;color:#65676b}
+.action-btn.liked{color:#e41e3f}
+.action-btn.saved{color:#1877f2}
+.loading,.error{text-align:center;padding:40px 14px;color:#65676b;font-size:.9rem;line-height:1.45}
+.error{color:#b91c1c}
+.insight-wrap{display:none;margin-top:14px;padding-top:12px;border-top:1px solid #e4e6eb}
+.insight-wrap.show{display:block}
+.insight-title{font-size:.82rem;font-weight:700;color:#1877f2;margin-bottom:8px}
+.insight-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+.insight-card{min-width:220px;max-width:240px;background:#f0f7ff;border:1px solid #dbeafe;border-radius:12px;padding:12px;flex-shrink:0;cursor:pointer}
+.insight-card h4{font-size:.88rem;font-weight:700;margin-bottom:6px}
+.insight-card p{font-size:.78rem;color:#4b5563;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:none;align-items:flex-end;justify-content:center}
+.sheet-overlay.show{display:flex}
+.sheet{width:100%;max-width:700px;height:85vh;background:#fff;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden}
+.sheet-header{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #e4e6eb;background:#f8fafc}
+.sheet-header h3{flex:1;font-size:.95rem;font-weight:700}
+.sheet-close{border:0;background:#e4e6eb;width:34px;height:34px;border-radius:10px}
+.sheet-frame{flex:1;width:100%;border:0;display:none}
+.sheet-loading{padding:20px;text-align:center;color:#65676b}
+</style>
 </head>
 <body>
-  <div id="feedPage">
-    <div class="top-bar">
-      <h1>MCQ Practice</h1>
-      <span class="user-chip" id="userChip">—</span>
-      <div class="lang-switch">
-        <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
-        <button class="lang-btn" id="btn-hi" onclick="setLang('hi')">हिं</button>
-      </div>
-    </div>
-
-    <div class="feed" id="feed">
-      <div class="loading">Loading questions...</div>
+<div id="feedPage">
+  <div class="top-bar">
+    <h1>MCQ Practice</h1>
+    <span class="user-chip" id="userChip">—</span>
+    <div class="lang-switch">
+      <button class="lang-btn active" id="btn-en" type="button" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btn-hi" type="button" onclick="setLang('hi')">हिं</button>
     </div>
   </div>
+  <div class="feed" id="feed"><div class="loading">Loading questions...</div></div>
+</div>
 
-  <div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet(event)">
-    <div class="sheet" onclick="event.stopPropagation()">
-      <div class="sheet-header">
-        <h3 id="sheetTitle">Topic</h3>
-        <button class="sheet-close" onclick="hideSheet()">✕</button>
-      </div>
-      <div class="sheet-loading" id="sheetLoading">Opening full page...</div>
-      <iframe class="sheet-frame" id="sheetFrame" style="display:none;"></iframe>
+<div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet(event)">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-header">
+      <h3 id="sheetTitle">Topic</h3>
+      <button class="sheet-close" type="button" onclick="hideSheet()">✕</button>
     </div>
+    <div class="sheet-loading" id="sheetLoading">Opening...</div>
+    <iframe class="sheet-frame" id="sheetFrame"></iframe>
   </div>
+</div>
 
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-  <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyICNHxGGgvd7TBcgSxjQm3obJqDOGtHHiwiwUoXnxiNurmqmWDfwOXo5x9rfQqnXs/exec";
+<script>
+  // ===== SAME URL (working) =====
+  const API_URL = "https://script.google.com/macros/s/AKfycbyICNHxGGgvd7TBcgSxjQm3obJqDOGtHHiwiwUoXnxiNurmqmWDfwOXo5x9rfQqnXs/exec";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCDvOq7CUmM92aDNyEfP7TNXsCLgmDoQxg",
-      authDomain: "prepexam-f98bf.firebaseapp.com",
-      databaseURL: "https://prepexam-f98bf-default-rtdb.firebaseio.com",
-      projectId: "prepexam-f98bf",
-      storageBucket: "prepexam-f98bf.firebasestorage.app",
-      messagingSenderId: "570075784084",
-      appId: "1:570075784084:web:0ebdbef4a887ce777aa581"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyCDvOq7CUmM92aDNyEfP7TNXsCLgmDoQxg",
+    authDomain: "prepexam-f98bf.firebaseapp.com",
+    databaseURL: "https://prepexam-f98bf-default-rtdb.firebaseio.com",
+    projectId: "prepexam-f98bf",
+    storageBucket: "prepexam-f98bf.firebasestorage.app",
+    messagingSenderId: "570075784084",
+    appId: "1:570075784084:web:0ebdbef4a887ce777aa581"
+  };
 
-    let db = null;
+  let db = null;
+  let allQuestions = [];
+  let wikiLang = "en";
+  let MY_ID = "";
+
+  function normalizeUserKey(raw) {
+    var s = String(raw || "").trim();
+    if (!s) return "";
+    if (s.indexOf("USER|") === 0) s = s.substring(5).trim();
+    if (s.indexOf("@") > 0) s = s.split("@")[0];
+    return s.replace(/@gmail\.com$/i, "").trim();
+  }
+
+  function getUserFromKodular() {
     try {
-      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-      db = firebase.database();
-    } catch (e) { console.log(e); }
-
-    let allQuestions = [];
-    let wikiLang = "en";
-    let MY_ID = ""; // Label5 → Users/{MY_ID}
-
-    /** Label5 = gmail local part (no @gmail.com) */
-    function normalizeUserKey(raw) {
-      var s = String(raw || "").trim();
-      if (!s) return "";
-      if (s.indexOf("USER|") === 0) s = s.substring(5).trim();
-      if (s.indexOf("@") > 0) s = s.split("@")[0];
-      s = s.replace(/@gmail\.com$/i, "").trim();
-      return s;
-    }
-
-    function getUserFromKodular() {
-      try {
-        if (window.AppInventor && window.AppInventor.getWebViewString) {
-          var s = normalizeUserKey(window.AppInventor.getWebViewString() || "");
-          if (s) return s;
-        }
-      } catch (e) {}
-      try {
-        if (window.Kodular && window.Kodular.getWebViewString) {
-          var s2 = normalizeUserKey(window.Kodular.getWebViewString() || "");
-          if (s2) return s2;
-        }
-      } catch (e) {}
-      try {
-        return normalizeUserKey(new URLSearchParams(location.search).get("user") || "");
-      } catch (e) {
-        return "";
+      if (window.AppInventor && window.AppInventor.getWebViewString) {
+        var s = normalizeUserKey(window.AppInventor.getWebViewString() || "");
+        if (s) return s;
       }
-    }
+    } catch (e) {}
+    try {
+      var q = new URLSearchParams(location.search).get("user");
+      return normalizeUserKey(q || "");
+    } catch (e) { return ""; }
+  }
 
-    function refreshMyId() {
-      MY_ID = getUserFromKodular() || localStorage.getItem("mcq_user_name") || "";
-      if (MY_ID) localStorage.setItem("mcq_user_name", MY_ID);
-      var chip = document.getElementById("userChip");
-      if (chip) chip.textContent = MY_ID || "no id";
-      return MY_ID;
-    }
+  function refreshMyId() {
+    MY_ID = getUserFromKodular() || localStorage.getItem("mcq_user_name") || "";
+    if (MY_ID) localStorage.setItem("mcq_user_name", MY_ID);
+    var chip = document.getElementById("userChip");
+    if (chip) chip.textContent = MY_ID || "no id";
+    return MY_ID;
+  }
 
-    function setLang(lang) {
-      wikiLang = lang;
-      document.getElementById("btn-en").classList.toggle("active", lang === "en");
-      document.getElementById("btn-hi").classList.toggle("active", lang === "hi");
-    }
+  function setLang(lang) {
+    wikiLang = lang;
+    document.getElementById("btn-en").classList.toggle("active", lang === "en");
+    document.getElementById("btn-hi").classList.toggle("active", lang === "hi");
+  }
 
-    function wikiHost() {
-      return wikiLang === "hi" ? "https://hi.wikipedia.org" : "https://en.wikipedia.org";
-    }
+  function getData(k){ try{return JSON.parse(localStorage.getItem(k)||"[]");}catch(e){return[];} }
+  function setData(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+  function escapeHTML(v){ return String(v||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 
-    function getData(key) {
-      try { return JSON.parse(localStorage.getItem(key) || "[]"); }
-      catch (e) { return []; }
-    }
-    function setData(key, data) {
-      localStorage.setItem(key, JSON.stringify(data));
-    }
-    function getStats() {
-      try {
-        return JSON.parse(localStorage.getItem("mcq_stats") || '{"attempted":0,"correct":0,"streak":0,"lastDate":"","subjects":{}}');
-      } catch (e) {
-        return { attempted: 0, correct: 0, streak: 0, lastDate: "", subjects: {} };
-      }
-    }
-    function saveStats(stats) {
-      localStorage.setItem("mcq_stats", JSON.stringify(stats));
-    }
+  // ---------- QUESTIONS FIRST (no Firebase wait) ----------
+  function loadQuestions() {
+    var feed = document.getElementById("feed");
+    feed.innerHTML = '<div class="loading">Loading questions...</div>';
 
-    function escapeHTML(v) {
-      return String(v || "")
-        .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-    }
-    function escapeAttr(v) {
-      return escapeHTML(v).replace(/'/g, "&#039;");
-    }
+    var done = false;
+    var timer = setTimeout(function () {
+      if (done) return;
+      done = true;
+      feed.innerHTML = '<div class="error">Timeout 20s<br>API slow / network issue<br><button onclick="loadQuestions()" style="margin-top:10px;padding:8px 14px;border:0;border-radius:8px;background:#1877f2;color:#fff;font-weight:700">Retry</button></div>';
+    }, 20000);
 
-    function buildSearchQuery(item) {
-      var chapter = (item.chapter || "").trim();
-      var subject = (item.subject || "").trim();
-      var exam = (item.exam || "").trim();
-      var q = (item.q || "").replace(/[^\w\s\u0900-\u097F]/g, " ");
-      var words = q.split(/\s+/).filter(function (w) { return w.length > 3; }).slice(0, 6).join(" ");
-      if (chapter.length > 2) return chapter + (subject ? " " + subject : "");
-      if (subject.length > 2) return subject + " " + words;
-      return words || exam || "general knowledge";
-    }
+    var url = API_URL + (API_URL.indexOf("?") >= 0 ? "&" : "?") + "t=" + Date.now();
 
-    async function fetchWikipediaInsights(query) {
-      var host = wikiHost();
-      var searchUrl = host + "/w/api.php?action=query&list=search&srsearch=" +
-        encodeURIComponent(query) + "&srlimit=5&format=json&origin=*";
-      var searchRes = await fetch(searchUrl);
-      if (!searchRes.ok) throw new Error("Wiki search failed");
-      var searchData = await searchRes.json();
-      var results = (searchData.query && searchData.query.search) || [];
-      if (!results.length) return [];
-      var cards = [];
-      for (var i = 0; i < Math.min(5, results.length); i++) {
-        var title = results[i].title;
-        try {
-          var sumUrl = host + "/api/rest_v1/page/summary/" + encodeURIComponent(title);
-          var sumRes = await fetch(sumUrl);
-          if (!sumRes.ok) continue;
-          var sum = await sumRes.json();
-          if (sum.type === "disambiguation") continue;
-          cards.push({
-            t: sum.title || title,
-            d: sum.extract || (results[i].snippet || "").replace(/<[^>]+>/g, ""),
-            pageUrl: host + "/wiki/" + encodeURIComponent(title.replace(/ /g, "_"))
-          });
-        } catch (e) {}
-      }
-      return cards;
-    }
-
-    async function showTopicInsight(qIndex, item) {
-      var box = document.getElementById("insight-" + qIndex);
-      if (!box || box.dataset.loaded === "1") return;
-      box.classList.add("show");
-      box.innerHTML = '<div class="insight-loading">' +
-        (wikiLang === "hi" ? "विषय सार लोड हो रहा है..." : "Loading exam-focused topic briefs...") +
-        "</div>";
-      try {
-        var query = buildSearchQuery(item);
-        var cards = await fetchWikipediaInsights(query);
-        if (!cards.length) {
-          box.innerHTML = '<div class="insight-title">📚 Topic Insight</div>' +
-            '<div class="insight-loading">' +
-            (wikiLang === "hi" ? "संबंधित विषय नहीं मिला।" : "No related topic found.") +
-            "</div>";
+    fetch(url, { method: "GET", redirect: "follow", cache: "no-store" })
+      .then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.text();
+      })
+      .then(function (text) {
+        if (done) return;
+        clearTimeout(timer);
+        done = true;
+        var data;
+        try { data = JSON.parse(text); }
+        catch (e) {
+          feed.innerHTML = '<div class="error">JSON parse fail<br><small>' + escapeHTML(text.slice(0, 200)) + '</small></div>';
           return;
         }
-        var title = wikiLang === "hi" ? "📚 परीक्षा नोट्स (संक्षेप)" : "📚 Exam notes (brief)";
-        var openTxt = wikiLang === "hi" ? "पूरा पेज खोलें →" : "Open full page →";
-        var html = '<div class="insight-title">' + title + '</div><div class="insight-scroll">';
-        cards.forEach(function (c, idx) {
-          html +=
-            '<div class="insight-card" id="ic-' + qIndex + '-' + idx + '">' +
-              '<h4>' + escapeHTML(c.t) + '</h4>' +
-              '<p>' + escapeHTML(c.d) + '</p>' +
-              '<div class="open-hint">' + openTxt + '</div>' +
-            '</div>';
-        });
-        html += '</div>';
-        box.innerHTML = html;
-        box.dataset.loaded = "1";
-        cards.forEach(function (c, idx) {
-          var el = document.getElementById("ic-" + qIndex + "-" + idx);
-          if (el) el.onclick = function () { openSheet(c.t, c.pageUrl); };
-        });
-      } catch (err) {
-        box.innerHTML = '<div class="insight-title">📚 Topic Insight</div>' +
-          '<div class="insight-loading">' +
-          (wikiLang === "hi" ? "Wikipedia लोड नहीं हुआ।" : "Could not load Wikipedia.") +
-          "</div>";
-      }
-    }
-
-    function openSheet(title, url) {
-      document.getElementById("sheetTitle").textContent = title;
-      document.getElementById("sheetOverlay").classList.add("show");
-      var frame = document.getElementById("sheetFrame");
-      var loading = document.getElementById("sheetLoading");
-      loading.style.display = "block";
-      frame.style.display = "none";
-      frame.onload = function () {
-        loading.style.display = "none";
-        frame.style.display = "block";
-      };
-      frame.src = url;
-    }
-    function hideSheet() {
-      document.getElementById("sheetOverlay").classList.remove("show");
-      document.getElementById("sheetFrame").src = "about:blank";
-    }
-    function closeSheet(e) {
-      if (e.target.id === "sheetOverlay") hideSheet();
-    }
-
-    async function loadQuestions() {
-      const feed = document.getElementById("feed");
-      feed.innerHTML = '<div class="loading">Loading questions...</div>';
-      try {
-        const res = await fetch(API_URL + (API_URL.indexOf("?") >= 0 ? "&" : "?") + "t=" + Date.now());
-        const data = await res.json();
-        if (!Array.isArray(data) || data.length === 0) throw new Error("No questions received");
+        if (data && Array.isArray(data.questions)) data = data.questions;
+        if (data && Array.isArray(data.data)) data = data.data;
+        if (!Array.isArray(data) || !data.length) {
+          feed.innerHTML = '<div class="error">No questions array</div>';
+          return;
+        }
         allQuestions = data;
         renderFeed();
-      } catch (err) {
-        feed.innerHTML = '<div class="loading">Failed to load questions.<br><small>' + err.message + '</small></div>';
-      }
-    }
+        // Firebase AFTER questions shown
+        loadFirebaseLater();
+      })
+      .catch(function (err) {
+        if (done) return;
+        clearTimeout(timer);
+        done = true;
+        feed.innerHTML = '<div class="error">Failed: ' + escapeHTML(err.message) +
+          '<br><button onclick="loadQuestions()" style="margin-top:10px;padding:8px 14px;border:0;border-radius:8px;background:#1877f2;color:#fff;font-weight:700">Retry</button></div>';
+      });
+  }
 
-    function renderFeed() {
-      const feed = document.getElementById("feed");
-      feed.innerHTML = "";
-      if (!allQuestions.length) {
-        feed.innerHTML = '<div class="loading">No questions found</div>';
-        return;
-      }
-      const myLikes = getData("mcq_likes");
-      const mySaved = getData("mcq_saved");
+  function renderFeed() {
+    var feed = document.getElementById("feed");
+    feed.innerHTML = "";
+    var myLikes = getData("mcq_likes");
+    var mySaved = getData("mcq_saved");
 
-      allQuestions.forEach(function (item, index) {
-        const liked = item.uid && myLikes.indexOf(item.uid) >= 0;
-        const saved = item.uid && mySaved.some(function (s) { return s.uid === item.uid; });
+    allQuestions.forEach(function (item, index) {
+      var liked = item.uid && myLikes.indexOf(item.uid) >= 0;
+      var saved = item.uid && mySaved.some(function (s) { return s.uid === item.uid; });
 
-        const card = document.createElement("div");
-        card.className = "post-card";
-
-        const header = document.createElement("div");
-        header.className = "post-header";
-        header.innerHTML =
+      var card = document.createElement("div");
+      card.className = "post-card";
+      card.innerHTML =
+        '<div class="post-header">' +
           '<div class="avatar">' + (item.username || "E").charAt(0) + '</div>' +
           '<div class="channel-info">' +
             '<h3>' + escapeHTML(item.username || "Educator") + '</h3>' +
             '<p>' + escapeHTML(item.subject || "General") + ' • ' + escapeHTML(item.difficulty || "Medium") + '</p>' +
-          '</div>';
-        card.appendChild(header);
+          '</div>' +
+        '</div>' +
+        '<div class="question-text"></div>' +
+        '<div class="options" id="options-' + index + '"></div>' +
+        '<div class="insight-wrap" id="insight-' + index + '"></div>' +
+        '<div class="post-footer">' +
+          '<div class="answered" id="answered-' + index + '">Tap option to answer</div>' +
+          '<div class="actions">' +
+            '<button type="button" class="action-btn' + (liked ? " liked" : "") + '" id="like-' + index + '">👍</button>' +
+            '<button type="button" class="action-btn' + (saved ? " saved" : "") + '" id="save-' + index + '">🔖</button>' +
+          '</div>' +
+        '</div>';
 
-        const qDiv = document.createElement("div");
-        qDiv.className = "question-text";
-        qDiv.textContent = item.q || "";
-        card.appendChild(qDiv);
+      card.querySelector(".question-text").textContent = item.q || "";
 
-        const optionsDiv = document.createElement("div");
-        optionsDiv.className = "options";
-        optionsDiv.id = "options-" + index;
-        (item.options || []).forEach(function (opt, i) {
-          const optDiv = document.createElement("div");
-          optDiv.className = "option";
-          optDiv.textContent = opt || "—";
-          optDiv.onclick = function () { selectOption(index, i); };
-          optionsDiv.appendChild(optDiv);
-        });
-        card.appendChild(optionsDiv);
-
-        const insight = document.createElement("div");
-        insight.className = "insight-wrap";
-        insight.id = "insight-" + index;
-        card.appendChild(insight);
-
-        const footer = document.createElement("div");
-        footer.className = "post-footer";
-
-        const answered = document.createElement("div");
-        answered.className = "answered";
-        answered.id = "answered-" + index;
-        answered.textContent = "Tap option to answer";
-        footer.appendChild(answered);
-
-        const actions = document.createElement("div");
-        actions.className = "actions";
-
-        const likeBtn = document.createElement("button");
-        likeBtn.className = "action-btn" + (liked ? " liked" : "");
-        likeBtn.textContent = "👍";
-        likeBtn.onclick = function () { toggleLike(item.uid, likeBtn); };
-        actions.appendChild(likeBtn);
-
-        const saveBtn = document.createElement("button");
-        saveBtn.className = "action-btn" + (saved ? " saved" : "");
-        saveBtn.textContent = "🔖";
-        saveBtn.onclick = function () { toggleSave(index, saveBtn); };
-        actions.appendChild(saveBtn);
-
-        footer.appendChild(actions);
-        card.appendChild(footer);
-        feed.appendChild(card);
+      var optBox = card.querySelector("#options-" + index);
+      (item.options || []).forEach(function (opt, i) {
+        var d = document.createElement("div");
+        d.className = "option";
+        d.textContent = opt || "—";
+        d.onclick = function () { selectOption(index, i); };
+        optBox.appendChild(d);
       });
+
+      card.querySelector("#like-" + index).onclick = function () { toggleLike(item.uid, this); };
+      card.querySelector("#save-" + index).onclick = function () { toggleSave(index, this); };
+      feed.appendChild(card);
+    });
+  }
+
+  function selectOption(qIndex, selected) {
+    var item = allQuestions[qIndex];
+    document.querySelectorAll("#options-" + qIndex + " .option").forEach(function (opt, i) {
+      opt.classList.add("disabled");
+      if (i === item.correct) opt.classList.add("correct");
+      if (i === selected && selected !== item.correct) opt.classList.add("wrong");
+    });
+    document.getElementById("answered-" + qIndex).textContent =
+      selected === item.correct ? "Correct ✓" : "Wrong ✗";
+    showTopicInsight(qIndex, item);
+  }
+
+  async function toggleLike(uid, btn) {
+    if (!uid) return;
+    var id = refreshMyId();
+    if (!id) { alert("Label5 se user id nahi mili (WebViewString)"); return; }
+
+    var likes = getData("mcq_likes");
+    var isLiked = likes.indexOf(uid) >= 0;
+    if (isLiked) {
+      likes = likes.filter(function (x) { return x !== uid; });
+      btn.classList.remove("liked");
+    } else {
+      likes.push(uid);
+      btn.classList.add("liked");
     }
+    setData("mcq_likes", likes);
 
-    function selectOption(qIndex, selected) {
-      const item = allQuestions[qIndex];
-      const options = document.querySelectorAll("#options-" + qIndex + " .option");
-      options.forEach(function (opt, i) {
-        opt.classList.add("disabled");
-        if (i === item.correct) opt.classList.add("correct");
-        if (i === selected && selected !== item.correct) opt.classList.add("wrong");
+    if (db) {
+      try {
+        var ref = db.ref("Users/" + id + "/consume/likedMcq/" + uid);
+        if (!isLiked) await ref.set({ ts: Math.floor(Date.now() / 1000) });
+        else await ref.remove();
+      } catch (e) { console.log(e); }
+    }
+  }
+
+  async function toggleSave(qIndex, btn) {
+    var item = allQuestions[qIndex];
+    if (!item || !item.uid) return;
+    var id = refreshMyId();
+    if (!id) { alert("Label5 se user id nahi mili"); return; }
+
+    var saved = getData("mcq_saved");
+    var exists = saved.some(function (s) { return s.uid === item.uid; });
+    if (exists) {
+      saved = saved.filter(function (s) { return s.uid !== item.uid; });
+      btn.classList.remove("saved");
+    } else {
+      saved.push({ uid: item.uid, q: item.q });
+      btn.classList.add("saved");
+    }
+    setData("mcq_saved", saved);
+
+    if (db) {
+      try {
+        var ref = db.ref("Users/" + id + "/consume/savedMcq/" + item.uid);
+        if (!exists) await ref.set({ ts: Math.floor(Date.now() / 1000) });
+        else await ref.remove();
+      } catch (e) {}
+    }
+  }
+
+  // ---------- Firebase AFTER UI ready ----------
+  function loadFirebaseLater() {
+    if (window.firebase && firebase.apps && firebase.apps.length) {
+      try { db = firebase.database(); } catch (e) {}
+      return;
+    }
+    var s1 = document.createElement("script");
+    s1.src = "https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js";
+    s1.onload = function () {
+      var s2 = document.createElement("script");
+      s2.src = "https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js";
+      s2.onload = function () {
+        try {
+          if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+          db = firebase.database();
+        } catch (e) { console.log(e); }
+      };
+      document.head.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  }
+
+  // Wiki (light)
+  async function showTopicInsight(qIndex, item) {
+    var box = document.getElementById("insight-" + qIndex);
+    if (!box || box.dataset.loaded === "1") return;
+    box.classList.add("show");
+    box.innerHTML = '<div style="font-size:.82rem;color:#65676b">Loading notes...</div>';
+    try {
+      var host = wikiLang === "hi" ? "https://hi.wikipedia.org" : "https://en.wikipedia.org";
+      var subject = (item.subject || "").trim();
+      var q = (item.q || "").replace(/[^\w\s\u0900-\u097F]/g, " ");
+      var query = subject || q.split(/\s+/).filter(function (w) { return w.length > 3; }).slice(0, 5).join(" ") || "exam";
+      var res = await fetch(host + "/w/api.php?action=query&list=search&srsearch=" + encodeURIComponent(query) + "&srlimit=4&format=json&origin=*");
+      var data = await res.json();
+      var results = (data.query && data.query.search) || [];
+      if (!results.length) {
+        box.innerHTML = '<div class="insight-title">📚 Topic</div><div style="font-size:.82rem;color:#65676b">No notes</div>';
+        return;
+      }
+      var html = '<div class="insight-title">📚 Exam notes</div><div class="insight-scroll">';
+      results.forEach(function (r) {
+        html += '<div class="insight-card"><h4>' + escapeHTML(r.title) + '</h4><p>' +
+          escapeHTML((r.snippet || "").replace(/<[^>]+>/g, "")) + '</p></div>';
       });
-      var ans = document.getElementById("answered-" + qIndex);
-      if (ans) ans.textContent = (selected === item.correct) ? "Correct ✓" : "Wrong ✗";
-      showTopicInsight(qIndex, item);
+      html += '</div>';
+      box.innerHTML = html;
+      box.dataset.loaded = "1";
+    } catch (e) {
+      box.innerHTML = '<div style="font-size:.82rem;color:#65676b">Wiki failed</div>';
+    }
+  }
 
-      const stats = getStats();
-      stats.attempted = (stats.attempted || 0) + 1;
-      if (selected === item.correct) stats.correct = (stats.correct || 0) + 1;
-      const subject = item.subject || "General";
-      if (!stats.subjects) stats.subjects = {};
-   
+  function hideSheet() {
+    document.getElementById("sheetOverlay").classList.remove("show");
+    document.getElementById("sheetFrame").src = "about:blank";
+  }
+  function closeSheet(e) {
+    if (e.target.id === "sheetOverlay") hideSheet();
+  }
+
+  refreshMyId();
+  loadQuestions(); // pehle questions — Firebase baad
+</script>
+</body>
+</html>

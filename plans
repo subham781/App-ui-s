@@ -13,9 +13,13 @@ h1{font-size:1.2rem;font-weight:700;margin-bottom:4px}
 .sub{font-size:.8rem;color:#64748b;margin-bottom:12px}
 .card{background:#fff;border:1px solid #e4e6eb;border-radius:16px;padding:14px;margin-bottom:12px}
 .user-row{display:flex;align-items:center;gap:10px}
-.av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1877f2,#4f46e5);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1877f2,#4f46e5);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
 .meta b{display:block;font-size:.95rem}
-.meta span{font-size:.75rem;color:#64748b}
+.meta span{font-size:.75rem;color:#64748b;word-break:break-all}
+.err-box{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;border-radius:12px;padding:10px 12px;font-size:.8rem;margin-top:10px;display:none;line-height:1.4}
+.err-box.show{display:block}
+.ok-box{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;border-radius:12px;padding:8px 12px;font-size:.78rem;margin-top:8px;display:none}
+.ok-box.show{display:block}
 .tabs{display:flex;gap:8px;margin-bottom:12px}
 .tab{flex:1;border:2px solid #e4e6eb;background:#fff;border-radius:12px;padding:12px;font-weight:700;cursor:pointer}
 .tab.on{border-color:#1877f2;background:#f0f7ff}
@@ -34,21 +38,25 @@ textarea{min-height:90px;resize:vertical}
 .msg{margin-top:10px;font-size:.85rem;text-align:center}
 .ok{color:#15803d}.err{color:#b91c1c}
 .hint{font-size:.72rem;color:#64748b;margin-top:6px}
+.retry{margin-top:8px;border:0;background:#e2e8f0;border-radius:8px;padding:8px 12px;font-weight:600;font-size:.8rem;cursor:pointer}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Create</h1>
-  <p class="sub">Same as Profile: Users / Label5 / profile</p>
+  <p class="sub">Label5 → Users/{id}/profile · REST load</p>
 
   <div class="card">
     <div class="user-row">
       <div class="av" id="av">?</div>
       <div class="meta">
-        <b id="dispName">Loading...</b>
+        <b id="dispName">Starting...</b>
         <span id="dispId">—</span>
       </div>
     </div>
+    <div class="ok-box" id="okBox"></div>
+    <div class="err-box" id="errBox"></div>
+    <button class="retry" type="button" id="btnRetry">Retry load profile</button>
   </div>
 
   <div class="tabs">
@@ -106,7 +114,7 @@ textarea{min-height:90px;resize:vertical}
     </div>
     <label>Chapter (optional)</label>
     <input id="chapter" type="text" placeholder="Chapter">
-    <p class="hint">ChannelName = profile name · OwnerId = Label5</p>
+    <p class="hint">Sheet: ChannelName = profile name · OwnerId = Label5</p>
     <button class="btn" id="mcqBtn" type="button">Publish MCQ</button>
     <div class="msg" id="mcqMsg"></div>
   </div>
@@ -121,31 +129,16 @@ textarea{min-height:90px;resize:vertical}
   </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 <script>
 (function () {
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz40_z7XbkpXepHGYxz97Q_6_NUhb30G_hYOdVEoyNgECJ36P-0UXjKIxYCB_vn5XBFhQ/exec";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCDvOq7CUmM92aDNyEfP7TNXsCLgmDoQxg",
-    authDomain: "prepexam-f98bf.firebaseapp.com",
-    databaseURL: "https://prepexam-f98bf-default-rtdb.firebaseio.com",
-    projectId: "prepexam-f98bf",
-    storageBucket: "prepexam-f98bf.firebasestorage.app",
-    messagingSenderId: "570075784084",
-    appId: "1:570075784084:web:0ebdbef4a887ce777aa581"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+  const DB_ROOT = "https://prepexam-f98bf-default-rtdb.firebaseio.com";
 
   var USER_ID = "";
   var DISPLAY_NAME = "";
   var CHANNEL_NAME = "";
   var correctAns = "A";
 
-  // ===== SAME as Profile.html =====
   function normalizeUserKey(raw) {
     var s = String(raw || "").trim();
     if (!s) return "";
@@ -157,8 +150,7 @@ textarea{min-height:90px;resize:vertical}
   function getUserFromKodular() {
     try {
       if (window.AppInventor && window.AppInventor.getWebViewString) {
-        var s = window.AppInventor.getWebViewString() || "";
-        s = normalizeUserKey(s);
+        var s = normalizeUserKey(window.AppInventor.getWebViewString() || "");
         if (s) return s;
       }
     } catch (e) {}
@@ -176,6 +168,23 @@ textarea{min-height:90px;resize:vertical}
     }
   }
 
+  function showErr(msg) {
+    var box = document.getElementById("errBox");
+    box.textContent = msg;
+    box.classList.add("show");
+  }
+  function hideErr() {
+    document.getElementById("errBox").classList.remove("show");
+  }
+  function showOk(msg) {
+    var box = document.getElementById("okBox");
+    box.textContent = msg;
+    box.classList.add("show");
+  }
+  function hideOk() {
+    document.getElementById("okBox").classList.remove("show");
+  }
+
   function setHeader(name, id, note) {
     document.getElementById("dispName").textContent = name || "—";
     document.getElementById("dispId").textContent =
@@ -183,71 +192,57 @@ textarea{min-height:90px;resize:vertical}
     document.getElementById("av").textContent = String(name || id || "?").charAt(0).toUpperCase();
   }
 
-  // Profile page jaisa: Users/{id} → profile.name / channelName / displayName
-  function loadUser(name) {
-    name = normalizeUserKey(name);
+  async function loadUser(forcedId) {
+    hideErr();
+    hideOk();
+
+    var name = normalizeUserKey(forcedId || getUserFromKodular());
     USER_ID = name;
 
     if (!name) {
-      setHeader("Username nahi mila", "", "WebViewString = Label5");
+      setHeader("No user id", "", "WebViewString empty");
+      showErr("ERROR: Label5 / WebViewString empty.\nKodular: WebViewString = Label5.Text (e.g. Rahul or subhambanshiwal2006)");
       return;
     }
 
-    setHeader("Loading...", name, "");
+    setHeader("Loading...", name, "fetching profile");
 
-    db.ref("Users/" + name)
-      .once("value")
-      .then(function (snap) {
-        if (!snap.exists()) {
-          DISPLAY_NAME = name;
-          CHANNEL_NAME = name;
-          setHeader(name, name, "path not found");
-          return;
-        }
+    var url = DB_ROOT + "/Users/" + encodeURIComponent(name) + "/profile.json";
 
-        var data = snap.val() || {};
-        var p = data.profile || {};
-
-        // display name priority (jo bhi profile me ho)
-        DISPLAY_NAME = String(
-          p.name ||
-          p.displayName ||
-          p["display name"] ||
-          p.channelName ||
-          name
-        ).trim();
-
-        CHANNEL_NAME = String(
-          p.channelName ||
-          p.name ||
-          p.displayName ||
-          DISPLAY_NAME
-        ).trim();
-
-        setHeader(DISPLAY_NAME, name, "ok");
-      })
-      .catch(function (err) {
+    try {
+      var res = await fetch(url + "?t=" + Date.now(), { cache: "no-store" });
+      if (!res.ok) {
+        setHeader(name, name, "HTTP " + res.status);
+        showErr("ERROR: Firebase HTTP " + res.status + "\nURL: " + url);
         DISPLAY_NAME = name;
         CHANNEL_NAME = name;
-        setHeader(name, name, err.message || "error");
-      });
-  }
+        return;
+      }
 
-  function start() {
-    var username = getUserFromKodular();
-    if (username) {
-      loadUser(username);
-    } else {
-      setHeader("Waiting Label5...", "", "WebViewString empty");
-      // Kodular late string
-      setTimeout(function () {
-        var u2 = getUserFromKodular();
-        if (u2) loadUser(u2);
-      }, 500);
-      setTimeout(function () {
-        var u3 = getUserFromKodular();
-        if (u3) loadUser(u3);
-      }, 1500);
+      var p = await res.json();
+
+      if (p === null || p === undefined) {
+        DISPLAY_NAME = name;
+        CHANNEL_NAME = name;
+        setHeader(name, name, "no profile");
+        showErr(
+          "ERROR: Profile null\nPath: Users/" + name + "/profile\n" +
+          "Firebase me ye exact key hona chahiye (case sensitive).\n" +
+          "Known keys: Rahul, Neha, subhambanshiwal2006"
+        );
+        return;
+      }
+
+      DISPLAY_NAME = String(p.name || p.displayName || p.channelName || name).trim();
+      CHANNEL_NAME = String(p.channelName || p.name || DISPLAY_NAME).trim();
+
+      setHeader(DISPLAY_NAME, name, "ok");
+      showOk("Profile loaded: " + DISPLAY_NAME + " (Users/" + name + "/profile)");
+    } catch (e) {
+      DISPLAY_NAME = name;
+      CHANNEL_NAME = name;
+      setHeader(name, name, "fetch fail");
+      showErr("ERROR: " + (e.message || e) + "\nURL: " + url);
     }
   }
 
@@ -257,4 +252,141 @@ textarea{min-height:90px;resize:vertical}
 
   async function postScript(payload) {
     var res = await fetch(SCRIPT_URL, {
-      method: "POST
+      method: "POST",
+      redirect: "follow",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+    var text = await res.text();
+    try { return JSON.parse(text); }
+    catch (e) { throw new Error("Script not JSON: " + text.slice(0, 120)); }
+  }
+
+  // tabs
+  document.getElementById("tabMcq").onclick = function () {
+    document.getElementById("mcq").classList.add("on");
+    document.getElementById("post").classList.remove("on");
+    this.classList.add("on");
+    document.getElementById("tabPost").classList.remove("on");
+  };
+  document.getElementById("tabPost").onclick = function () {
+    document.getElementById("post").classList.add("on");
+    document.getElementById("mcq").classList.remove("on");
+    this.classList.add("on");
+    document.getElementById("tabMcq").classList.remove("on");
+  };
+
+  document.querySelectorAll("#correctBox button").forEach(function (b) {
+    b.onclick = function () {
+      document.querySelectorAll("#correctBox button").forEach(function (x) { x.classList.remove("on"); });
+      this.classList.add("on");
+      correctAns = this.getAttribute("data-v");
+    };
+  });
+
+  document.getElementById("btnRetry").onclick = function () { loadUser(); };
+
+  document.getElementById("mcqBtn").onclick = async function () {
+    var msg = document.getElementById("mcqMsg");
+    var btn = this;
+    msg.textContent = "";
+    if (!USER_ID) {
+      msg.innerHTML = '<span class="err">User id nahi</span>';
+      showErr("Publish block: Label5 id missing");
+      return;
+    }
+
+    var question = document.getElementById("q").value.trim();
+    var subject = document.getElementById("subject").value.trim();
+    if (!question) return msg.innerHTML = '<span class="err">Question required</span>';
+    if (!subject) return msg.innerHTML = '<span class="err">Subject select</span>';
+
+    var channelName = CHANNEL_NAME || DISPLAY_NAME || USER_ID;
+    var qid = uid("q");
+
+    var payload = {
+      action: "mcq",
+      qid: qid,
+      question: question,
+      optionA: document.getElementById("oa").value.trim(),
+      optionB: document.getElementById("ob").value.trim(),
+      optionC: document.getElementById("oc").value.trim(),
+      optionD: document.getElementById("od").value.trim(),
+      correct: correctAns,
+      channelName: channelName,
+      displayName: DISPLAY_NAME || channelName,
+      username: channelName,
+      subject: subject,
+      chapter: document.getElementById("chapter").value.trim(),
+      level: document.getElementById("level").value,
+      ownerId: USER_ID,
+      likes: 0,
+      comments: 0
+    };
+
+    btn.disabled = true;
+    msg.textContent = "Publishing...";
+    try {
+      var data = await postScript(payload);
+      if (!data.success) throw new Error(data.error || "Sheet failed");
+      msg.innerHTML = '<span class="ok">Saved · ' + channelName + ' · ' + qid + '</span>';
+    } catch (e) {
+      msg.innerHTML = '<span class="err">' + e.message + '</span>';
+      showErr("Publish error: " + e.message);
+    }
+    btn.disabled = false;
+  };
+
+  document.getElementById("postBtn").onclick = async function () {
+    var msg = document.getElementById("postMsg");
+    var btn = this;
+    msg.textContent = "";
+    if (!USER_ID) {
+      msg.innerHTML = '<span class="err">User id nahi</span>';
+      return;
+    }
+    var description = document.getElementById("desc").value.trim();
+    var image = document.getElementById("image").value.trim();
+    if (!description && !image) return msg.innerHTML = '<span class="err">Text or image</span>';
+
+    var username = CHANNEL_NAME || DISPLAY_NAME || USER_ID;
+    var pid = uid("p");
+    var payload = {
+      action: "post",
+      pid: pid,
+      image: image,
+      username: username,
+      channelName: username,
+      displayName: DISPLAY_NAME || username,
+      description: description,
+      likes: 0,
+      saves: 0,
+      ownerId: USER_ID
+    };
+
+    btn.disabled = true;
+    msg.textContent = "Publishing...";
+    try {
+      var data = await postScript(payload);
+      if (!data.success) throw new Error(data.error || "fail");
+      msg.innerHTML = '<span class="ok">Saved · ' + username + ' · ' + pid + '</span>';
+    } catch (e) {
+      msg.innerHTML = '<span class="err">' + e.message + '</span>';
+      showErr("Publish error: " + e.message);
+    }
+    btn.disabled = false;
+  };
+
+  // start + late WebViewString retries
+  loadUser();
+  setTimeout(function () { if (!DISPLAY_NAME || DISPLAY_NAME === USER_ID) loadUser(); }, 600);
+  setTimeout(function () { if (!DOCUMENT_OK()) loadUser(); }, 1500);
+
+  function DOCUMENT_OK() {
+    var t = document.getElementById("dispId").textContent || "";
+    return t.indexOf("· ok") >= 0;
+  }
+})();
+</script>
+</body>
+</html>

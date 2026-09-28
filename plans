@@ -138,7 +138,7 @@ textarea{min-height:90px;resize:vertical}
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 <script>
   // ===== REPLACE only Apps Script create URL if needed =====
-  const SCRIPT_URL = "REPLACE_CREATE_APPS_SCRIPT_URL"; // action=mcq | post
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwmJ1ZRzyURoUcQEORH_nBKiQ2vOHLA1zMvba6a01Qjgvv4jV9dtXCkEV6I0lAUZE5n/exec"; // action=mcq | post
 
   const firebaseConfig = {
     apiKey: "AIzaSyCDvOq7CUmM92aDNyEfP7TNXsCLgmDoQxg",

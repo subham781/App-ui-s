@@ -21,10 +21,7 @@ h1{font-size:1.2rem;font-weight:700;margin-bottom:4px}
 .tab.on{border-color:#1877f2;background:#f0f7ff}
 .panel{display:none}.panel.on{display:block}
 label{display:block;font-size:.78rem;font-weight:600;color:#475569;margin:10px 0 5px}
-input,select,textarea{
-  width:100%;border:1.5px solid #e4e6eb;border-radius:12px;padding:11px 12px;
-  font-size:.92rem;font-family:inherit;background:#fafbfc
-}
+input,select,textarea{width:100%;border:1.5px solid #e4e6eb;border-radius:12px;padding:11px 12px;font-size:.92rem;font-family:inherit;background:#fafbfc}
 textarea{min-height:90px;resize:vertical}
 .opt{display:flex;gap:8px;align-items:center;margin-bottom:8px}
 .tag{width:28px;height:28px;border-radius:8px;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0}
@@ -42,13 +39,13 @@ textarea{min-height:90px;resize:vertical}
 <body>
 <div class="wrap">
   <h1>Create</h1>
-  <p class="sub">Profile se name/channel auto · User ID = Label5</p>
+  <p class="sub">Name from Firebase profile · Owner ID from Label5</p>
 
   <div class="card">
     <div class="user-row">
       <div class="av" id="av">?</div>
       <div class="meta">
-        <b id="dispName">Loading profile...</b>
+        <b id="dispName">Waiting Label5...</b>
         <span id="dispId">—</span>
       </div>
     </div>
@@ -59,25 +56,21 @@ textarea{min-height:90px;resize:vertical}
     <button class="tab" type="button" onclick="showPanel('post',this)">Post</button>
   </div>
 
-  <!-- MCQ -->
   <div class="card panel on" id="mcq">
     <label>Question</label>
     <textarea id="q" placeholder="Write question..."></textarea>
-
     <label>Options</label>
     <div class="opt"><span class="tag">A</span><input id="oa" placeholder="Option A"></div>
     <div class="opt"><span class="tag">B</span><input id="ob" placeholder="Option B"></div>
     <div class="opt"><span class="tag">C</span><input id="oc" placeholder="Option C"></div>
     <div class="opt"><span class="tag">D</span><input id="od" placeholder="Option D"></div>
-
-    <label>Correct answer</label>
+    <label>Correct</label>
     <div class="correct" id="correctBox">
       <button type="button" class="on" data-v="A">A</button>
       <button type="button" data-v="B">B</button>
       <button type="button" data-v="C">C</button>
       <button type="button" data-v="D">D</button>
     </div>
-
     <div class="row2">
       <div>
         <label>Subject</label>
@@ -111,24 +104,18 @@ textarea{min-height:90px;resize:vertical}
         </select>
       </div>
     </div>
-
     <label>Chapter (optional)</label>
-    <input id="chapter" type="text" placeholder="e.g. Algebra / Freedom Struggle">
-
-    <p class="hint">Channel name + Owner ID profile / Label5 se auto lagenge.</p>
+    <input id="chapter" type="text" placeholder="Chapter">
+    <p class="hint">Sheet: ChannelName = profile name · Col L = Label5 id</p>
     <button class="btn" id="mcqBtn" type="button" onclick="publishMcq()">Publish MCQ</button>
     <div class="msg" id="mcqMsg"></div>
   </div>
 
-  <!-- POST -->
   <div class="card panel" id="post">
-    <label>Description / text</label>
+    <label>Description</label>
     <textarea id="desc" placeholder="Write something..."></textarea>
-
     <label>Image link (optional)</label>
-    <input id="image" type="url" placeholder="https://... leave empty if no image">
-
-    <p class="hint">Username + Owner ID auto from profile / Label5.</p>
+    <input id="image" type="url" placeholder="https://...">
     <button class="btn" id="postBtn" type="button" onclick="publishPost()">Publish Post</button>
     <div class="msg" id="postMsg"></div>
   </div>
@@ -137,8 +124,8 @@ textarea{min-height:90px;resize:vertical}
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 <script>
-  // ===== REPLACE only Apps Script create URL if needed =====
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwmJ1ZRzyURoUcQEORH_nBKiQ2vOHLA1zMvba6a01Qjgvv4jV9dtXCkEV6I0lAUZE5n/exec"; // action=mcq | post
+  // ===== NAYA Apps Script deploy URL =====
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz40_z7XbkpXepHGYxz97Q_6_NUhb30G_hYOdVEoyNgECJ36P-0UXjKIxYCB_vn5XBFhQ/exec";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCDvOq7CUmM92aDNyEfP7TNXsCLgmDoQxg",
@@ -156,9 +143,10 @@ textarea{min-height:90px;resize:vertical}
     db = firebase.database();
   } catch (e) { console.log(e); }
 
-  let USER_ID = "";       // Label5 key → Users/{USER_ID}
-  let CHANNEL_NAME = "";  // from profile
+  let USER_ID = "";
   let DISPLAY_NAME = "";
+  let CHANNEL_NAME = "";
+  let profileReady = false;
   let correctAns = "A";
 
   function normalizeUserKey(raw) {
@@ -200,40 +188,68 @@ textarea{min-height:90px;resize:vertical}
     return prefix + "_" + Date.now() + "_" + Math.floor(1000 + Math.random() * 9000);
   }
 
+  function setHeader(name, id, note) {
+    document.getElementById("dispName").textContent = name || "—";
+    document.getElementById("dispId").textContent = (id ? ("ID: " + id) : "—") + (note ? (" · " + note) : "");
+    document.getElementById("av").textContent = String(name || id || "?").charAt(0).toUpperCase();
+  }
+
   async function loadProfile() {
     USER_ID = getUserFromKodular() || localStorage.getItem("mcq_user_name") || "";
     if (USER_ID) localStorage.setItem("mcq_user_name", USER_ID);
 
-    document.getElementById("dispId").textContent = USER_ID ? ("ID: " + USER_ID) : "Label5 missing";
-    document.getElementById("av").textContent = (USER_ID || "?").charAt(0).toUpperCase();
+    if (!USER_ID) {
+      setHeader("No Label5", "", "WebViewString empty");
+      profileReady = false;
+      return;
+    }
 
-    if (!USER_ID || !db) {
-      document.getElementById("dispName").textContent = USER_ID || "No user";
-      CHANNEL_NAME = USER_ID || "User";
-      DISPLAY_NAME = USER_ID || "User";
+    setHeader("Loading name...", USER_ID, "");
+
+    if (!db) {
+      DISPLAY_NAME = USER_ID;
+      CHANNEL_NAME = USER_ID;
+      setHeader(USER_ID, USER_ID, "Firebase off");
+      profileReady = true;
       return;
     }
 
     try {
-      var snap = await db.ref("Users/" + USER_ID + "/profile").once("value");
-      var p = snap.val() || {};
-      DISPLAY_NAME = p.name || p.channelName || USER_ID;
-      CHANNEL_NAME = p.channelName || p.name || USER_ID;
-      document.getElementById("dispName").textContent = DISPLAY_NAME;
-      document.getElementById("av").textContent = DISPLAY_NAME.charAt(0).toUpperCase();
-      if (p.photo) {
-        // optional: could set background image
+      // Full user node (more reliable than only /profile if structure differs)
+      var snap = await db.ref("Users/" + USER_ID).once("value");
+      if (!snap.exists()) {
+        DISPLAY_NAME = USER_ID;
+        CHANNEL_NAME = USER_ID;
+        setHeader(USER_ID, USER_ID, "profile not found");
+        profileReady = true;
+        return;
       }
+      var data = snap.val() || {};
+      var p = data.profile || {};
+      // Prefer real display fields
+      DISPLAY_NAME = (p.name || p.channelName || "").trim() || USER_ID;
+      CHANNEL_NAME = (p.channelName || p.name || "").trim() || DISPLAY_NAME;
+      setHeader(DISPLAY_NAME, USER_ID, "profile ok");
+      profileReady = true;
     } catch (e) {
       DISPLAY_NAME = USER_ID;
       CHANNEL_NAME = USER_ID;
-      document.getElementById("dispName").textContent = USER_ID;
+      setHeader(USER_ID, USER_ID, "read error");
+      profileReady = true;
+      console.log(e);
     }
+  }
+
+  // Kodular sometimes sets WebViewString late — retry
+  function bootProfile() {
+    loadProfile();
+    setTimeout(loadProfile, 400);
+    setTimeout(loadProfile, 1200);
   }
 
   async function postScript(payload) {
     if (!SCRIPT_URL || SCRIPT_URL.indexOf("REPLACE") === 0) {
-      throw new Error("SCRIPT_URL set karo (Create Apps Script deploy link)");
+      throw new Error("SCRIPT_URL me naya Apps Script link daalo");
     }
     var res = await fetch(SCRIPT_URL, {
       method: "POST",
@@ -241,21 +257,26 @@ textarea{min-height:90px;resize:vertical}
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify(payload)
     });
-    return res.json();
+    var text = await res.text();
+    try { return JSON.parse(text); }
+    catch (e) { throw new Error("Script JSON nahi: " + text.slice(0, 120)); }
   }
 
   async function publishMcq() {
     var msg = document.getElementById("mcqMsg");
     var btn = document.getElementById("mcqBtn");
     msg.textContent = "";
-    if (!USER_ID) return msg.innerHTML = '<span class="err">Label5 / WebViewString required</span>';
+    if (!USER_ID) return msg.innerHTML = '<span class="err">Label5 id nahi mili</span>';
 
     var question = document.getElementById("q").value.trim();
     var subject = document.getElementById("subject").value.trim();
     if (!question) return msg.innerHTML = '<span class="err">Question required</span>';
     if (!subject) return msg.innerHTML = '<span class="err">Subject select karo</span>';
 
+    // final names (never send only id if profile name exists)
+    var channelName = CHANNEL_NAME || DISPLAY_NAME || USER_ID;
     var qid = uid("q");
+
     var payload = {
       action: "mcq",
       qid: qid,
@@ -265,11 +286,12 @@ textarea{min-height:90px;resize:vertical}
       optionC: document.getElementById("oc").value.trim(),
       optionD: document.getElementById("od").value.trim(),
       correct: correctAns,
-      channelName: CHANNEL_NAME || DISPLAY_NAME || USER_ID,
+      channelName: channelName,
+      displayName: DISPLAY_NAME || channelName,
+      username: channelName,
       subject: subject,
       chapter: document.getElementById("chapter").value.trim(),
       level: document.getElementById("level").value,
-      username: CHANNEL_NAME || DISPLAY_NAME || USER_ID,
       ownerId: USER_ID,
       likes: 0,
       comments: 0
@@ -279,7 +301,7 @@ textarea{min-height:90px;resize:vertical}
     msg.textContent = "Publishing...";
     try {
       var data = await postScript(payload);
-      if (!data.success) throw new Error(data.error || "Sheet failed");
+      if (!data.success) throw new Error(data.error || "fail");
 
       if (db) {
         await db.ref("Users/" + USER_ID + "/provide/mcq/" + qid).set({
@@ -290,12 +312,7 @@ textarea{min-height:90px;resize:vertical}
           return (v || 0) + 1;
         });
       }
-      msg.innerHTML = '<span class="ok">MCQ saved · ' + qid + '</span>';
-      document.getElementById("q").value = "";
-      document.getElementById("oa").value = "";
-      document.getElementById("ob").value = "";
-      document.getElementById("oc").value = "";
-      document.getElementById("od").value = "";
+      msg.innerHTML = '<span class="ok">Saved · name: ' + channelName + ' · id: ' + qid + '</span>';
     } catch (e) {
       msg.innerHTML = '<span class="err">' + e.message + '</span>';
     }
@@ -306,20 +323,22 @@ textarea{min-height:90px;resize:vertical}
     var msg = document.getElementById("postMsg");
     var btn = document.getElementById("postBtn");
     msg.textContent = "";
-    if (!USER_ID) return msg.innerHTML = '<span class="err">Label5 / WebViewString required</span>';
+    if (!USER_ID) return msg.innerHTML = '<span class="err">Label5 id nahi mili</span>';
 
     var description = document.getElementById("desc").value.trim();
     var image = document.getElementById("image").value.trim();
-    if (!description && !image) {
-      return msg.innerHTML = '<span class="err">Text or image required</span>';
-    }
+    if (!description && !image) return msg.innerHTML = '<span class="err">Text or image required</span>';
 
+    var username = CHANNEL_NAME || DISPLAY_NAME || USER_ID;
     var pid = uid("p");
+
     var payload = {
       action: "post",
       pid: pid,
       image: image,
-      username: CHANNEL_NAME || DISPLAY_NAME || USER_ID,
+      username: username,
+      channelName: username,
+      displayName: DISPLAY_NAME || username,
       description: description,
       likes: 0,
       saves: 0,
@@ -330,8 +349,7 @@ textarea{min-height:90px;resize:vertical}
     msg.textContent = "Publishing...";
     try {
       var data = await postScript(payload);
-      if (!data.success) throw new Error(data.error || "Sheet failed");
-
+      if (!data.success) throw new Error(data.error || "fail");
       if (db) {
         await db.ref("Users/" + USER_ID + "/provide/posts/" + pid).set({
           ts: Math.floor(Date.now() / 1000)
@@ -340,16 +358,14 @@ textarea{min-height:90px;resize:vertical}
           return (v || 0) + 1;
         });
       }
-      msg.innerHTML = '<span class="ok">Post saved · ' + pid + '</span>';
-      document.getElementById("desc").value = "";
-      document.getElementById("image").value = "";
+      msg.innerHTML = '<span class="ok">Post saved · ' + username + ' · ' + pid + '</span>';
     } catch (e) {
       msg.innerHTML = '<span class="err">' + e.message + '</span>';
     }
     btn.disabled = false;
   }
 
-  loadProfile();
+  bootProfile();
 </script>
 </body>
 </html>

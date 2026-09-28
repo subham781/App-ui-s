@@ -5,212 +5,111 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Profile</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-
 body{
   font-family:Inter,system-ui,sans-serif;
-  background:#f0f2f5;
-  color:#0f172a;
-  min-height:100vh;
-  padding:16px;
-  padding-bottom:40px;
+  background:linear-gradient(180deg,#eef2ff 0%,#f0f2f5 140px,#f0f2f5 100%);
+  color:#0f172a;min-height:100vh;padding:16px;padding-bottom:48px;
 }
-
 .wrap{max-width:480px;margin:0 auto}
-
-.card{
-  background:#fff;
-  border-radius:18px;
-  border:1px solid #e4e6eb;
-  box-shadow:0 4px 16px rgba(0,0,0,.05);
-  padding:18px;
-  margin-bottom:12px;
-}
-
-.profile-top{text-align:center;padding-top:8px}
-
-.avatar{
-  width:84px;
-  height:84px;
-  border-radius:50%;
-  object-fit:cover;
-  border:3px solid #e8f0fe;
-  background:#e4e6eb;
-  margin:0 auto 10px;
-  display:block;
-}
-
-.avatar-fallback{
-  width:84px;
-  height:84px;
-  border-radius:50%;
+.hero{
   background:linear-gradient(135deg,#1877f2,#4f46e5);
-  color:#fff;
-  font-size:2rem;
-  font-weight:700;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin:0 auto 10px;
+  border-radius:22px;padding:22px 18px 18px;color:#fff;
+  box-shadow:0 12px 28px rgba(37,99,235,.25);margin-bottom:14px;position:relative;
 }
-
-.name{font-size:1.25rem;font-weight:700}
-
-.channel{
-  color:#1877f2;
-  font-size:.9rem;
-  font-weight:600;
-  margin-top:2px;
+.hero-actions{position:absolute;top:14px;right:14px;display:flex;gap:8px}
+.icon-btn{
+  width:36px;height:36px;border:0;border-radius:12px;
+  background:rgba(255,255,255,.18);color:#fff;font-size:15px;cursor:pointer;
+  backdrop-filter:blur(6px);
 }
-
-.bio{
-  color:#65676b;
-  font-size:.86rem;
-  margin-top:8px;
-  line-height:1.4;
+.avatar-wrap{display:flex;justify-content:center;margin-bottom:10px}
+.avatar,.avatar-fallback{
+  width:88px;height:88px;border-radius:50%;border:3px solid rgba(255,255,255,.55);
 }
-
-.tags{
-  display:flex;
-  gap:6px;
-  justify-content:center;
-  flex-wrap:wrap;
-  margin-top:10px;
+.avatar{object-fit:cover;background:#ddd;display:block}
+.avatar-fallback{
+  background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;
+  font-size:2rem;font-weight:700;
 }
-
+.display-name{text-align:center;font-size:1.35rem;font-weight:700}
+.channel{text-align:center;opacity:.92;font-size:.9rem;font-weight:600;margin-top:3px}
+.bio{text-align:center;opacity:.88;font-size:.84rem;margin-top:8px;line-height:1.4;max-width:340px;margin-left:auto;margin-right:auto}
+.tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:12px}
 .tag{
-  background:#f0f2f5;
-  border-radius:999px;
-  padding:5px 10px;
-  font-size:.72rem;
-  font-weight:600;
-  color:#4b5563;
+  background:rgba(255,255,255,.18);border-radius:999px;padding:5px 11px;
+  font-size:.72rem;font-weight:600;
 }
-
 .stats{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px;
-  margin-top:14px;
-  padding-top:14px;
-  border-top:1px solid #f1f5f9;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+  margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.2);
 }
-
 .stat{text-align:center}
-
-.stat b{
-  display:block;
-  font-size:1rem;
+.stat b{display:block;font-size:1.05rem}
+.stat span{font-size:.68rem;opacity:.85}
+.card{
+  background:#fff;border-radius:18px;border:1px solid #e8ecf4;
+  box-shadow:0 4px 16px rgba(15,23,42,.04);padding:16px;margin-bottom:12px;
 }
-
-.stat span{
-  font-size:.68rem;
-  color:#65676b;
-}
-
 .section-title{
-  font-size:.78rem;
-  font-weight:700;
-  color:#1877f2;
-  text-transform:uppercase;
-  letter-spacing:.4px;
-  margin-bottom:10px;
+  font-size:.76rem;font-weight:700;color:#4f46e5;text-transform:uppercase;
+  letter-spacing:.45px;margin-bottom:12px;
 }
-
-.row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:8px 0;
-  border-bottom:1px solid #f8fafc;
-  font-size:.88rem;
-}
-
-.row:last-child{border-bottom:0}
-
-.row span{color:#65676b}
-
-.row b{color:#0f172a}
-
-.bar-wrap{margin-top:8px}
-
-.bar-label{
-  display:flex;
-  justify-content:space-between;
-  font-size:.8rem;
-  margin-bottom:4px;
-}
-
-.bar-bg{
-  height:8px;
-  background:#eef2ff;
-  border-radius:99px;
-  overflow:hidden;
-}
-
-.bar-fill{
-  height:100%;
-  background:linear-gradient(90deg,#1877f2,#4f46e5);
-  border-radius:99px;
-}
-
-.grid2{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-}
-
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .mini{
-  background:#f8fafc;
-  border:1px solid #eef2f7;
-  border-radius:12px;
-  padding:12px;
-  text-align:center;
+  background:#f8fafc;border:1px solid #eef2f7;border-radius:14px;padding:12px;text-align:center;
 }
-
-.mini b{
-  display:block;
-  font-size:1.1rem;
+.mini b{display:block;font-size:1.15rem;color:#0f172a}
+.mini span{font-size:.72rem;color:#64748b}
+.row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:9px 0;border-bottom:1px solid #f1f5f9;font-size:.88rem;
 }
-
-.mini span{
-  font-size:.72rem;
-  color:#65676b;
-}
-
-.loading,
-.error{
-  text-align:center;
-  padding:40px 16px;
-  color:#65676b;
-  font-size:.92rem;
-}
-
+.row:last-child{border-bottom:0}
+.row span{color:#64748b}
+.row b{color:#0f172a}
+.bar-wrap{margin-top:10px}
+.bar-label{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:4px}
+.bar-bg{height:8px;background:#eef2ff;border-radius:99px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,#1877f2,#4f46e5);border-radius:99px}
+.loading,.error{text-align:center;padding:48px 16px;color:#64748b;font-size:.92rem;line-height:1.5}
 .error{color:#b91c1c}
+.uid-hint{text-align:center;font-size:.72rem;color:#94a3b8;margin:-4px 0 12px}
+
+/* Edit panel */
+.edit-panel{display:none}
+.edit-panel.show{display:block}
+label{display:block;font-size:.78rem;font-weight:600;color:#475569;margin:10px 0 5px}
+input,textarea,select{
+  width:100%;border:1.5px solid #e2e8f0;border-radius:12px;padding:11px 12px;
+  font-size:.92rem;font-family:inherit;background:#fafbfc;outline:none;
+}
+input:focus,textarea:focus,select:focus{border-color:#6366f1;background:#fff}
+textarea{min-height:80px;resize:vertical}
+.btn-row{display:flex;gap:10px;margin-top:14px}
+.btn{
+  flex:1;border:0;border-radius:12px;padding:12px;font-weight:700;font-size:.9rem;cursor:pointer;
+}
+.btn-ghost{background:#e2e8f0;color:#0f172a}
+.btn-primary{background:linear-gradient(135deg,#1877f2,#4f46e5);color:#fff}
+.toast{
+  position:fixed;left:50%;bottom:24px;transform:translateX(-50%);
+  background:#0f172a;color:#fff;padding:10px 16px;border-radius:999px;
+  font-size:.82rem;opacity:0;pointer-events:none;transition:.25s;z-index:50;
+}
+.toast.show{opacity:1}
 </style>
 </head>
-
 <body>
-
 <div class="wrap">
-
-  <div id="app">
-    <div class="loading">Loading profile...</div>
-  </div>
-
+  <div id="app"><div class="loading">Loading profile...</div></div>
 </div>
+<div class="toast" id="toast">Saved</div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-
 <script>
-
-// =====================================================
-// FIREBASE CONFIG
-// =====================================================
-
 const firebaseConfig = {
   apiKey: "AIzaSyCDvOq7CUmM92aDNyEfP7TNXsCLgmDoQxg",
   authDomain: "prepexam-f98bf.firebaseapp.com",
@@ -221,639 +120,257 @@ const firebaseConfig = {
   appId: "1:570075784084:web:0ebdbef4a887ce777aa581"
 };
 
-// =====================================================
-// FIREBASE START
-// =====================================================
-
 firebase.initializeApp(firebaseConfig);
-
 const db = firebase.database();
 
+let currentKey = "";   // Users/{key}  — gmail local part
+let currentData = null;
 
-// =====================================================
-// USERNAME FROM KODULAR
-//
-// Kodular mein:
-// WebViewer.WebViewString = Label5.Text
-//
-// Example:
-// Label5.Text = "Rahul Sharma"
-// WebViewString = "Rahul Sharma"
-// =====================================================
+/** Label5 = gmail without @gmail.com (or full email — we strip domain) */
+function normalizeUserKey(raw) {
+  var s = String(raw || "").trim();
+  if (!s) return "";
+  if (s.indexOf("USER|") === 0) s = s.substring(5).trim();
+  // full email → local part
+  if (s.indexOf("@") > 0) s = s.split("@")[0];
+  // safety: remove trailing @gmail.com if pasted wrong
+  s = s.replace(/@gmail\.com$/i, "").trim();
+  return s;
+}
 
-function getUserFromKodular(){
-
-  try{
-
-    // AppInventor / Kodular WebViewer
-    if(
-      window.AppInventor &&
-      window.AppInventor.getWebViewString
-    ){
-
+function getUserFromKodular() {
+  try {
+    if (window.AppInventor && window.AppInventor.getWebViewString) {
       var s = window.AppInventor.getWebViewString() || "";
-
-      s = String(s).trim();
-
-      if(s.indexOf("USER|") === 0){
-        s = s.substring(5).trim();
-      }
-
-      if(s){
-        return s;
-      }
+      s = normalizeUserKey(s);
+      if (s) return s;
     }
-
-  }catch(e){
-    console.log("AppInventor error:",e);
-  }
-
-
-  // Backup: Kodular object
-  try{
-
-    if(
-      window.Kodular &&
-      window.Kodular.getWebViewString
-    ){
-
-      var s2 = window.Kodular.getWebViewString() || "";
-
-      s2 = String(s2).trim();
-
-      if(s2.indexOf("USER|") === 0){
-        s2 = s2.substring(5).trim();
-      }
-
-      if(s2){
-        return s2;
-      }
+  } catch (e) {}
+  try {
+    if (window.Kodular && window.Kodular.getWebViewString) {
+      var s2 = normalizeUserKey(window.Kodular.getWebViewString() || "");
+      if (s2) return s2;
     }
-
-  }catch(e){
-    console.log("Kodular error:",e);
-  }
-
-
-  // Backup for browser testing
-  try{
-
-    var q =
-      new URLSearchParams(location.search).get("user");
-
-    return q ? q.trim() : "";
-
-  }catch(e){
-
+  } catch (e) {}
+  try {
+    return normalizeUserKey(new URLSearchParams(location.search).get("user") || "");
+  } catch (e) {
     return "";
   }
 }
 
-
-// =====================================================
-// HTML ESCAPE
-// =====================================================
-
-function escapeHTML(v){
-
+function escapeHTML(v) {
   return String(v || "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;");
-
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function countKeys(obj) {
+  return obj && typeof obj === "object" ? Object.keys(obj).length : 0;
+}
+function showToast(msg) {
+  var t = document.getElementById("toast");
+  t.textContent = msg || "Saved";
+  t.classList.add("show");
+  setTimeout(function () { t.classList.remove("show"); }, 1800);
 }
 
+function renderProfile(key, data) {
+  currentKey = key;
+  currentData = data || {};
 
-// =====================================================
-// COUNT OBJECT KEYS
-// =====================================================
+  var p = data.profile || {};
+  var stats = data.publicStats || {};
+  var analysis = data.analysis || {};
+  var allTime = analysis.allTime || {};
+  var today = analysis.today || {};
+  var subjects = analysis.subjects || {};
+  var provide = data.provide || {};
+  var consume = data.consume || {};
 
-function countKeys(obj){
-
-  return obj &&
-         typeof obj === "object"
-         ? Object.keys(obj).length
-         : 0;
-
-}
-
-
-// =====================================================
-// RENDER PROFILE
-// =====================================================
-
-function renderProfile(name,data){
-
-  var p =
-    data.profile || {};
-
-  var stats =
-    data.publicStats || {};
-
-  var analysis =
-    data.analysis || {};
-
-  var allTime =
-    analysis.allTime || {};
-
-  var today =
-    analysis.today || {};
-
-  var subjects =
-    analysis.subjects || {};
-
-  var provide =
-    data.provide || {};
-
-  var consume =
-    data.consume || {};
-
-
-  // PROFILE PHOTO
-
-  var photo =
-    p.photo || "";
-
-
-  // INITIAL
-
-  var initial =
-    (p.name || name || "?")
-    .charAt(0)
-    .toUpperCase();
-
-
-  // =================================================
-  // SUBJECT PERFORMANCE
-  // =================================================
+  // SHOW profile.name (channel style), not firebase key
+  var displayName = p.name || p.channelName || key;
+  var channel = p.channelName || ("@" + key);
+  var photo = p.photo || "";
+  var initial = String(displayName).charAt(0).toUpperCase();
 
   var subjectHtml = "";
-
-  var subEntries =
-    Object.keys(subjects);
-
-
-  if(!subEntries.length){
-
-    subjectHtml =
-      '<div class="row">' +
-      '<span>No subject data</span>' +
-      '<b>—</b>' +
-      '</div>';
-
-  }else{
-
-    subEntries.forEach(function(key){
-
-      var s =
-        subjects[key] || {};
-
-      var acc =
-        s.accuracy != null
-        ? Number(s.accuracy)
-        : 0;
-
+  var subEntries = Object.keys(subjects);
+  if (!subEntries.length) {
+    subjectHtml = '<div class="row"><span>No subject data</span><b>—</b></div>';
+  } else {
+    subEntries.forEach(function (k) {
+      var s = subjects[k] || {};
+      var acc = s.accuracy != null ? Number(s.accuracy) : 0;
       subjectHtml +=
-
         '<div class="bar-wrap">' +
-
-          '<div class="bar-label">' +
-
-            '<span>' +
-              escapeHTML(key) +
-            '</span>' +
-
-            '<b>' +
-              acc +
-              '%' +
-            '</b>' +
-
-          '</div>' +
-
-          '<div class="bar-bg">' +
-
-            '<div class="bar-fill" ' +
-            'style="width:' +
-            Math.min(100,Math.max(0,acc)) +
-            '%"></div>' +
-
-          '</div>' +
-
+          '<div class="bar-label"><span>' + escapeHTML(k) + '</span><b>' + acc + '%</b></div>' +
+          '<div class="bar-bg"><div class="bar-fill" style="width:' + Math.min(100, Math.max(0, acc)) + '%"></div></div>' +
         '</div>';
-
     });
-
   }
 
-
-  // =================================================
-  // PROFILE HTML
-  // =================================================
-
-  var app =
-    document.getElementById("app");
-
-
+  var app = document.getElementById("app");
   app.innerHTML =
-
-    // PROFILE CARD
-    '<div class="card profile-top">' +
-
-      (
-        photo
-
-        ?
-
-        '<img class="avatar" ' +
-        'src="' +
-        escapeHTML(photo) +
-        '" alt="photo">'
-
-        :
-
-        '<div class="avatar-fallback">' +
-          escapeHTML(initial) +
-        '</div>'
-      ) +
-
-      '<div class="name">' +
-        escapeHTML(p.name || name) +
+    '<div class="hero">' +
+      '<div class="hero-actions">' +
+        '<button class="icon-btn" type="button" id="btnEdit" title="Edit">✎</button>' +
       '</div>' +
-
-      '<div class="channel">' +
-        escapeHTML(
-          p.channelName ||
-          ("@" + name)
-        ) +
+      '<div class="avatar-wrap">' +
+        (photo
+          ? '<img class="avatar" src="' + escapeHTML(photo) + '" alt="photo">'
+          : '<div class="avatar-fallback">' + escapeHTML(initial) + '</div>') +
       '</div>' +
-
-      '<div class="bio">' +
-        escapeHTML(p.bio || "") +
-      '</div>' +
-
+      '<div class="display-name">' + escapeHTML(displayName) + '</div>' +
+      '<div class="channel">' + escapeHTML(channel) + '</div>' +
+      '<div class="bio">' + escapeHTML(p.bio || "No bio yet") + '</div>' +
       '<div class="tags">' +
-
-        '<span class="tag">' +
-          escapeHTML(
-            p.targetExam || "Exam"
-          ) +
-        '</span>' +
-
-        '<span class="tag">' +
-          escapeHTML(
-            p.targetYear || ""
-          ) +
-        '</span>' +
-
-        '<span class="tag">' +
-          escapeHTML(
-            (data.settings &&
-             data.settings.language) ||
-            "en"
-          ) +
-        '</span>' +
-
+        '<span class="tag">' + escapeHTML(p.targetExam || "Exam") + '</span>' +
+        '<span class="tag">' + escapeHTML(p.targetYear || "") + '</span>' +
+        '<span class="tag">' + escapeHTML((data.settings && data.settings.language) || "en") + '</span>' +
       '</div>' +
-
       '<div class="stats">' +
-
-        '<div class="stat">' +
-          '<b>' +
-            (stats.mcqPosted || 0) +
-          '</b>' +
-          '<span>MCQ</span>' +
-        '</div>' +
-
-        '<div class="stat">' +
-          '<b>' +
-            (stats.mocksCount || 0) +
-          '</b>' +
-          '<span>Mocks</span>' +
-        '</div>' +
-
-        '<div class="stat">' +
-          '<b>' +
-            (stats.likesReceived || 0) +
-          '</b>' +
-          '<span>Likes</span>' +
-        '</div>' +
-
-        '<div class="stat">' +
-          '<b>' +
-            (stats.followers || 0) +
-          '</b>' +
-          '<span>Followers</span>' +
-        '</div>' +
-
+        '<div class="stat"><b>' + (stats.mcqPosted || 0) + '</b><span>MCQ</span></div>' +
+        '<div class="stat"><b>' + (stats.mocksCount || 0) + '</b><span>Mocks</span></div>' +
+        '<div class="stat"><b>' + (stats.likesReceived || 0) + '</b><span>Likes</span></div>' +
+        '<div class="stat"><b>' + (stats.followers || 0) + '</b><span>Followers</span></div>' +
       '</div>' +
-
     '</div>' +
 
+    '<div class="uid-hint">Account ID: ' + escapeHTML(key) + '</div>' +
 
-    // PERFORMANCE
-    '<div class="card">' +
-
-      '<div class="section-title">' +
-        'Performance' +
+    // EDIT PANEL
+    '<div class="card edit-panel" id="editPanel">' +
+      '<div class="section-title">Edit profile</div>' +
+      '<label>Display name</label>' +
+      '<input id="ed_name" type="text" value="' + escapeHTML(p.name || "") + '" placeholder="Your name">' +
+      '<label>Channel name</label>' +
+      '<input id="ed_channel" type="text" value="' + escapeHTML(p.channelName || "") + '" placeholder="Channel name">' +
+      '<label>Bio</label>' +
+      '<textarea id="ed_bio" placeholder="About you">' + escapeHTML(p.bio || "") + '</textarea>' +
+      '<label>Photo URL</label>' +
+      '<input id="ed_photo" type="url" value="' + escapeHTML(p.photo || "") + '" placeholder="https://...">' +
+      '<label>Target exam</label>' +
+      '<input id="ed_exam" type="text" value="' + escapeHTML(p.targetExam || "") + '" placeholder="NDA / CDS">' +
+      '<label>Target year</label>' +
+      '<input id="ed_year" type="text" value="' + escapeHTML(p.targetYear || "") + '" placeholder="2026">' +
+      '<label>Language</label>' +
+      '<select id="ed_lang">' +
+        '<option value="hi"' + (((data.settings && data.settings.language) === "hi") ? " selected" : "") + '>Hindi</option>' +
+        '<option value="en"' + (((data.settings && data.settings.language) !== "hi") ? " selected" : "") + '>English</option>' +
+      '</select>' +
+      '<div class="btn-row">' +
+        '<button class="btn btn-ghost" type="button" id="btnCancelEdit">Cancel</button>' +
+        '<button class="btn btn-primary" type="button" id="btnSaveEdit">Save</button>' +
       '</div>' +
+    '</div>' +
 
+    '<div class="card">' +
+      '<div class="section-title">Performance</div>' +
       '<div class="grid2">' +
-
-        '<div class="mini">' +
-          '<b>' +
-            (
-              allTime.accuracy != null
-              ? allTime.accuracy
-              : 0
-            ) +
-            '%' +
-          '</b>' +
-          '<span>Accuracy</span>' +
-        '</div>' +
-
-        '<div class="mini">' +
-          '<b>' +
-            (allTime.streak || 0) +
-          '</b>' +
-          '<span>Streak</span>' +
-        '</div>' +
-
-        '<div class="mini">' +
-          '<b>' +
-            (allTime.attempted || 0) +
-          '</b>' +
-          '<span>Attempted</span>' +
-        '</div>' +
-
-        '<div class="mini">' +
-          '<b>' +
-            (allTime.bestStreak || 0) +
-          '</b>' +
-          '<span>Best streak</span>' +
-        '</div>' +
-
+        '<div class="mini"><b>' + (allTime.accuracy != null ? allTime.accuracy : 0) + '%</b><span>Accuracy</span></div>' +
+        '<div class="mini"><b>' + (allTime.streak || 0) + '</b><span>Streak</span></div>' +
+        '<div class="mini"><b>' + (allTime.attempted || 0) + '</b><span>Attempted</span></div>' +
+        '<div class="mini"><b>' + (allTime.bestStreak || 0) + '</b><span>Best streak</span></div>' +
       '</div>' +
-
-      '<div class="row" style="margin-top:10px">' +
-
-        '<span>Today accuracy</span>' +
-
-        '<b>' +
-          (
-            today.accuracy != null
-            ? today.accuracy
-            : "—"
-          ) +
-          '%' +
-        '</b>' +
-
-      '</div>' +
-
-      '<div class="row">' +
-
-        '<span>Study minutes</span>' +
-
-        '<b>' +
-          (allTime.studyMinutes || 0) +
-        '</b>' +
-
-      '</div>' +
-
+      '<div class="row" style="margin-top:10px"><span>Today accuracy</span><b>' +
+        (today.accuracy != null ? today.accuracy + "%" : "—") + '</b></div>' +
+      '<div class="row"><span>Study minutes</span><b>' + (allTime.studyMinutes || 0) + '</b></div>' +
     '</div>' +
 
-
-    // SUBJECTS
     '<div class="card">' +
-
-      '<div class="section-title">' +
-        'Subjects' +
-      '</div>' +
-
+      '<div class="section-title">Subjects</div>' +
       subjectHtml +
-
     '</div>' +
 
-
-    // PROVIDE
     '<div class="card">' +
-
-      '<div class="section-title">' +
-        'Provide (uploaded)' +
-      '</div>' +
-
-      '<div class="row">' +
-        '<span>MCQ</span>' +
-        '<b>' +
-          countKeys(provide.mcq) +
-        '</b>' +
-      '</div>' +
-
-      '<div class="row">' +
-        '<span>Posts</span>' +
-        '<b>' +
-          countKeys(provide.posts) +
-        '</b>' +
-      '</div>' +
-
-      '<div class="row">' +
-        '<span>Courses</span>' +
-        '<b>' +
-          countKeys(provide.courses) +
-        '</b>' +
-      '</div>' +
-
-      '<div class="row">' +
-        '<span>Mocks</span>' +
-        '<b>' +
-          countKeys(provide.mocks) +
-        '</b>' +
-      '</div>' +
-
-      '<div class="row">' +
-        '<span>Test series</span>' +
-        '<b>' +
-          countKeys(provide.testSeries) +
-        '</b>' +
-      '</div>' +
-
+      '<div class="section-title">Provide (uploaded)</div>' +
+      '<div class="row"><span>MCQ</span><b>' + countKeys(provide.mcq) + '</b></div>' +
+      '<div class="row"><span>Posts</span><b>' + countKeys(provide.posts) + '</b></div>' +
+      '<div class="row"><span>Courses</span><b>' + countKeys(provide.courses) + '</b></div>' +
+      '<div class="row"><span>Mocks</span><b>' + countKeys(provide.mocks) + '</b></div>' +
+      '<div class="row"><span>Test series</span><b>' + countKeys(provide.testSeries) + '</b></div>' +
     '</div>' +
 
-
-    // CONSUME
     '<div class="card">' +
-
-      '<div class="section-title">' +
-        'Consume (activity)' +
-      '</div>' +
-
-      '<div class="row">' +
-        '<span>Saved MCQ</span>' +
-        '<b>' +
-          countKeys(consume.savedMcq) +
-        '</b>' +
-      '</div>' +
-
-      '<div class="row">' +
-        '<span>Liked MCQ</span>' +
-        '<b>' +
-          countKeys(consume.likedMcq) +
-        '</b>' +
-      '</div>' +
-
-      '<div class="row">' +
-        '<span>Mocks attempted</span>' +
-        '<b>' +
-          countKeys(consume.attemptedMocks) +
-        '</b>' +
-      '</div>' +
-
-      '<div class="row">' +
-        '<span>Courses purchased</span>' +
-        '<b>' +
-          countKeys(
-            consume.purchased &&
-            consume.purchased.courses
-          ) +
-        '</b>' +
-      '</div>' +
-
+      '<div class="section-title">Consume (activity)</div>' +
+      '<div class="row"><span>Saved MCQ</span><b>' + countKeys(consume.savedMcq) + '</b></div>' +
+      '<div class="row"><span>Liked MCQ</span><b>' + countKeys(consume.likedMcq) + '</b></div>' +
+      '<div class="row"><span>Mocks attempted</span><b>' + countKeys(consume.attemptedMocks) + '</b></div>' +
+      '<div class="row"><span>Courses purchased</span><b>' +
+        countKeys(consume.purchased && consume.purchased.courses) + '</b></div>' +
     '</div>';
 
+  document.getElementById("btnEdit").onclick = function () {
+    document.getElementById("editPanel").classList.add("show");
+  };
+  document.getElementById("btnCancelEdit").onclick = function () {
+    document.getElementById("editPanel").classList.remove("show");
+  };
+  document.getElementById("btnSaveEdit").onclick = saveProfile;
 }
 
+function saveProfile() {
+  if (!currentKey) return;
+  var name = document.getElementById("ed_name").value.trim();
+  var channel = document.getElementById("ed_channel").value.trim();
+  var bio = document.getElementById("ed_bio").value.trim();
+  var photo = document.getElementById("ed_photo").value.trim();
+  var exam = document.getElementById("ed_exam").value.trim();
+  var year = document.getElementById("ed_year").value.trim();
+  var lang = document.getElementById("ed_lang").value;
 
-// =====================================================
-// LOAD USER FROM FIREBASE
-// =====================================================
+  var updates = {};
+  updates["Users/" + currentKey + "/profile/name"] = name;
+  updates["Users/" + currentKey + "/profile/channelName"] = channel;
+  updates["Users/" + currentKey + "/profile/bio"] = bio;
+  updates["Users/" + currentKey + "/profile/photo"] = photo;
+  updates["Users/" + currentKey + "/profile/targetExam"] = exam;
+  updates["Users/" + currentKey + "/profile/targetYear"] = year;
+  updates["Users/" + currentKey + "/settings/language"] = lang;
 
-function loadUser(name){
+  db.ref().update(updates)
+    .then(function () {
+      showToast("Profile saved");
+      loadUser(currentKey);
+    })
+    .catch(function (err) {
+      alert("Save failed: " + err.message);
+    });
+}
 
-  name =
-    String(name || "").trim();
-
-
-  var app =
-    document.getElementById("app");
-
-
-  if(!name){
-
+function loadUser(name) {
+  name = normalizeUserKey(name);
+  var app = document.getElementById("app");
+  if (!name) {
     app.innerHTML =
-      '<div class="error">' +
-      'Username nahi mila.<br>' +
-      'Kodular WebViewString mein Label5.Text bhejo.' +
-      '</div>';
-
+      '<div class="error">Username nahi mila.<br>Kodular: WebViewString = Label5.Text<br>(gmail bina @gmail.com)</div>';
     return;
   }
+  app.innerHTML = '<div class="loading">Loading profile...</div>';
 
-
-  app.innerHTML =
-    '<div class="loading">' +
-    'Loading profile...' +
-    '</div>';
-
-
-  // IMPORTANT:
-  // Firebase path = Users/{Label5.Text}
-
-  db.ref(
-    "Users/" + name
-  )
-
-  .once("value")
-
-  .then(function(snap){
-
-    if(!snap.exists()){
-
-      app.innerHTML =
-        '<div class="error">' +
-
-        'User not found: ' +
-        escapeHTML(name) +
-
-        '<br><br>' +
-
-        'Firebase path:<br>' +
-
-        '<b>Users/' +
-        escapeHTML(name) +
-        '</b>' +
-
-        '</div>';
-
-      return;
-    }
-
-
-    renderProfile(
-      name,
-      snap.val() || {}
-    );
-
-  })
-
-  .catch(function(err){
-
-    app.innerHTML =
-      '<div class="error">' +
-
-      'Firebase error:<br>' +
-
-      escapeHTML(err.message) +
-
-      '</div>';
-
-  });
-
+  db.ref("Users/" + name).once("value")
+    .then(function (snap) {
+      if (!snap.exists()) {
+        app.innerHTML =
+          '<div class="error">User not found: <b>' + escapeHTML(name) +
+          '</b><br>Path: Users/' + escapeHTML(name) + '</div>';
+        return;
+      }
+      renderProfile(name, snap.val() || {});
+    })
+    .catch(function (err) {
+      app.innerHTML = '<div class="error">Firebase error:<br>' + escapeHTML(err.message) + '</div>';
+    });
 }
 
-
-// =====================================================
 // START
-// =====================================================
-
-var username =
-  getUserFromKodular();
-
-
-if(username){
-
+var username = getUserFromKodular();
+if (username) {
   loadUser(username);
-
-}else{
-
+} else {
   document.getElementById("app").innerHTML =
-
-    '<div class="loading">' +
-
-      'Waiting for Kodular Label5.Text...' +
-
-      '<br><br>' +
-
-      '<small>' +
-      'WebViewString = Label5.Text' +
-      '</small>' +
-
-    '</div>';
-
+    '<div class="loading">Waiting for Label5...<br><small>WebViewString = Label5.Text<br>e.g. rahul (not rahul@gmail.com)</small></div>';
 }
-
 </script>
-
 </body>
 </html>
-
-Kodular mein bas ye karna hai:
-
-"WebViewer1.WebViewString = Label5.Text"
-
-Agar "Label5.Text = Rahul Sharma" hai, HTML automatically Firebase se:
-
-"Users/Rahul Sharma"
-
-load karega.
-
-Aur HTML mein koi username textbox nahi hai.

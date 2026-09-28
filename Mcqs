@@ -27,10 +27,20 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
     }
-    .top-bar h1 {
-      font-size: 1rem;
+    .top-bar h1 { font-size: 1rem; font-weight: 700; }
+    .user-chip {
+      font-size: 0.72rem;
       font-weight: 700;
+      background: #eef2ff;
+      color: #3730a3;
+      padding: 4px 10px;
+      border-radius: 999px;
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .lang-switch {
       display: flex;
@@ -136,7 +146,6 @@
     .action-btn.saved { color: #1877f2; }
     .loading { text-align: center; padding: 40px; color: #65676b; }
 
-    /* Insight */
     .insight-wrap {
       display: none;
       margin-top: 14px;
@@ -193,7 +202,6 @@
     }
     .insight-loading { font-size: 0.82rem; color: #65676b; padding: 6px 0; }
 
-    /* Bottom sheet */
     .sheet-overlay {
       position: fixed;
       inset: 0;
@@ -261,6 +269,7 @@
   <div id="feedPage">
     <div class="top-bar">
       <h1>MCQ Practice</h1>
+      <span class="user-chip" id="userChip">—</span>
       <div class="lang-switch">
         <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
         <button class="lang-btn" id="btn-hi" onclick="setLang('hi')">हिं</button>
@@ -272,7 +281,6 @@
     </div>
   </div>
 
-  <!-- Bottom sheet for full Wikipedia -->
   <div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet(event)">
     <div class="sheet" onclick="event.stopPropagation()">
       <div class="sheet-header">
@@ -284,10 +292,68 @@
     </div>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyICNHxGGgvd7TBcgSxjQm3obJqDOGtHHiwiwUoXnxiNurmqmWDfwOXo5x9rfQqnXs/exec";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCDvOq7CUmM92aDNyEfP7TNXsCLgmDoQxg",
+      authDomain: "prepexam-f98bf.firebaseapp.com",
+      databaseURL: "https://prepexam-f98bf-default-rtdb.firebaseio.com",
+      projectId: "prepexam-f98bf",
+      storageBucket: "prepexam-f98bf.firebasestorage.app",
+      messagingSenderId: "570075784084",
+      appId: "1:570075784084:web:0ebdbef4a887ce777aa581"
+    };
+
+    let db = null;
+    try {
+      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+      db = firebase.database();
+    } catch (e) { console.log(e); }
+
     let allQuestions = [];
-    let wikiLang = "en"; // en | hi
+    let wikiLang = "en";
+    let MY_ID = ""; // Label5 → Users/{MY_ID}
+
+    /** Label5 = gmail local part (no @gmail.com) */
+    function normalizeUserKey(raw) {
+      var s = String(raw || "").trim();
+      if (!s) return "";
+      if (s.indexOf("USER|") === 0) s = s.substring(5).trim();
+      if (s.indexOf("@") > 0) s = s.split("@")[0];
+      s = s.replace(/@gmail\.com$/i, "").trim();
+      return s;
+    }
+
+    function getUserFromKodular() {
+      try {
+        if (window.AppInventor && window.AppInventor.getWebViewString) {
+          var s = normalizeUserKey(window.AppInventor.getWebViewString() || "");
+          if (s) return s;
+        }
+      } catch (e) {}
+      try {
+        if (window.Kodular && window.Kodular.getWebViewString) {
+          var s2 = normalizeUserKey(window.Kodular.getWebViewString() || "");
+          if (s2) return s2;
+        }
+      } catch (e) {}
+      try {
+        return normalizeUserKey(new URLSearchParams(location.search).get("user") || "");
+      } catch (e) {
+        return "";
+      }
+    }
+
+    function refreshMyId() {
+      MY_ID = getUserFromKodular() || localStorage.getItem("mcq_user_name") || "";
+      if (MY_ID) localStorage.setItem("mcq_user_name", MY_ID);
+      var chip = document.getElementById("userChip");
+      if (chip) chip.textContent = MY_ID || "no id";
+      return MY_ID;
+    }
 
     function setLang(lang) {
       wikiLang = lang;
@@ -310,22 +376,28 @@
       try {
         return JSON.parse(localStorage.getItem("mcq_stats") || '{"attempted":0,"correct":0,"streak":0,"lastDate":"","subjects":{}}');
       } catch (e) {
-        return {attempted:0, correct:0, streak:0, lastDate:"", subjects:{}};
+        return { attempted: 0, correct: 0, streak: 0, lastDate: "", subjects: {} };
       }
     }
     function saveStats(stats) {
       localStorage.setItem("mcq_stats", JSON.stringify(stats));
     }
 
-    /* Competitive-focused search query */
+    function escapeHTML(v) {
+      return String(v || "")
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+    function escapeAttr(v) {
+      return escapeHTML(v).replace(/'/g, "&#039;");
+    }
+
     function buildSearchQuery(item) {
       var chapter = (item.chapter || "").trim();
       var subject = (item.subject || "").trim();
       var exam = (item.exam || "").trim();
       var q = (item.q || "").replace(/[^\w\s\u0900-\u097F]/g, " ");
       var words = q.split(/\s+/).filter(function (w) { return w.length > 3; }).slice(0, 6).join(" ");
-
-      // Priority for exam students: chapter > subject keywords > question words
       if (chapter.length > 2) return chapter + (subject ? " " + subject : "");
       if (subject.length > 2) return subject + " " + words;
       return words || exam || "general knowledge";
@@ -335,13 +407,11 @@
       var host = wikiHost();
       var searchUrl = host + "/w/api.php?action=query&list=search&srsearch=" +
         encodeURIComponent(query) + "&srlimit=5&format=json&origin=*";
-
       var searchRes = await fetch(searchUrl);
       if (!searchRes.ok) throw new Error("Wiki search failed");
       var searchData = await searchRes.json();
       var results = (searchData.query && searchData.query.search) || [];
       if (!results.length) return [];
-
       var cards = [];
       for (var i = 0; i < Math.min(5, results.length); i++) {
         var title = results[i].title;
@@ -351,7 +421,6 @@
           if (!sumRes.ok) continue;
           var sum = await sumRes.json();
           if (sum.type === "disambiguation") continue;
-
           cards.push({
             t: sum.title || title,
             d: sum.extract || (results[i].snippet || "").replace(/<[^>]+>/g, ""),
@@ -365,16 +434,13 @@
     async function showTopicInsight(qIndex, item) {
       var box = document.getElementById("insight-" + qIndex);
       if (!box || box.dataset.loaded === "1") return;
-
       box.classList.add("show");
       box.innerHTML = '<div class="insight-loading">' +
         (wikiLang === "hi" ? "विषय सार लोड हो रहा है..." : "Loading exam-focused topic briefs...") +
         "</div>";
-
       try {
         var query = buildSearchQuery(item);
         var cards = await fetchWikipediaInsights(query);
-
         if (!cards.length) {
           box.innerHTML = '<div class="insight-title">📚 Topic Insight</div>' +
             '<div class="insight-loading">' +
@@ -382,14 +448,12 @@
             "</div>";
           return;
         }
-
         var title = wikiLang === "hi" ? "📚 परीक्षा नोट्स (संक्षेप)" : "📚 Exam notes (brief)";
         var openTxt = wikiLang === "hi" ? "पूरा पेज खोलें →" : "Open full page →";
-
         var html = '<div class="insight-title">' + title + '</div><div class="insight-scroll">';
         cards.forEach(function (c, idx) {
           html +=
-            '<div class="insight-card" data-url="' + escapeAttr(c.pageUrl) + '" data-title="' + escapeAttr(c.t) + '" id="ic-' + qIndex + '-' + idx + '">' +
+            '<div class="insight-card" id="ic-' + qIndex + '-' + idx + '">' +
               '<h4>' + escapeHTML(c.t) + '</h4>' +
               '<p>' + escapeHTML(c.d) + '</p>' +
               '<div class="open-hint">' + openTxt + '</div>' +
@@ -398,20 +462,14 @@
         html += '</div>';
         box.innerHTML = html;
         box.dataset.loaded = "1";
-
         cards.forEach(function (c, idx) {
           var el = document.getElementById("ic-" + qIndex + "-" + idx);
-          if (el) {
-            el.onclick = function () {
-              openSheet(c.t, c.pageUrl);
-            };
-          }
+          if (el) el.onclick = function () { openSheet(c.t, c.pageUrl); };
         });
       } catch (err) {
-        console.error(err);
         box.innerHTML = '<div class="insight-title">📚 Topic Insight</div>' +
           '<div class="insight-loading">' +
-          (wikiLang === "hi" ? "Wikipedia लोड नहीं हुआ। Internet check करें।" : "Could not load Wikipedia. Check internet.") +
+          (wikiLang === "hi" ? "Wikipedia लोड नहीं हुआ।" : "Could not load Wikipedia.") +
           "</div>";
       }
     }
@@ -429,30 +487,19 @@
       };
       frame.src = url;
     }
-
     function hideSheet() {
       document.getElementById("sheetOverlay").classList.remove("show");
       document.getElementById("sheetFrame").src = "about:blank";
     }
-
     function closeSheet(e) {
       if (e.target.id === "sheetOverlay") hideSheet();
-    }
-
-    function escapeHTML(v) {
-      return String(v || "")
-        .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-    }
-    function escapeAttr(v) {
-      return escapeHTML(v).replace(/'/g, "&#039;");
     }
 
     async function loadQuestions() {
       const feed = document.getElementById("feed");
       feed.innerHTML = '<div class="loading">Loading questions...</div>';
       try {
-        const res = await fetch(API_URL);
+        const res = await fetch(API_URL + (API_URL.indexOf("?") >= 0 ? "&" : "?") + "t=" + Date.now());
         const data = await res.json();
         if (!Array.isArray(data) || data.length === 0) throw new Error("No questions received");
         allQuestions = data;
@@ -469,8 +516,13 @@
         feed.innerHTML = '<div class="loading">No questions found</div>';
         return;
       }
+      const myLikes = getData("mcq_likes");
+      const mySaved = getData("mcq_saved");
 
-      allQuestions.forEach((item, index) => {
+      allQuestions.forEach(function (item, index) {
+        const liked = item.uid && myLikes.indexOf(item.uid) >= 0;
+        const saved = item.uid && mySaved.some(function (s) { return s.uid === item.uid; });
+
         const card = document.createElement("div");
         card.className = "post-card";
 
@@ -479,8 +531,8 @@
         header.innerHTML =
           '<div class="avatar">' + (item.username || "E").charAt(0) + '</div>' +
           '<div class="channel-info">' +
-            '<h3>' + (item.username || "Educator") + '</h3>' +
-            '<p>' + (item.subject || "General") + ' • ' + (item.difficulty || "Medium") + '</p>' +
+            '<h3>' + escapeHTML(item.username || "Educator") + '</h3>' +
+            '<p>' + escapeHTML(item.subject || "General") + ' • ' + escapeHTML(item.difficulty || "Medium") + '</p>' +
           '</div>';
         card.appendChild(header);
 
@@ -492,7 +544,7 @@
         const optionsDiv = document.createElement("div");
         optionsDiv.className = "options";
         optionsDiv.id = "options-" + index;
-        (item.options || []).forEach((opt, i) => {
+        (item.options || []).forEach(function (opt, i) {
           const optDiv = document.createElement("div");
           optDiv.className = "option";
           optDiv.textContent = opt || "—";
@@ -519,13 +571,13 @@
         actions.className = "actions";
 
         const likeBtn = document.createElement("button");
-        likeBtn.className = "action-btn";
+        likeBtn.className = "action-btn" + (liked ? " liked" : "");
         likeBtn.textContent = "👍";
         likeBtn.onclick = function () { toggleLike(item.uid, likeBtn); };
         actions.appendChild(likeBtn);
 
         const saveBtn = document.createElement("button");
-        saveBtn.className = "action-btn";
+        saveBtn.className = "action-btn" + (saved ? " saved" : "");
         saveBtn.textContent = "🔖";
         saveBtn.onclick = function () { toggleSave(index, saveBtn); };
         actions.appendChild(saveBtn);
@@ -539,68 +591,18 @@
     function selectOption(qIndex, selected) {
       const item = allQuestions[qIndex];
       const options = document.querySelectorAll("#options-" + qIndex + " .option");
-
-      options.forEach((opt, i) => {
+      options.forEach(function (opt, i) {
         opt.classList.add("disabled");
         if (i === item.correct) opt.classList.add("correct");
         if (i === selected && selected !== item.correct) opt.classList.add("wrong");
       });
-
       var ans = document.getElementById("answered-" + qIndex);
       if (ans) ans.textContent = (selected === item.correct) ? "Correct ✓" : "Wrong ✗";
-
       showTopicInsight(qIndex, item);
 
       const stats = getStats();
       stats.attempted = (stats.attempted || 0) + 1;
       if (selected === item.correct) stats.correct = (stats.correct || 0) + 1;
-
       const subject = item.subject || "General";
       if (!stats.subjects) stats.subjects = {};
-      if (!stats.subjects[subject]) stats.subjects[subject] = { attempted: 0, correct: 0 };
-      stats.subjects[subject].attempted++;
-      if (selected === item.correct) stats.subjects[subject].correct++;
-
-      const today = new Date().toDateString();
-      if (stats.lastDate !== today) {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        stats.streak = (stats.lastDate === yesterday.toDateString()) ? (stats.streak || 0) + 1 : 1;
-        stats.lastDate = today;
-      }
-      saveStats(stats);
-    }
-
-    function toggleLike(uid, btn) {
-      let likes = getData("mcq_likes");
-      if (likes.includes(uid)) {
-        likes = likes.filter(function (id) { return id !== uid; });
-        btn.classList.remove("liked");
-      } else {
-        likes.push(uid);
-        btn.classList.add("liked");
-      }
-      setData("mcq_likes", likes);
-    }
-
-    function toggleSave(qIndex, btn) {
-      let saved = getData("mcq_saved");
-      const item = allQuestions[qIndex];
-      const exists = saved.find(function (s) { return s.uid === item.uid; });
-      if (exists) {
-        saved = saved.filter(function (s) { return s.uid !== item.uid; });
-        btn.classList.remove("saved");
-      } else {
-        saved.push({
-          q: item.q, subject: item.subject, difficulty: item.difficulty,
-          uid: item.uid, username: item.username
-        });
-        btn.classList.add("saved");
-      }
-      setData("mcq_saved", saved);
-    }
-
-    loadQuestions();
-  </script>
-</body>
-</html>
+   

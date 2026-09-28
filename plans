@@ -3,248 +3,353 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Plans</title>
+<title>Create</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
-  background:#f3f6fb;
-  color:#0f172a;
-  min-height:100vh;
+body{font-family:Inter,system-ui,sans-serif;background:#f0f2f5;color:#0f172a;padding:16px;padding-bottom:40px}
+.wrap{max-width:520px;margin:0 auto}
+h1{font-size:1.2rem;font-weight:700;margin-bottom:4px}
+.sub{font-size:.8rem;color:#64748b;margin-bottom:12px}
+.card{background:#fff;border:1px solid #e4e6eb;border-radius:16px;padding:14px;margin-bottom:12px}
+.user-row{display:flex;align-items:center;gap:10px}
+.av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1877f2,#4f46e5);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.meta b{display:block;font-size:.95rem}
+.meta span{font-size:.75rem;color:#64748b}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tab{flex:1;border:2px solid #e4e6eb;background:#fff;border-radius:12px;padding:12px;font-weight:700;cursor:pointer}
+.tab.on{border-color:#1877f2;background:#f0f7ff}
+.panel{display:none}.panel.on{display:block}
+label{display:block;font-size:.78rem;font-weight:600;color:#475569;margin:10px 0 5px}
+input,select,textarea{
+  width:100%;border:1.5px solid #e4e6eb;border-radius:12px;padding:11px 12px;
+  font-size:.92rem;font-family:inherit;background:#fafbfc
 }
-.wrap{
-  max-width:480px;
-  margin:0 auto;
-  padding:18px 16px 40px;
-}
-.hero{
-  text-align:center;
-  margin-bottom:18px;
-}
-.hero h1{
-  font-size:1.45rem;
-  font-weight:800;
-  letter-spacing:-0.3px;
-}
-.hero p{
-  margin-top:6px;
-  color:#64748b;
-  font-size:0.9rem;
-  line-height:1.5;
-}
-.plan{
-  background:#fff;
-  border:1px solid #e7eef8;
-  border-radius:22px;
-  padding:18px;
-  margin-bottom:14px;
-  box-shadow:0 10px 28px rgba(15,23,42,0.06);
-  position:relative;
-  overflow:hidden;
-}
-.plan.popular{
-  border:2px solid #2563eb;
-  background:linear-gradient(180deg,#ffffff 0%,#f8fbff 100%);
-}
-.tag{
-  position:absolute;
-  top:14px;
-  right:14px;
-  background:#2563eb;
-  color:#fff;
-  font-size:0.7rem;
-  font-weight:700;
-  padding:5px 9px;
-  border-radius:999px;
-}
-.plan-name{
-  font-size:1.05rem;
-  font-weight:800;
-  margin-bottom:4px;
-}
-.plan-desc{
-  color:#64748b;
-  font-size:0.82rem;
-  margin-bottom:14px;
-}
-.price-row{
-  display:flex;
-  align-items:flex-end;
-  gap:6px;
-  margin-bottom:4px;
-}
-.price{
-  font-size:2rem;
-  font-weight:800;
-  color:#0f172a;
-  line-height:1;
-}
-.period{
-  color:#64748b;
-  font-size:0.85rem;
-  margin-bottom:4px;
-}
-.old-price{
-  color:#94a3b8;
-  text-decoration:line-through;
-  font-size:0.85rem;
-  margin-bottom:14px;
-}
-.features{
-  list-style:none;
-  margin:14px 0 16px;
-}
-.features li{
-  display:flex;
-  gap:10px;
-  align-items:flex-start;
-  padding:8px 0;
-  font-size:0.9rem;
-  color:#334155;
-  border-top:1px solid #f1f5f9;
-}
-.features li:first-child{border-top:0}
-.check{
-  width:20px;
-  height:20px;
-  border-radius:50%;
-  background:#e8f9ee;
-  color:#16a34a;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:12px;
-  font-weight:700;
-  flex-shrink:0;
-  margin-top:1px;
-}
-.btn{
-  width:100%;
-  border:0;
-  border-radius:14px;
-  padding:14px;
-  font-size:0.95rem;
-  font-weight:700;
-  cursor:pointer;
-}
-.btn-primary{
-  background:linear-gradient(135deg,#2563eb,#4f46e5);
-  color:#fff;
-  box-shadow:0 8px 18px rgba(37,99,235,0.25);
-}
-.btn-soft{
-  background:#f1f5f9;
-  color:#0f172a;
-}
-.btn:active{transform:scale(0.98)}
-.note{
-  text-align:center;
-  margin-top:10px;
-  color:#94a3b8;
-  font-size:0.78rem;
-}
-.free-banner{
-  background:linear-gradient(135deg,#0f172a,#1e293b);
-  color:#fff;
-  border-radius:22px;
-  padding:18px;
-  margin-bottom:14px;
-}
-.free-banner h3{
-  font-size:1.05rem;
-  margin-bottom:6px;
-}
-.free-banner p{
-  color:#cbd5e1;
-  font-size:0.84rem;
-  line-height:1.5;
-  margin-bottom:14px;
-}
+textarea{min-height:90px;resize:vertical}
+.opt{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.tag{width:28px;height:28px;border-radius:8px;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0}
+.correct{display:flex;gap:8px;flex-wrap:wrap}
+.correct button{border:1.5px solid #e4e6eb;background:#fff;border-radius:999px;padding:6px 12px;font-weight:600}
+.correct button.on{background:#e7f6ec;border-color:#31a24c;color:#31a24c}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{width:100%;border:0;border-radius:12px;padding:13px;font-weight:700;background:linear-gradient(135deg,#1877f2,#4f46e5);color:#fff;margin-top:14px;cursor:pointer}
+.btn:disabled{opacity:.6}
+.msg{margin-top:10px;font-size:.85rem;text-align:center}
+.ok{color:#15803d}.err{color:#b91c1c}
+.hint{font-size:.72rem;color:#64748b;margin-top:6px}
 </style>
 </head>
 <body>
 <div class="wrap">
+  <h1>Create</h1>
+  <p class="sub">Profile se name/channel auto · User ID = Label5</p>
 
-  <div class="hero">
-    <h1>Choose Your Plan</h1>
-    <p>Unlock mock tests, analysis and premium study tools</p>
-  </div>
-
-  <div class="free-banner">
-    <h3>Free Starter</h3>
-    <p>Practice limited tests, basic analysis and free tools. Upgrade anytime.</p>
-    <button class="btn btn-soft" onclick="selectPlan('free')">Continue Free</button>
-  </div>
-
-  <div class="plan">
-    <div class="plan-name">Monthly</div>
-    <div class="plan-desc">Best for short-term exam prep</div>
-    <div class="price-row">
-      <div class="price">₹99</div>
-      <div class="period">/ month</div>
+  <div class="card">
+    <div class="user-row">
+      <div class="av" id="av">?</div>
+      <div class="meta">
+        <b id="dispName">Loading profile...</b>
+        <span id="dispId">—</span>
+      </div>
     </div>
-    <div class="old-price">₹199</div>
-    <ul class="features">
-      <li><span class="check">✓</span><span>Full length mock tests</span></li>
-      <li><span class="check">✓</span><span>Subject-wise practice</span></li>
-      <li><span class="check">✓</span><span>Performance analysis</span></li>
-      <li><span class="check">✓</span><span>Saved questions sync</span></li>
-    </ul>
-    <button class="btn btn-primary" onclick="selectPlan('monthly')">Get Monthly</button>
   </div>
 
-  <div class="plan popular">
-    <div class="tag">Most Popular</div>
-    <div class="plan-name">Yearly</div>
-    <div class="plan-desc">Best value for serious aspirants</div>
-    <div class="price-row">
-      <div class="price">₹499</div>
-      <div class="period">/ year</div>
+  <div class="tabs">
+    <button class="tab on" type="button" onclick="showPanel('mcq',this)">MCQ</button>
+    <button class="tab" type="button" onclick="showPanel('post',this)">Post</button>
+  </div>
+
+  <!-- MCQ -->
+  <div class="card panel on" id="mcq">
+    <label>Question</label>
+    <textarea id="q" placeholder="Write question..."></textarea>
+
+    <label>Options</label>
+    <div class="opt"><span class="tag">A</span><input id="oa" placeholder="Option A"></div>
+    <div class="opt"><span class="tag">B</span><input id="ob" placeholder="Option B"></div>
+    <div class="opt"><span class="tag">C</span><input id="oc" placeholder="Option C"></div>
+    <div class="opt"><span class="tag">D</span><input id="od" placeholder="Option D"></div>
+
+    <label>Correct answer</label>
+    <div class="correct" id="correctBox">
+      <button type="button" class="on" data-v="A">A</button>
+      <button type="button" data-v="B">B</button>
+      <button type="button" data-v="C">C</button>
+      <button type="button" data-v="D">D</button>
     </div>
-    <div class="old-price">₹1199</div>
-    <ul class="features">
-      <li><span class="check">✓</span><span>Everything in Monthly</span></li>
-      <li><span class="check">✓</span><span>Priority new mock tests</span></li>
-      <li><span class="check">✓</span><span>Advanced analysis insights</span></li>
-      <li><span class="check">✓</span><span>Ad-free experience</span></li>
-      <li><span class="check">✓</span><span>Save more than 60%</span></li>
-    </ul>
-    <button class="btn btn-primary" onclick="selectPlan('yearly')">Get Yearly</button>
-  </div>
 
-  <div class="plan">
-    <div class="plan-name">Lifetime</div>
-    <div class="plan-desc">One-time payment, lifetime access</div>
-    <div class="price-row">
-      <div class="price">₹999</div>
-      <div class="period">one time</div>
+    <div class="row2">
+      <div>
+        <label>Subject</label>
+        <select id="subject">
+          <option value="">Select subject</option>
+          <option>Maths</option>
+          <option>Mathematics</option>
+          <option>English</option>
+          <option>GK</option>
+          <option>General</option>
+          <option>History</option>
+          <option>Polity</option>
+          <option>Geography</option>
+          <option>Science</option>
+          <option>Physics</option>
+          <option>Chemistry</option>
+          <option>Biology</option>
+          <option>Logical Reasoning</option>
+          <option>Current Affairs</option>
+          <option>Economics</option>
+          <option>Defence</option>
+        </select>
+      </div>
+      <div>
+        <label>Level</label>
+        <select id="level">
+          <option>Easy</option>
+          <option selected>Medium</option>
+          <option>Hard</option>
+          <option>Very Hard</option>
+        </select>
+      </div>
     </div>
-    <div class="old-price">₹2499</div>
-    <ul class="features">
-      <li><span class="check">✓</span><span>All premium features forever</span></li>
-      <li><span class="check">✓</span><span>Future content included</span></li>
-      <li><span class="check">✓</span><span>No recurring payment</span></li>
-      <li><span class="check">✓</span><span>Best for long-term use</span></li>
-    </ul>
-    <button class="btn btn-primary" onclick="selectPlan('lifetime')">Get Lifetime</button>
+
+    <label>Chapter (optional)</label>
+    <input id="chapter" type="text" placeholder="e.g. Algebra / Freedom Struggle">
+
+    <p class="hint">Channel name + Owner ID profile / Label5 se auto lagenge.</p>
+    <button class="btn" id="mcqBtn" type="button" onclick="publishMcq()">Publish MCQ</button>
+    <div class="msg" id="mcqMsg"></div>
   </div>
 
-  <p class="note">Cancel anytime on monthly plan • Secure payment</p>
+  <!-- POST -->
+  <div class="card panel" id="post">
+    <label>Description / text</label>
+    <textarea id="desc" placeholder="Write something..."></textarea>
+
+    <label>Image link (optional)</label>
+    <input id="image" type="url" placeholder="https://... leave empty if no image">
+
+    <p class="hint">Username + Owner ID auto from profile / Label5.</p>
+    <button class="btn" id="postBtn" type="button" onclick="publishPost()">Publish Post</button>
+    <div class="msg" id="postMsg"></div>
+  </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 <script>
-function selectPlan(plan){
-  var msg = "PLAN|" + plan;
-  try{
-    if(window.Kodular && window.Kodular.setWebViewString){
-      window.Kodular.setWebViewString(msg);
+  // ===== REPLACE only Apps Script create URL if needed =====
+  const SCRIPT_URL = "REPLACE_CREATE_APPS_SCRIPT_URL"; // action=mcq | post
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCDvOq7CUmM92aDNyEfP7TNXsCLgmDoQxg",
+    authDomain: "prepexam-f98bf.firebaseapp.com",
+    databaseURL: "https://prepexam-f98bf-default-rtdb.firebaseio.com",
+    projectId: "prepexam-f98bf",
+    storageBucket: "prepexam-f98bf.firebasestorage.app",
+    messagingSenderId: "570075784084",
+    appId: "1:570075784084:web:0ebdbef4a887ce777aa581"
+  };
+
+  let db = null;
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+  } catch (e) { console.log(e); }
+
+  let USER_ID = "";       // Label5 key → Users/{USER_ID}
+  let CHANNEL_NAME = "";  // from profile
+  let DISPLAY_NAME = "";
+  let correctAns = "A";
+
+  function normalizeUserKey(raw) {
+    var s = String(raw || "").trim();
+    if (!s) return "";
+    if (s.indexOf("USER|") === 0) s = s.substring(5).trim();
+    if (s.indexOf("@") > 0) s = s.split("@")[0];
+    return s.replace(/@gmail\.com$/i, "").trim();
+  }
+
+  function getUserFromKodular() {
+    try {
+      if (window.AppInventor && window.AppInventor.getWebViewString) {
+        var s = normalizeUserKey(window.AppInventor.getWebViewString() || "");
+        if (s) return s;
+      }
+    } catch (e) {}
+    try {
+      return normalizeUserKey(new URLSearchParams(location.search).get("user") || "");
+    } catch (e) { return ""; }
+  }
+
+  function showPanel(id, btn) {
+    document.querySelectorAll(".panel").forEach(function (p) { p.classList.remove("on"); });
+    document.querySelectorAll(".tab").forEach(function (t) { t.classList.remove("on"); });
+    document.getElementById(id).classList.add("on");
+    btn.classList.add("on");
+  }
+
+  document.querySelectorAll("#correctBox button").forEach(function (b) {
+    b.onclick = function () {
+      document.querySelectorAll("#correctBox button").forEach(function (x) { x.classList.remove("on"); });
+      this.classList.add("on");
+      correctAns = this.getAttribute("data-v");
+    };
+  });
+
+  function uid(prefix) {
+    return prefix + "_" + Date.now() + "_" + Math.floor(1000 + Math.random() * 9000);
+  }
+
+  async function loadProfile() {
+    USER_ID = getUserFromKodular() || localStorage.getItem("mcq_user_name") || "";
+    if (USER_ID) localStorage.setItem("mcq_user_name", USER_ID);
+
+    document.getElementById("dispId").textContent = USER_ID ? ("ID: " + USER_ID) : "Label5 missing";
+    document.getElementById("av").textContent = (USER_ID || "?").charAt(0).toUpperCase();
+
+    if (!USER_ID || !db) {
+      document.getElementById("dispName").textContent = USER_ID || "No user";
+      CHANNEL_NAME = USER_ID || "User";
+      DISPLAY_NAME = USER_ID || "User";
+      return;
     }
-    if(window.AppInventor && window.AppInventor.setWebViewString){
-      window.AppInventor.setWebViewString(msg);
+
+    try {
+      var snap = await db.ref("Users/" + USER_ID + "/profile").once("value");
+      var p = snap.val() || {};
+      DISPLAY_NAME = p.name || p.channelName || USER_ID;
+      CHANNEL_NAME = p.channelName || p.name || USER_ID;
+      document.getElementById("dispName").textContent = DISPLAY_NAME;
+      document.getElementById("av").textContent = DISPLAY_NAME.charAt(0).toUpperCase();
+      if (p.photo) {
+        // optional: could set background image
+      }
+    } catch (e) {
+      DISPLAY_NAME = USER_ID;
+      CHANNEL_NAME = USER_ID;
+      document.getElementById("dispName").textContent = USER_ID;
     }
-  }catch(e){}
-  alert("Selected: " + plan);
-}
+  }
+
+  async function postScript(payload) {
+    if (!SCRIPT_URL || SCRIPT_URL.indexOf("REPLACE") === 0) {
+      throw new Error("SCRIPT_URL set karo (Create Apps Script deploy link)");
+    }
+    var res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      redirect: "follow",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+    return res.json();
+  }
+
+  async function publishMcq() {
+    var msg = document.getElementById("mcqMsg");
+    var btn = document.getElementById("mcqBtn");
+    msg.textContent = "";
+    if (!USER_ID) return msg.innerHTML = '<span class="err">Label5 / WebViewString required</span>';
+
+    var question = document.getElementById("q").value.trim();
+    var subject = document.getElementById("subject").value.trim();
+    if (!question) return msg.innerHTML = '<span class="err">Question required</span>';
+    if (!subject) return msg.innerHTML = '<span class="err">Subject select karo</span>';
+
+    var qid = uid("q");
+    var payload = {
+      action: "mcq",
+      qid: qid,
+      question: question,
+      optionA: document.getElementById("oa").value.trim(),
+      optionB: document.getElementById("ob").value.trim(),
+      optionC: document.getElementById("oc").value.trim(),
+      optionD: document.getElementById("od").value.trim(),
+      correct: correctAns,
+      channelName: CHANNEL_NAME || DISPLAY_NAME || USER_ID,
+      subject: subject,
+      chapter: document.getElementById("chapter").value.trim(),
+      level: document.getElementById("level").value,
+      username: CHANNEL_NAME || DISPLAY_NAME || USER_ID,
+      ownerId: USER_ID,
+      likes: 0,
+      comments: 0
+    };
+
+    btn.disabled = true;
+    msg.textContent = "Publishing...";
+    try {
+      var data = await postScript(payload);
+      if (!data.success) throw new Error(data.error || "Sheet failed");
+
+      if (db) {
+        await db.ref("Users/" + USER_ID + "/provide/mcq/" + qid).set({
+          ts: Math.floor(Date.now() / 1000),
+          subject: subject
+        });
+        await db.ref("Users/" + USER_ID + "/publicStats/mcqPosted").transaction(function (v) {
+          return (v || 0) + 1;
+        });
+      }
+      msg.innerHTML = '<span class="ok">MCQ saved · ' + qid + '</span>';
+      document.getElementById("q").value = "";
+      document.getElementById("oa").value = "";
+      document.getElementById("ob").value = "";
+      document.getElementById("oc").value = "";
+      document.getElementById("od").value = "";
+    } catch (e) {
+      msg.innerHTML = '<span class="err">' + e.message + '</span>';
+    }
+    btn.disabled = false;
+  }
+
+  async function publishPost() {
+    var msg = document.getElementById("postMsg");
+    var btn = document.getElementById("postBtn");
+    msg.textContent = "";
+    if (!USER_ID) return msg.innerHTML = '<span class="err">Label5 / WebViewString required</span>';
+
+    var description = document.getElementById("desc").value.trim();
+    var image = document.getElementById("image").value.trim();
+    if (!description && !image) {
+      return msg.innerHTML = '<span class="err">Text or image required</span>';
+    }
+
+    var pid = uid("p");
+    var payload = {
+      action: "post",
+      pid: pid,
+      image: image,
+      username: CHANNEL_NAME || DISPLAY_NAME || USER_ID,
+      description: description,
+      likes: 0,
+      saves: 0,
+      ownerId: USER_ID
+    };
+
+    btn.disabled = true;
+    msg.textContent = "Publishing...";
+    try {
+      var data = await postScript(payload);
+      if (!data.success) throw new Error(data.error || "Sheet failed");
+
+      if (db) {
+        await db.ref("Users/" + USER_ID + "/provide/posts/" + pid).set({
+          ts: Math.floor(Date.now() / 1000)
+        });
+        await db.ref("Users/" + USER_ID + "/publicStats/postsCount").transaction(function (v) {
+          return (v || 0) + 1;
+        });
+      }
+      msg.innerHTML = '<span class="ok">Post saved · ' + pid + '</span>';
+      document.getElementById("desc").value = "";
+      document.getElementById("image").value = "";
+    } catch (e) {
+      msg.innerHTML = '<span class="err">' + e.message + '</span>';
+    }
+    btn.disabled = false;
+  }
+
+  loadProfile();
 </script>
 </body>
 </html>

@@ -3,87 +3,362 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>Create</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Inter,system-ui,sans-serif;background:#f0f2f5;color:#0f172a;padding:16px;padding-bottom:40px}
-.wrap{max-width:520px;margin:0 auto}
-h1{font-size:1.2rem;font-weight:700;margin-bottom:4px}
-.sub{font-size:.8rem;color:#64748b;margin-bottom:12px}
-.card{background:#fff;border:1px solid #e4e6eb;border-radius:16px;padding:14px;margin-bottom:12px}
-.user-row{display:flex;align-items:center;gap:10px}
-.av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1877f2,#4f46e5);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
-.meta b{display:block;font-size:.95rem}
-.meta span{font-size:.75rem;color:#64748b;word-break:break-all}
-.err-box{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;border-radius:12px;padding:10px 12px;font-size:.8rem;margin-top:10px;display:none;line-height:1.4}
-.err-box.show{display:block}
-.ok-box{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;border-radius:12px;padding:8px 12px;font-size:.78rem;margin-top:8px;display:none}
-.ok-box.show{display:block}
-.tabs{display:flex;gap:8px;margin-bottom:12px}
-.tab{flex:1;border:2px solid #e4e6eb;background:#fff;border-radius:12px;padding:12px;font-weight:700;cursor:pointer}
-.tab.on{border-color:#1877f2;background:#f0f7ff}
-.panel{display:none}.panel.on{display:block}
-label{display:block;font-size:.78rem;font-weight:600;color:#475569;margin:10px 0 5px}
-input,select,textarea{width:100%;border:1.5px solid #e4e6eb;border-radius:12px;padding:11px 12px;font-size:.92rem;font-family:inherit;background:#fafbfc}
-textarea{min-height:90px;resize:vertical}
-.opt{display:flex;gap:8px;align-items:center;margin-bottom:8px}
-.tag{width:28px;height:28px;border-radius:8px;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0}
-.correct{display:flex;gap:8px;flex-wrap:wrap}
-.correct button{border:1.5px solid #e4e6eb;background:#fff;border-radius:999px;padding:6px 12px;font-weight:600}
-.correct button.on{background:#e7f6ec;border-color:#31a24c;color:#31a24c}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.btn{width:100%;border:0;border-radius:12px;padding:13px;font-weight:700;background:linear-gradient(135deg,#1877f2,#4f46e5);color:#fff;margin-top:14px;cursor:pointer}
-.btn:disabled{opacity:.6}
-.msg{margin-top:10px;font-size:.85rem;text-align:center}
-.ok{color:#15803d}.err{color:#b91c1c}
-.hint{font-size:.72rem;color:#64748b;margin-top:6px}
-.retry{margin-top:8px;border:0;background:#e2e8f0;border-radius:8px;padding:8px 12px;font-weight:600;font-size:.8rem;cursor:pointer}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box
+}
+
+body{
+  font-family:Inter,system-ui,sans-serif;
+  background:#f0f2f5;
+  color:#0f172a;
+  padding:16px;
+  padding-bottom:40px
+}
+
+.wrap{
+  max-width:520px;
+  margin:0 auto
+}
+
+h1{
+  font-size:1.2rem;
+  font-weight:700;
+  margin-bottom:4px
+}
+
+.sub{
+  font-size:.8rem;
+  color:#64748b;
+  margin-bottom:12px
+}
+
+.card{
+  background:#fff;
+  border:1px solid #e4e6eb;
+  border-radius:16px;
+  padding:14px;
+  margin-bottom:12px
+}
+
+.user-row{
+  display:flex;
+  align-items:center;
+  gap:10px
+}
+
+.av{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#1877f2,#4f46e5);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  flex-shrink:0
+}
+
+.meta b{
+  display:block;
+  font-size:.95rem
+}
+
+.meta span{
+  font-size:.75rem;
+  color:#64748b;
+  word-break:break-all
+}
+
+.err-box{
+  background:#fef2f2;
+  border:1px solid #fecaca;
+  color:#b91c1c;
+  border-radius:12px;
+  padding:10px 12px;
+  font-size:.8rem;
+  margin-top:10px;
+  display:none;
+  line-height:1.4;
+  white-space:pre-wrap
+}
+
+.err-box.show{
+  display:block
+}
+
+.ok-box{
+  background:#f0fdf4;
+  border:1px solid #bbf7d0;
+  color:#15803d;
+  border-radius:12px;
+  padding:8px 12px;
+  font-size:.78rem;
+  margin-top:8px;
+  display:none
+}
+
+.ok-box.show{
+  display:block
+}
+
+.tabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:12px
+}
+
+.tab{
+  flex:1;
+  border:2px solid #e4e6eb;
+  background:#fff;
+  border-radius:12px;
+  padding:12px;
+  font-weight:700;
+  cursor:pointer
+}
+
+.tab.on{
+  border-color:#1877f2;
+  background:#f0f7ff
+}
+
+.panel{
+  display:none
+}
+
+.panel.on{
+  display:block
+}
+
+label{
+  display:block;
+  font-size:.78rem;
+  font-weight:600;
+  color:#475569;
+  margin:10px 0 5px
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  border:1.5px solid #e4e6eb;
+  border-radius:12px;
+  padding:11px 12px;
+  font-size:.92rem;
+  font-family:inherit;
+  background:#fafbfc
+}
+
+textarea{
+  min-height:90px;
+  resize:vertical
+}
+
+.opt{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin-bottom:8px
+}
+
+.tag{
+  width:28px;
+  height:28px;
+  border-radius:8px;
+  background:#eef2ff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.75rem;
+  font-weight:700;
+  flex-shrink:0
+}
+
+.correct{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap
+}
+
+.correct button{
+  border:1.5px solid #e4e6eb;
+  background:#fff;
+  border-radius:999px;
+  padding:6px 12px;
+  font-weight:600
+}
+
+.correct button.on{
+  background:#e7f6ec;
+  border-color:#31a24c;
+  color:#31a24c
+}
+
+.row2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px
+}
+
+.btn{
+  width:100%;
+  border:0;
+  border-radius:12px;
+  padding:13px;
+  font-weight:700;
+  background:linear-gradient(135deg,#1877f2,#4f46e5);
+  color:#fff;
+  margin-top:14px;
+  cursor:pointer
+}
+
+.btn:disabled{
+  opacity:.6
+}
+
+.msg{
+  margin-top:10px;
+  font-size:.85rem;
+  text-align:center
+}
+
+.ok{
+  color:#15803d
+}
+
+.err{
+  color:#b91c1c
+}
+
+.hint{
+  font-size:.72rem;
+  color:#64748b;
+  margin-top:6px
+}
+
+.retry{
+  margin-top:8px;
+  border:0;
+  background:#e2e8f0;
+  border-radius:8px;
+  padding:8px 12px;
+  font-weight:600;
+  font-size:.8rem;
+  cursor:pointer
+}
 </style>
 </head>
+
 <body>
+
 <div class="wrap">
+
   <h1>Create</h1>
   <p class="sub">Label5 → Users/{id}/profile · REST load</p>
 
   <div class="card">
+
     <div class="user-row">
+
       <div class="av" id="av">?</div>
+
       <div class="meta">
         <b id="dispName">Starting...</b>
         <span id="dispId">—</span>
       </div>
+
     </div>
+
     <div class="ok-box" id="okBox"></div>
+
     <div class="err-box" id="errBox"></div>
-    <button class="retry" type="button" id="btnRetry">Retry load profile</button>
+
+    <button class="retry" type="button" id="btnRetry">
+      Retry load profile
+    </button>
+
   </div>
 
   <div class="tabs">
-    <button class="tab on" type="button" id="tabMcq">MCQ</button>
-    <button class="tab" type="button" id="tabPost">Post</button>
+
+    <button class="tab on" type="button" id="tabMcq">
+      MCQ
+    </button>
+
+    <button class="tab" type="button" id="tabPost">
+      Post
+    </button>
+
   </div>
 
+
+  <!-- ================= MCQ ================= -->
+
   <div class="card panel on" id="mcq">
+
     <label>Question</label>
-    <textarea id="q" placeholder="Write question..."></textarea>
+
+    <textarea
+      id="q"
+      placeholder="Write question..."
+    ></textarea>
+
+
     <label>Options</label>
-    <div class="opt"><span class="tag">A</span><input id="oa" placeholder="Option A"></div>
-    <div class="opt"><span class="tag">B</span><input id="ob" placeholder="Option B"></div>
-    <div class="opt"><span class="tag">C</span><input id="oc" placeholder="Option C"></div>
-    <div class="opt"><span class="tag">D</span><input id="od" placeholder="Option D"></div>
+
+    <div class="opt">
+      <span class="tag">A</span>
+      <input id="oa" placeholder="Option A">
+    </div>
+
+    <div class="opt">
+      <span class="tag">B</span>
+      <input id="ob" placeholder="Option B">
+    </div>
+
+    <div class="opt">
+      <span class="tag">C</span>
+      <input id="oc" placeholder="Option C">
+    </div>
+
+    <div class="opt">
+      <span class="tag">D</span>
+      <input id="od" placeholder="Option D">
+    </div>
+
+
     <label>Correct</label>
+
     <div class="correct" id="correctBox">
+
       <button type="button" class="on" data-v="A">A</button>
       <button type="button" data-v="B">B</button>
       <button type="button" data-v="C">C</button>
       <button type="button" data-v="D">D</button>
+
     </div>
+
+
     <div class="row2">
+
       <div>
+
         <label>Subject</label>
+
         <select id="subject">
+
           <option value="">Select subject</option>
+
           <option>Maths</option>
           <option>Mathematics</option>
           <option>English</option>
@@ -100,293 +375,928 @@ textarea{min-height:90px;resize:vertical}
           <option>Current Affairs</option>
           <option>Economics</option>
           <option>Defence</option>
+
         </select>
+
       </div>
+
+
       <div>
+
         <label>Level</label>
+
         <select id="level">
+
           <option>Easy</option>
           <option selected>Medium</option>
           <option>Hard</option>
           <option>Very Hard</option>
+
         </select>
+
       </div>
+
     </div>
+
+
     <label>Chapter (optional)</label>
-    <input id="chapter" type="text" placeholder="Chapter">
-    <p class="hint">Sheet: ChannelName = profile name · OwnerId = Label5</p>
-    <button class="btn" id="mcqBtn" type="button">Publish MCQ</button>
+
+    <input
+      id="chapter"
+      type="text"
+      placeholder="Chapter"
+    >
+
+
+    <p class="hint">
+      Sheet: ChannelName = profile name · OwnerId = Label5
+    </p>
+
+
+    <button
+      class="btn"
+      id="mcqBtn"
+      type="button"
+    >
+      Publish MCQ
+    </button>
+
+
     <div class="msg" id="mcqMsg"></div>
+
   </div>
+
+
+
+  <!-- ================= POST ================= -->
 
   <div class="card panel" id="post">
+
     <label>Description</label>
-    <textarea id="desc" placeholder="Write something..."></textarea>
+
+    <textarea
+      id="desc"
+      placeholder="Write something..."
+    ></textarea>
+
+
     <label>Image link (optional)</label>
-    <input id="image" type="url" placeholder="https://...">
-    <button class="btn" id="postBtn" type="button">Publish Post</button>
+
+    <input
+      id="image"
+      type="url"
+      placeholder="https://..."
+    >
+
+
+    <button
+      class="btn"
+      id="postBtn"
+      type="button"
+    >
+      Publish Post
+    </button>
+
+
     <div class="msg" id="postMsg"></div>
+
   </div>
+
 </div>
 
+
 <script>
-(function () {
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyKOgJPO7jDTJqM9zksmV342IvinOwMEhjXH5f-xVw65k_D8_SYQ3ZEU2b48t8fDR9PQQ/exec";
-  const DB_ROOT = "https://prepexam-f98bf-default-rtdb.firebaseio.com";
 
-  var USER_ID = "";
-  var DISPLAY_NAME = "";
-  var CHANNEL_NAME = "";
-  var correctAns = "A";
+(function(){
 
-  function normalizeUserKey(raw) {
-    var s = String(raw || "").trim();
-    if (!s) return "";
-    if (s.indexOf("USER|") === 0) s = s.substring(5).trim();
-    if (s.indexOf("@") > 0) s = s.split("@")[0];
-    return s.replace(/@gmail\.com$/i, "").trim();
+"use strict";
+
+
+/* =========================================================
+   CONFIG
+========================================================= */
+
+const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbz40_z7XbkpXepHGYxz97Q_6_NUhb30G_hYOdVEoyNgECJ36P-0UXjKIxYCB_vn5XBFhQ/exec";
+
+const DB_ROOT =
+"https://prepexam-f98bf-default-rtdb.firebaseio.com";
+
+
+/* =========================================================
+   USER VARIABLES
+========================================================= */
+
+let USER_ID = "";
+let DISPLAY_NAME = "";
+let CHANNEL_NAME = "";
+
+let correctAns = "A";
+
+
+/* =========================================================
+   USER ID NORMALIZATION
+========================================================= */
+
+function normalizeUserKey(raw){
+
+  let s = String(raw || "").trim();
+
+  if(!s) return "";
+
+  if(s.indexOf("USER|") === 0){
+    s = s.substring(5).trim();
   }
 
-  function getUserFromKodular() {
-    try {
-      if (window.AppInventor && window.AppInventor.getWebViewString) {
-        var s = normalizeUserKey(window.AppInventor.getWebViewString() || "");
-        if (s) return s;
-      }
-    } catch (e) {}
-    try {
-      if (window.Kodular && window.Kodular.getWebViewString) {
-        var s2 = normalizeUserKey(window.Kodular.getWebViewString() || "");
-        if (s2) return s2;
-      }
-    } catch (e) {}
-    try {
-      var q = new URLSearchParams(location.search).get("user");
-      return q ? normalizeUserKey(q) : "";
-    } catch (e) {
-      return "";
+  /*
+     IMPORTANT:
+     Firebase path tumhare current structure ke according
+     Users/{id}/profile hai.
+
+     Gmail ke case me @gmail.com remove karna retained hai.
+  */
+
+  if(/@gmail\.com$/i.test(s)){
+    s = s.replace(/@gmail\.com$/i,"");
+  }
+
+  return s.trim();
+}
+
+
+/* =========================================================
+   GET USER FROM KODULAR
+========================================================= */
+
+function getUserFromKodular(){
+
+  /* AppInventor WebViewString */
+
+  try{
+
+    if(
+      window.AppInventor &&
+      typeof window.AppInventor.getWebViewString === "function"
+    ){
+
+      const value =
+        window.AppInventor.getWebViewString();
+
+      const id =
+        normalizeUserKey(value);
+
+      if(id) return id;
     }
-  }
 
-  function showErr(msg) {
-    var box = document.getElementById("errBox");
-    box.textContent = msg;
-    box.classList.add("show");
-  }
-  function hideErr() {
-    document.getElementById("errBox").classList.remove("show");
-  }
-  function showOk(msg) {
-    var box = document.getElementById("okBox");
-    box.textContent = msg;
-    box.classList.add("show");
-  }
-  function hideOk() {
-    document.getElementById("okBox").classList.remove("show");
-  }
+  }catch(e){}
 
-  function setHeader(name, id, note) {
-    document.getElementById("dispName").textContent = name || "—";
-    document.getElementById("dispId").textContent =
-      (id ? ("ID: " + id) : "—") + (note ? (" · " + note) : "");
-    document.getElementById("av").textContent = String(name || id || "?").charAt(0).toUpperCase();
-  }
 
-  async function loadUser(forcedId) {
-    hideErr();
-    hideOk();
+  /* Kodular */
 
-    var name = normalizeUserKey(forcedId || getUserFromKodular());
-    USER_ID = name;
+  try{
 
-    if (!name) {
-      setHeader("No user id", "", "WebViewString empty");
-      showErr("ERROR: Label5 / WebViewString empty.\nKodular: WebViewString = Label5.Text (e.g. Rahul or subhambanshiwal2006)");
-      return;
+    if(
+      window.Kodular &&
+      typeof window.Kodular.getWebViewString === "function"
+    ){
+
+      const value =
+        window.Kodular.getWebViewString();
+
+      const id =
+        normalizeUserKey(value);
+
+      if(id) return id;
     }
 
-    setHeader("Loading...", name, "fetching profile");
+  }catch(e){}
 
-    var url = DB_ROOT + "/Users/" + encodeURIComponent(name) + "/profile.json";
 
-    try {
-      var res = await fetch(url + "?t=" + Date.now(), { cache: "no-store" });
-      if (!res.ok) {
-        setHeader(name, name, "HTTP " + res.status);
-        showErr("ERROR: Firebase HTTP " + res.status + "\nURL: " + url);
-        DISPLAY_NAME = name;
-        CHANNEL_NAME = name;
-        return;
-      }
+  /* Browser testing */
 
-      var p = await res.json();
+  try{
 
-      if (p === null || p === undefined) {
-        DISPLAY_NAME = name;
-        CHANNEL_NAME = name;
-        setHeader(name, name, "no profile");
-        showErr(
-          "ERROR: Profile null\nPath: Users/" + name + "/profile\n" +
-          "Firebase me ye exact key hona chahiye (case sensitive).\n" +
-          "Known keys: Rahul, Neha, subhambanshiwal2006"
-        );
-        return;
-      }
+    const q =
+      new URLSearchParams(location.search).get("user");
 
-      DISPLAY_NAME = String(p.name || p.displayName || p.channelName || name).trim();
-      CHANNEL_NAME = String(p.channelName || p.name || DISPLAY_NAME).trim();
+    if(q){
+      return normalizeUserKey(q);
+    }
 
-      setHeader(DISPLAY_NAME, name, "ok");
-      showOk("Profile loaded: " + DISPLAY_NAME + " (Users/" + name + "/profile)");
-    } catch (e) {
+  }catch(e){}
+
+
+  return "";
+}
+
+
+/* =========================================================
+   UI HELPERS
+========================================================= */
+
+function showErr(msg){
+
+  const box =
+    document.getElementById("errBox");
+
+  box.textContent = msg;
+
+  box.classList.add("show");
+}
+
+
+function hideErr(){
+
+  document
+    .getElementById("errBox")
+    .classList.remove("show");
+}
+
+
+function showOk(msg){
+
+  const box =
+    document.getElementById("okBox");
+
+  box.textContent = msg;
+
+  box.classList.add("show");
+}
+
+
+function hideOk(){
+
+  document
+    .getElementById("okBox")
+    .classList.remove("show");
+}
+
+
+function setHeader(name,id,note){
+
+  document.getElementById("dispName").textContent =
+    name || "—";
+
+  document.getElementById("dispId").textContent =
+    (id ? "ID: " + id : "—") +
+    (note ? " · " + note : "");
+
+  document.getElementById("av").textContent =
+    String(name || id || "?")
+      .charAt(0)
+      .toUpperCase();
+}
+
+
+/* =========================================================
+   LOAD FIREBASE PROFILE
+========================================================= */
+
+async function loadUser(forcedId){
+
+  hideErr();
+  hideOk();
+
+  const name =
+    normalizeUserKey(
+      forcedId || getUserFromKodular()
+    );
+
+  USER_ID = name;
+
+  if(!name){
+
+    setHeader(
+      "No user id",
+      "",
+      "WebViewString empty"
+    );
+
+    showErr(
+      "Label5 / WebViewString empty.\n\n" +
+      "Kodular me WebViewString = Label5.Text set karo."
+    );
+
+    return false;
+  }
+
+
+  setHeader(
+    "Loading...",
+    name,
+    "fetching profile"
+  );
+
+
+  const url =
+    DB_ROOT +
+    "/Users/" +
+    encodeURIComponent(name) +
+    "/profile.json";
+
+
+  try{
+
+    const res =
+      await fetch(
+        url + "?t=" + Date.now(),
+        {
+          method:"GET",
+          cache:"no-store"
+        }
+      );
+
+
+    if(!res.ok){
+
       DISPLAY_NAME = name;
       CHANNEL_NAME = name;
-      setHeader(name, name, "fetch fail");
-      showErr("ERROR: " + (e.message || e) + "\nURL: " + url);
+
+      setHeader(
+        name,
+        name,
+        "HTTP " + res.status
+      );
+
+      showErr(
+        "Firebase HTTP error: " +
+        res.status +
+        "\n\nPath:\nUsers/" +
+        name +
+        "/profile"
+      );
+
+      return false;
     }
+
+
+    const p =
+      await res.json();
+
+
+    if(
+      p === null ||
+      p === undefined
+    ){
+
+      DISPLAY_NAME = name;
+      CHANNEL_NAME = name;
+
+      setHeader(
+        name,
+        name,
+        "profile not found"
+      );
+
+      showErr(
+        "Firebase profile null.\n\n" +
+        "Expected:\nUsers/" +
+        name +
+        "/profile"
+      );
+
+      return false;
+    }
+
+
+    DISPLAY_NAME =
+      String(
+        p.name ||
+        p.displayName ||
+        p.channelName ||
+        name
+      ).trim();
+
+
+    CHANNEL_NAME =
+      String(
+        p.channelName ||
+        p.name ||
+        DISPLAY_NAME
+      ).trim();
+
+
+    setHeader(
+      DISPLAY_NAME,
+      name,
+      "ok"
+    );
+
+
+    showOk(
+      "Profile loaded: " +
+      DISPLAY_NAME
+    );
+
+
+    return true;
+
+  }catch(e){
+
+    DISPLAY_NAME = name;
+    CHANNEL_NAME = name;
+
+    setHeader(
+      name,
+      name,
+      "fetch fail"
+    );
+
+    showErr(
+      "Firebase error:\n" +
+      (e.message || e)
+    );
+
+    return false;
+  }
+}
+
+
+/* =========================================================
+   ID GENERATOR
+========================================================= */
+
+function makeId(prefix){
+
+  return (
+    prefix +
+    "_" +
+    Date.now() +
+    "_" +
+    Math.floor(
+      1000 + Math.random() * 9000
+    )
+  );
+}
+
+
+/* =========================================================
+   GOOGLE APPS SCRIPT POST
+========================================================= */
+
+async function postScript(payload){
+
+  /*
+    Apps Script ContentService ke saath
+    text/plain use kar rahe hain.
+
+    Ye request ko preflight se bachata hai.
+  */
+
+  const response =
+    await fetch(
+      SCRIPT_URL,
+      {
+        method:"POST",
+
+        redirect:"follow",
+
+        headers:{
+          "Content-Type":
+            "text/plain;charset=utf-8"
+        },
+
+        body:
+          JSON.stringify(payload)
+      }
+    );
+
+
+  const responseText =
+    await response.text();
+
+
+  if(!responseText){
+
+    throw new Error(
+      "Apps Script ne empty response diya."
+    );
   }
 
-  function uid(prefix) {
-    return prefix + "_" + Date.now() + "_" + Math.floor(1000 + Math.random() * 9000);
+
+  let result;
+
+  try{
+
+    result =
+      JSON.parse(responseText);
+
+  }catch(e){
+
+    throw new Error(
+      "Apps Script JSON response nahi mila.\n\n" +
+      responseText.substring(0,300)
+    );
   }
 
-  async function postScript(payload) {
-    var res = await fetch(SCRIPT_URL, {
-      method: "POST",
-      redirect: "follow",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
-    });
-    var text = await res.text();
-    try { return JSON.parse(text); }
-    catch (e) { throw new Error("Script not JSON: " + text.slice(0, 120)); }
-  }
 
-  // tabs
-  document.getElementById("tabMcq").onclick = function () {
-    document.getElementById("mcq").classList.add("on");
-    document.getElementById("post").classList.remove("on");
+  return result;
+}
+
+
+/* =========================================================
+   TABS
+========================================================= */
+
+document
+  .getElementById("tabMcq")
+  .onclick = function(){
+
+    document
+      .getElementById("mcq")
+      .classList.add("on");
+
+    document
+      .getElementById("post")
+      .classList.remove("on");
+
     this.classList.add("on");
-    document.getElementById("tabPost").classList.remove("on");
-  };
-  document.getElementById("tabPost").onclick = function () {
-    document.getElementById("post").classList.add("on");
-    document.getElementById("mcq").classList.remove("on");
-    this.classList.add("on");
-    document.getElementById("tabMcq").classList.remove("on");
+
+    document
+      .getElementById("tabPost")
+      .classList.remove("on");
   };
 
-  document.querySelectorAll("#correctBox button").forEach(function (b) {
-    b.onclick = function () {
-      document.querySelectorAll("#correctBox button").forEach(function (x) { x.classList.remove("on"); });
+
+document
+  .getElementById("tabPost")
+  .onclick = function(){
+
+    document
+      .getElementById("post")
+      .classList.add("on");
+
+    document
+      .getElementById("mcq")
+      .classList.remove("on");
+
+    this.classList.add("on");
+
+    document
+      .getElementById("tabMcq")
+      .classList.remove("on");
+  };
+
+
+/* =========================================================
+   CORRECT ANSWER
+========================================================= */
+
+document
+  .querySelectorAll("#correctBox button")
+  .forEach(function(button){
+
+    button.onclick = function(){
+
+      document
+        .querySelectorAll("#correctBox button")
+        .forEach(function(x){
+
+          x.classList.remove("on");
+
+        });
+
+
       this.classList.add("on");
-      correctAns = this.getAttribute("data-v");
+
+      correctAns =
+        this.getAttribute("data-v");
     };
+
   });
 
-  document.getElementById("btnRetry").onclick = function () { loadUser(); };
 
-  document.getElementById("mcqBtn").onclick = async function () {
-    var msg = document.getElementById("mcqMsg");
-    var btn = this;
+/* =========================================================
+   RETRY
+========================================================= */
+
+document
+  .getElementById("btnRetry")
+  .onclick = function(){
+
+    loadUser();
+  };
+
+
+/* =========================================================
+   PUBLISH MCQ
+========================================================= */
+
+document
+  .getElementById("mcqBtn")
+  .onclick = async function(){
+
+    const btn = this;
+
+    const msg =
+      document.getElementById("mcqMsg");
+
     msg.textContent = "";
-    if (!USER_ID) {
-      msg.innerHTML = '<span class="err">User id nahi</span>';
-      showErr("Publish block: Label5 id missing");
+
+
+    if(!USER_ID){
+
+      msg.innerHTML =
+        '<span class="err">' +
+        'User ID nahi mila' +
+        '</span>';
+
+      showErr(
+        "Publish blocked.\n\n" +
+        "Label5 / WebViewString empty."
+      );
+
       return;
     }
 
-    var question = document.getElementById("q").value.trim();
-    var subject = document.getElementById("subject").value.trim();
-    if (!question) return msg.innerHTML = '<span class="err">Question required</span>';
-    if (!subject) return msg.innerHTML = '<span class="err">Subject select</span>';
 
-    var channelName = CHANNEL_NAME || DISPLAY_NAME || USER_ID;
-    var qid = uid("q");
+    const question =
+      document
+        .getElementById("q")
+        .value
+        .trim();
 
-    var payload = {
-      action: "mcq",
-      qid: qid,
-      question: question,
-      optionA: document.getElementById("oa").value.trim(),
-      optionB: document.getElementById("ob").value.trim(),
-      optionC: document.getElementById("oc").value.trim(),
-      optionD: document.getElementById("od").value.trim(),
-      correct: correctAns,
-      channelName: channelName,
-      displayName: DISPLAY_NAME || channelName,
-      username: channelName,
-      subject: subject,
-      chapter: document.getElementById("chapter").value.trim(),
-      level: document.getElementById("level").value,
-      ownerId: USER_ID,
-      likes: 0,
-      comments: 0
-    };
 
-    btn.disabled = true;
-    msg.textContent = "Publishing...";
-    try {
-      var data = await postScript(payload);
-      if (!data.success) throw new Error(data.error || "Sheet failed");
-      msg.innerHTML = '<span class="ok">Saved · ' + channelName + ' · ' + qid + '</span>';
-    } catch (e) {
-      msg.innerHTML = '<span class="err">' + e.message + '</span>';
-      showErr("Publish error: " + e.message);
-    }
-    btn.disabled = false;
-  };
+    const optionA =
+      document
+        .getElementById("oa")
+        .value
+        .trim();
 
-  document.getElementById("postBtn").onclick = async function () {
-    var msg = document.getElementById("postMsg");
-    var btn = this;
-    msg.textContent = "";
-    if (!USER_ID) {
-      msg.innerHTML = '<span class="err">User id nahi</span>';
+
+    const optionB =
+      document
+        .getElementById("ob")
+        .value
+        .trim();
+
+
+    const optionC =
+      document
+        .getElementById("oc")
+        .value
+        .trim();
+
+
+    const optionD =
+      document
+        .getElementById("od")
+        .value
+        .trim();
+
+
+    const subject =
+      document
+        .getElementById("subject")
+        .value
+        .trim();
+
+
+    if(!question){
+
+      msg.innerHTML =
+        '<span class="err">' +
+        'Question required' +
+        '</span>';
+
       return;
     }
-    var description = document.getElementById("desc").value.trim();
-    var image = document.getElementById("image").value.trim();
-    if (!description && !image) return msg.innerHTML = '<span class="err">Text or image</span>';
 
-    var username = CHANNEL_NAME || DISPLAY_NAME || USER_ID;
-    var pid = uid("p");
-    var payload = {
-      action: "post",
-      pid: pid,
-      image: image,
-      username: username,
-      channelName: username,
-      displayName: DISPLAY_NAME || username,
-      description: description,
-      likes: 0,
-      saves: 0,
-      ownerId: USER_ID
+
+    if(!optionA ||
+       !optionB ||
+       !optionC ||
+       !optionD){
+
+      msg.innerHTML =
+        '<span class="err">' +
+        'All 4 options required' +
+        '</span>';
+
+      return;
+    }
+
+
+    if(!subject){
+
+      msg.innerHTML =
+        '<span class="err">' +
+        'Subject select karo' +
+        '</span>';
+
+      return;
+    }
+
+
+    const channelName =
+      CHANNEL_NAME ||
+      DISPLAY_NAME ||
+      USER_ID;
+
+
+    const qid =
+      makeId("q");
+
+
+    /*
+      EXACTLY Apps Script ke expected keys.
+    */
+
+    const payload = {
+
+      action:"mcq",
+
+      qid:qid,
+
+      question:question,
+
+      optionA:optionA,
+
+      optionB:optionB,
+
+      optionC:optionC,
+
+      optionD:optionD,
+
+      correct:correctAns,
+
+      channelName:channelName,
+
+      subject:subject,
+
+      chapter:
+        document
+          .getElementById("chapter")
+          .value
+          .trim(),
+
+      level:
+        document
+          .getElementById("level")
+          .value,
+
+      ownerId:USER_ID
     };
 
+
     btn.disabled = true;
-    msg.textContent = "Publishing...";
-    try {
-      var data = await postScript(payload);
-      if (!data.success) throw new Error(data.error || "fail");
-      msg.innerHTML = '<span class="ok">Saved · ' + username + ' · ' + pid + '</span>';
-    } catch (e) {
-      msg.innerHTML = '<span class="err">' + e.message + '</span>';
-      showErr("Publish error: " + e.message);
+
+    msg.textContent =
+      "Publishing...";
+
+
+    try{
+
+      console.log(
+        "MCQ PAYLOAD:",
+        payload
+      );
+
+
+      const data =
+        await postScript(payload);
+
+
+      console.log(
+        "SCRIPT RESPONSE:",
+        data
+      );
+
+
+      if(
+        !data ||
+        data.success !== true
+      ){
+
+        throw new Error(
+          data && data.error
+            ? data.error
+            : "Apps Script failed"
+        );
+      }
+
+
+      msg.innerHTML =
+        '<span class="ok">' +
+        '✓ Saved to QBASE<br>' +
+        'QID: ' +
+        data.id +
+        '</span>';
+
+
+      showOk(
+        "MCQ successfully saved in QBASE."
+      );
+
+
+      /*
+        Clear form after successful save.
+      */
+
+      document.getElementById("q").value = "";
+      document.getElementById("oa").value = "";
+      document.getElementById("ob").value = "";
+      document.getElementById("oc").value = "";
+      document.getElementById("od").value = "";
+      document.getElementById("chapter").value = "";
+
+
+    }catch(e){
+
+      const errorText =
+        e && e.message
+          ? e.message
+          : String(e);
+
+
+      console.error(
+        "MCQ PUBLISH ERROR:",
+        e
+      );
+
+
+      msg.innerHTML =
+        '<span class="err">' +
+        'Publish failed' +
+        '</span>';
+
+
+      showErr(
+        "MCQ Publish Error:\n\n" +
+        errorText
+      );
+
+    }finally{
+
+      btn.disabled = false;
+
     }
-    btn.disabled = false;
+
   };
 
-  // start + late WebViewString retries
-  loadUser();
-  setTimeout(function () { if (!DISPLAY_NAME || DISPLAY_NAME === USER_ID) loadUser(); }, 600);
-  setTimeout(function () { if (!DOCUMENT_OK()) loadUser(); }, 1500);
 
-  function DOCUMENT_OK() {
-    var t = document.getElementById("dispId").textContent || "";
-    return t.indexOf("· ok") >= 0;
-  }
-})();
-</script>
-</body>
-</html>
+/* =========================================================
+   PUBLISH POST
+========================================================= */
+
+document
+  .getElementById("postBtn")
+  .onclick = async function(){
+
+    const btn = this;
+
+    const msg =
+      document.getElementById("postMsg");
+
+    msg.textContent = "";
+
+
+    if(!USER_ID){
+
+      msg.innerHTML =
+        '<span class="err">' +
+        'User ID nahi mila' +
+        '</span>';
+
+      return;
+    }
+
+
+    const description =
+      document
+        .getElementById("desc")
+        .value
+        .trim();
+
+
+    const image =
+      document
+        .getElementById("image")
+        .value
+        .trim();
+
+
+    if(!description && !image){
+
+      msg.innerHTML =
+        '<span class="err">' +
+        'Text or image required' +
+        '</span>';
+
+      return;
+    }
+
+
+    const username =
+      CHANNEL_NAME ||
+      DISPLAY_NAME ||
+      USER_ID;
+
+
+    const pid =
+      makeId("p");
+
+
+    /*
+      EXACTLY Apps Script ke expected keys.
+   

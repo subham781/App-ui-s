@@ -131,7 +131,7 @@ textarea{min-height:90px;resize:vertical}
 
 <script>
 (function () {
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz40_z7XbkpXepHGYxz97Q_6_NUhb30G_hYOdVEoyNgECJ36P-0UXjKIxYCB_vn5XBFhQ/exec";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyKOgJPO7jDTJqM9zksmV342IvinOwMEhjXH5f-xVw65k_D8_SYQ3ZEU2b48t8fDR9PQQ/exec";
   const DB_ROOT = "https://prepexam-f98bf-default-rtdb.firebaseio.com";
 
   var USER_ID = "";

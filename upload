@@ -3,376 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Create</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Coming Soon</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Inter,system-ui,sans-serif;background:#f0f2f5;color:#0f172a;padding:16px;padding-bottom:40px}
-.wrap{max-width:520px;margin:0 auto}
-h1{font-size:1.2rem;font-weight:700;margin-bottom:4px}
-.sub{font-size:.8rem;color:#64748b;margin-bottom:12px}
-.card{background:#fff;border:1px solid #e4e6eb;border-radius:16px;padding:14px;margin-bottom:12px}
-.user-row{display:flex;align-items:center;gap:10px}
-.av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1877f2,#4f46e5);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
-.meta b{display:block;font-size:.95rem}
-.meta span{font-size:.75rem;color:#64748b;word-break:break-all}
-.err-box{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;border-radius:12px;padding:10px 12px;font-size:.8rem;margin-top:10px;display:none;white-space:pre-wrap}
-.err-box.show{display:block}
-.ok-box{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;border-radius:12px;padding:8px 12px;font-size:.78rem;margin-top:8px;display:none}
-.ok-box.show{display:block}
-.tabs{display:flex;gap:8px;margin-bottom:12px}
-.tab{flex:1;border:2px solid #e4e6eb;background:#fff;border-radius:12px;padding:12px;font-weight:700}
-.tab.on{border-color:#1877f2;background:#f0f7ff}
-.panel{display:none}.panel.on{display:block}
-label{display:block;font-size:.78rem;font-weight:600;color:#475569;margin:10px 0 5px}
-input,select,textarea{width:100%;border:1.5px solid #e4e6eb;border-radius:12px;padding:11px 12px;font-size:.92rem;font-family:inherit;background:#fafbfc}
-textarea{min-height:90px;resize:vertical}
-.opt{display:flex;gap:8px;align-items:center;margin-bottom:8px}
-.tag{width:28px;height:28px;border-radius:8px;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700}
-.correct{display:flex;gap:8px;flex-wrap:wrap}
-.correct button{border:1.5px solid #e4e6eb;background:#fff;border-radius:999px;padding:6px 12px;font-weight:600}
-.correct button.on{background:#e7f6ec;border-color:#31a24c;color:#31a24c}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.btn{width:100%;border:0;border-radius:12px;padding:13px;font-weight:700;background:linear-gradient(135deg,#1877f2,#4f46e5);color:#fff;margin-top:14px}
-.btn:disabled{opacity:.6}
-.msg{margin-top:10px;font-size:.85rem;text-align:center}
-.ok{color:#15803d}.err{color:#b91c1c}
-.hint{font-size:.72rem;color:#64748b;margin-top:6px}
-.retry{margin-top:8px;border:0;background:#e2e8f0;border-radius:8px;padding:8px 12px;font-weight:600;font-size:.8rem}
+html,body{height:100%}
+body{
+  font-family:Inter,system-ui,sans-serif;
+  background:linear-gradient(160deg,#eff6ff 0%,#f5f3ff 45%,#f8fafc 100%);
+  color:#0f172a;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  text-align:center;
+}
+.card{
+  width:100%;
+  max-width:400px;
+  background:#fff;
+  border:1px solid #e8ecf4;
+  border-radius:24px;
+  padding:36px 28px;
+  box-shadow:0 16px 48px rgba(15,23,42,.08);
+}
+.badge{
+  display:inline-block;
+  font-size:.7rem;
+  font-weight:700;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+  color:#3730a3;
+  background:#eef2ff;
+  border:1px solid #c7d2fe;
+  padding:6px 12px;
+  border-radius:999px;
+  margin-bottom:18px;
+}
+.icon{
+  width:64px;height:64px;margin:0 auto 18px;
+  border-radius:20px;
+  background:linear-gradient(135deg,#2563eb,#7c3aed);
+  color:#fff;
+  font-size:1.5rem;
+  font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 12px 28px rgba(37,99,235,.3);
+}
+h1{
+  font-size:1.6rem;
+  font-weight:800;
+  letter-spacing:-.4px;
+  margin-bottom:10px;
+}
+p{
+  font-size:.92rem;
+  color:#64748b;
+  line-height:1.55;
+  margin-bottom:22px;
+}
+.dots{display:flex;gap:8px;justify-content:center}
+.dot{
+  width:8px;height:8px;border-radius:50%;
+  background:#c7d2fe;
+  animation:bounce 1.2s ease-in-out infinite;
+}
+.dot:nth-child(2){animation-delay:.15s}
+.dot:nth-child(3){animation-delay:.3s}
+@keyframes bounce{
+  0%,80%,100%{transform:translateY(0);opacity:.5}
+  40%{transform:translateY(-7px);opacity:1;background:#4f46e5}
+}
+.foot{
+  margin-top:22px;
+  font-size:.75rem;
+  color:#94a3b8;
+  font-weight:500;
+}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>Create</h1>
-  <p class="sub">WebViewString id pehle dikhega · phir profile name</p>
-
   <div class="card">
-    <div class="user-row">
-      <div class="av" id="av">?</div>
-      <div class="meta">
-        <b id="dispName">Waiting id...</b>
-        <span id="dispId">—</span>
-      </div>
+    <div class="badge">PrepExam</div>
+    <div class="icon">PE</div>
+    <h1>Coming Soon</h1>
+    <p>Hum is feature par kaam kar rahe hain. Jaldi hi yeh aapke liye available hoga.</p>
+    <div class="dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
     </div>
-    <div class="ok-box" id="okBox"></div>
-    <div class="err-box" id="errBox"></div>
-    <button class="retry" type="button" id="btnRetry">Retry</button>
+    <div class="foot">Stay tuned</div>
   </div>
-
-  <div class="tabs">
-    <button class="tab on" type="button" id="tabMcq">MCQ</button>
-    <button class="tab" type="button" id="tabPost">Post</button>
-  </div>
-
-  <div class="card panel on" id="mcq">
-    <label>Question</label>
-    <textarea id="q" placeholder="Write question..."></textarea>
-    <label>Options</label>
-    <div class="opt"><span class="tag">A</span><input id="oa" placeholder="Option A"></div>
-    <div class="opt"><span class="tag">B</span><input id="ob" placeholder="Option B"></div>
-    <div class="opt"><span class="tag">C</span><input id="oc" placeholder="Option C"></div>
-    <div class="opt"><span class="tag">D</span><input id="od" placeholder="Option D"></div>
-    <label>Correct</label>
-    <div class="correct" id="correctBox">
-      <button type="button" class="on" data-v="A">A</button>
-      <button type="button" data-v="B">B</button>
-      <button type="button" data-v="C">C</button>
-      <button type="button" data-v="D">D</button>
-    </div>
-    <div class="row2">
-      <div>
-        <label>Subject</label>
-        <select id="subject">
-          <option value="">Select subject</option>
-          <option>Maths</option><option>Mathematics</option><option>English</option>
-          <option>GK</option><option>General</option><option>History</option>
-          <option>Polity</option><option>Geography</option><option>Science</option>
-          <option>Physics</option><option>Chemistry</option><option>Biology</option>
-          <option>Logical Reasoning</option><option>Current Affairs</option>
-          <option>Economics</option><option>Defence</option>
-        </select>
-      </div>
-      <div>
-        <label>Level</label>
-        <select id="level">
-          <option>Easy</option>
-          <option selected>Medium</option>
-          <option>Hard</option>
-          <option>Very Hard</option>
-        </select>
-      </div>
-    </div>
-    <label>Chapter (optional)</label>
-    <input id="chapter" type="text" placeholder="Chapter">
-    <p class="hint">ChannelName = profile · OwnerId = WebViewString</p>
-    <button class="btn" id="mcqBtn" type="button">Publish MCQ</button>
-    <div class="msg" id="mcqMsg"></div>
-  </div>
-
-  <div class="card panel" id="post">
-    <label>Description</label>
-    <textarea id="desc" placeholder="Write something..."></textarea>
-    <label>Image link (optional)</label>
-    <input id="image" type="url" placeholder="https://...">
-    <button class="btn" id="postBtn" type="button">Publish Post</button>
-    <div class="msg" id="postMsg"></div>
-  </div>
-</div>
-
-<script>
-(function () {
-  var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyF2FFlzU9fZyE7le6lhUcBECBFj2W7fvV2-CLFtsZ-DBs1i1Fm_D5_zjtbVgQBQ-UkOQ/exec";
-  var DB_ROOT = "https://prepexam-f98bf-default-rtdb.firebaseio.com";
-
-  var USER_ID = "";
-  var DISPLAY_NAME = "";
-  var CHANNEL_NAME = "";
-  var correctAns = "A";
-
-  function normalizeUserKey(raw) {
-    var s = String(raw || "").trim();
-    if (!s) return "";
-    if (s.indexOf("|") > 0 && /^(EXISTS|CREATED|NEW|ERROR)\|/i.test(s)) {
-      s = s.split("|")[1] || "";
-    }
-    if (s.indexOf("USER|") === 0) s = s.substring(5).trim();
-    if (s.indexOf("@") > 0) s = s.split("@")[0];
-    s = s.replace(/@gmail\.com$/i, "").trim();
-    if (s.toUpperCase() === "USER_ID_12345") return "";
-    return s;
-  }
-
-  function getUserFromKodular() {
-    try {
-      if (window.AppInventor && window.AppInventor.getWebViewString) {
-        var s = normalizeUserKey(window.AppInventor.getWebViewString() || "");
-        if (s) return s;
-      }
-    } catch (e) {}
-    try {
-      if (window.Kodular && window.Kodular.getWebViewString) {
-        var s2 = normalizeUserKey(window.Kodular.getWebViewString() || "");
-        if (s2) return s2;
-      }
-    } catch (e) {}
-    try {
-      var q = new URLSearchParams(location.search).get("user");
-      if (q) return normalizeUserKey(q);
-    } catch (e) {}
-    return "";
-  }
-
-  function showErr(msg) {
-    var box = document.getElementById("errBox");
-    box.textContent = msg;
-    box.classList.add("show");
-  }
-  function hideErr() { document.getElementById("errBox").classList.remove("show"); }
-  function showOk(msg) {
-    var box = document.getElementById("okBox");
-    box.textContent = msg;
-    box.classList.add("show");
-  }
-  function hideOk() { document.getElementById("okBox").classList.remove("show"); }
-
-  function setHeader(name, id, note) {
-    document.getElementById("dispName").textContent = name || "—";
-    document.getElementById("dispId").textContent = (id ? "ID: " + id : "—") + (note ? " · " + note : "");
-    document.getElementById("av").textContent = String(name || id || "?").charAt(0).toUpperCase();
-  }
-
-  async function loadUser() {
-    hideErr();
-    hideOk();
-
-    var id = getUserFromKodular();
-    USER_ID = id;
-
-    // 1) Pehle id turant dikhao (Loading ki jagah)
-    if (!id) {
-      setHeader("No id yet", "", "WebViewString empty");
-      showErr("WebViewString = Label5.Text set karo, phir Retry.");
-      return;
-    }
-
-    setHeader(id, id, "id received"); // loading text hatao — id show
-    DISPLAY_NAME = id;
-    CHANNEL_NAME = id;
-
-    // 2) Phir profile name lao
-    try {
-      var url = DB_ROOT + "/Users/" + encodeURIComponent(id) + "/profile.json?t=" + Date.now();
-      var res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) {
-        showErr("Firebase HTTP " + res.status + "\nUsers/" + id + "/profile");
-        return;
-      }
-      var p = await res.json();
-      if (!p) {
-        showErr("Profile null\nUsers/" + id + "/profile\nPublish abhi id se chalega.");
-        return;
-      }
-      DISPLAY_NAME = String(p.name || p.displayName || p.channelName || id).trim();
-      CHANNEL_NAME = String(p.channelName || p.name || DISPLAY_NAME).trim();
-      setHeader(DISPLAY_NAME, id, "ok");
-      showOk("Profile: " + DISPLAY_NAME);
-    } catch (e) {
-      showErr("Profile fetch fail: " + (e.message || e) + "\nPublish id se try kar sakte ho.");
-    }
-  }
-
-  function makeId(prefix) {
-    return prefix + "_" + Date.now() + "_" + Math.floor(1000 + Math.random() * 9000);
-  }
-
-  async function postScript(payload) {
-    var res = await fetch(SCRIPT_URL, {
-      method: "POST",
-      redirect: "follow",
-      body: JSON.stringify(payload)
-    });
-    var text = await res.text();
-    if (!text) throw new Error("Empty response");
-    if (text.trim().charAt(0) === "<") {
-      throw new Error("Script HTML de raha hai (Deploy Anyone / New version).");
-    }
-    try { return JSON.parse(text); }
-    catch (e) { throw new Error(text.slice(0, 200)); }
-  }
-
-  // Tabs
-  document.getElementById("tabMcq").onclick = function () {
-    document.getElementById("mcq").classList.add("on");
-    document.getElementById("post").classList.remove("on");
-    this.classList.add("on");
-    document.getElementById("tabPost").classList.remove("on");
-  };
-  document.getElementById("tabPost").onclick = function () {
-    document.getElementById("post").classList.add("on");
-    document.getElementById("mcq").classList.remove("on");
-    this.classList.add("on");
-    document.getElementById("tabMcq").classList.remove("on");
-  };
-
-  document.querySelectorAll("#correctBox button").forEach(function (b) {
-    b.onclick = function () {
-      document.querySelectorAll("#correctBox button").forEach(function (x) { x.classList.remove("on"); });
-      this.classList.add("on");
-      correctAns = this.getAttribute("data-v");
-    };
-  });
-
-  document.getElementById("btnRetry").onclick = function () { loadUser(); };
-
-  // Publish MCQ
-  document.getElementById("mcqBtn").onclick = async function () {
-    var btn = this;
-    var msg = document.getElementById("mcqMsg");
-    msg.textContent = "";
-    if (!USER_ID) {
-      USER_ID = getUserFromKodular();
-    }
-    if (!USER_ID) {
-      msg.innerHTML = '<span class="err">User ID nahi</span>';
-      showErr("WebViewString empty");
-      return;
-    }
-
-    var question = document.getElementById("q").value.trim();
-    var optionA = document.getElementById("oa").value.trim();
-    var optionB = document.getElementById("ob").value.trim();
-    var optionC = document.getElementById("oc").value.trim();
-    var optionD = document.getElementById("od").value.trim();
-    var subject = document.getElementById("subject").value.trim();
-
-    if (!question) return msg.innerHTML = '<span class="err">Question required</span>';
-    if (!optionA || !optionB || !optionC || !optionD) return msg.innerHTML = '<span class="err">All 4 options</span>';
-    if (!subject) return msg.innerHTML = '<span class="err">Subject select</span>';
-
-    var payload = {
-      action: "mcq",
-      qid: makeId("q"),
-      question: question,
-      optionA: optionA,
-      optionB: optionB,
-      optionC: optionC,
-      optionD: optionD,
-      correct: correctAns,
-      channelName: CHANNEL_NAME || DISPLAY_NAME || USER_ID,
-      subject: subject,
-      chapter: document.getElementById("chapter").value.trim(),
-      level: document.getElementById("level").value,
-      ownerId: USER_ID
-    };
-
-    btn.disabled = true;
-    msg.textContent = "Publishing...";
-    try {
-      var data = await postScript(payload);
-      if (!data || data.success !== true) throw new Error((data && data.error) || "Failed");
-      msg.innerHTML = '<span class="ok">Saved · ' + (data.id || payload.qid) + '</span>';
-      showOk("MCQ saved");
-      document.getElementById("q").value = "";
-      document.getElementById("oa").value = "";
-      document.getElementById("ob").value = "";
-      document.getElementById("oc").value = "";
-      document.getElementById("od").value = "";
-      document.getElementById("chapter").value = "";
-    } catch (e) {
-      msg.innerHTML = '<span class="err">Publish failed</span>';
-      showErr(String(e.message || e));
-    }
-    btn.disabled = false;
-  };
-
-  // Publish Post
-  document.getElementById("postBtn").onclick = async function () {
-    var btn = this;
-    var msg = document.getElementById("postMsg");
-    msg.textContent = "";
-    if (!USER_ID) USER_ID = getUserFromKodular();
-    if (!USER_ID) {
-      msg.innerHTML = '<span class="err">User ID nahi</span>';
-      return;
-    }
-    var description = document.getElementById("desc").value.trim();
-    var image = document.getElementById("image").value.trim();
-    if (!description && !image) {
-      msg.innerHTML = '<span class="err">Text or image required</span>';
-      return;
-    }
-    var payload = {
-      action: "post",
-      pid: makeId("p"),
-      image: image,
-      username: CHANNEL_NAME || DISPLAY_NAME || USER_ID,
-      channelName: CHANNEL_NAME || DISPLAY_NAME || USER_ID,
-      description: description,
-      ownerId: USER_ID,
-      likes: 0,
-      saves: 0
-    };
-    btn.disabled = true;
-    msg.textContent = "Publishing...";
-    try {
-      var data = await postScript(payload);
-      if (!data || data.success !== true) throw new Error((data && data.error) || "Failed");
-      msg.innerHTML = '<span class="ok">Saved · ' + (data.id || payload.pid) + '</span>';
-      showOk("Post saved");
-      document.getElementById("desc").value = "";
-      document.getElementById("image").value = "";
-    } catch (e) {
-      msg.innerHTML = '<span class="err">Publish failed</span>';
-      showErr(String(e.message || e));
-    }
-    btn.disabled = false;
-  };
-
-  // START — id turant, phir retries
-  loadUser();
-  setTimeout(loadUser, 500);
-  setTimeout(loadUser, 1200);
-})();
-</script>
 </body>
 </html>

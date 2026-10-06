@@ -3,647 +3,374 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Study Materials</title>
-
+<title>Exam Courses</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:Inter,system-ui,sans-serif;background:#f4f6fb;color:#0f172a;min-height:100vh}
+.wrap{max-width:640px;margin:0 auto;padding:14px 14px 40px}
+h1{font-size:1.15rem;font-weight:700}
+.sub{font-size:.8rem;color:#64748b;margin:4px 0 12px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex-shrink:0;border:1.5px solid #e2e8f0;background:#fff;border-radius:999px;
+  padding:8px 14px;font-size:.8rem;font-weight:600;color:#475569
 }
-
-body{
-    font-family:Arial,sans-serif;
-    background:#f5f7fb;
-    color:#172033;
+.chip.on{background:#2563eb;border-color:#2563eb;color:#fff}
+.section{
+  font-size:.72rem;font-weight:700;color:#6366f1;text-transform:uppercase;
+  letter-spacing:.4px;margin:16px 0 10px
 }
-
-.header{
-    background:linear-gradient(135deg,#2563eb,#4f46e5);
-    color:white;
-    padding:28px 18px 45px;
-    border-radius:0 0 28px 28px;
+.section.mine{color:#0f766e}
+.banner-card{
+  background:#fff;border:1px solid #e8ecf4;border-radius:16px;overflow:hidden;
+  margin-bottom:12px;box-shadow:0 2px 12px rgba(15,23,42,.05);cursor:pointer
 }
-
-.header-inner{
-    max-width:1000px;
-    margin:auto;
+.banner-card:active{transform:scale(.99)}
+.banner{
+  width:100%;height:120px;object-fit:cover;background:linear-gradient(135deg,#dbeafe,#e0e7ff);display:block
 }
-
-.header h1{
-    font-size:28px;
-    margin-bottom:7px;
+.banner-info{padding:12px}
+.banner-info b{display:block;font-size:.9rem;line-height:1.35;margin-bottom:4px}
+.banner-info span{font-size:.72rem;color:#64748b}
+.focus-box{
+  background:linear-gradient(135deg,#ecfdf5,#f0f9ff);border:1px solid #a7f3d0;
+  border-radius:16px;padding:14px;margin-bottom:12px
 }
-
-.container{
-    max-width:1000px;
-    margin:-22px auto 40px;
-    padding:0 15px;
+.focus-box h2{font-size:.95rem;font-weight:700;color:#0f766e;margin-bottom:8px}
+.mini{
+  display:flex;gap:10px;align-items:center;background:#fff;border-radius:12px;
+  padding:8px;margin-bottom:8px;border:1px solid #e2e8f0;cursor:pointer
 }
-
-.card{
-    background:white;
-    border-radius:18px;
-    padding:22px;
-    margin-bottom:18px;
-    box-shadow:0 8px 25px rgba(20,30,60,.08);
+.mini img{width:64px;height:40px;border-radius:8px;object-fit:cover;background:#e2e8f0}
+.mini b{font-size:.82rem;display:block}
+.mini span{font-size:.7rem;color:#64748b}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:600;font-size:.82rem}
+.btn-back{background:#e2e8f0}
+.btn-save{background:#eef2ff;color:#3730a3}
+.player-box{display:none;background:#000;border-radius:14px;overflow:hidden;margin-bottom:12px;aspect-ratio:16/9}
+.player-box.show{display:block}
+.player-box iframe{width:100%;height:100%;border:0}
+.vid{
+  display:flex;gap:10px;align-items:center;background:#fff;border:1px solid #e8ecf4;
+  border-radius:12px;padding:10px;margin-bottom:8px;cursor:pointer
 }
-
-.title{
-    font-size:19px;
-    font-weight:700;
-    margin-bottom:17px;
-}
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-    gap:14px;
-}
-
-.select-card{
-    border:1px solid #e4e8f0;
-    background:white;
-    padding:18px 14px;
-    border-radius:14px;
-    cursor:pointer;
-    text-align:left;
-    font-size:15px;
-    font-weight:600;
-    transition:.2s;
-}
-
-.select-card:hover{
-    border-color:#4f46e5;
-    transform:translateY(-2px);
-}
-
-.icon{
-    width:43px;
-    height:43px;
-    border-radius:12px;
-    background:#eef2ff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:21px;
-    margin-bottom:10px;
-}
-
-.breadcrumb{
-    display:flex;
-    flex-wrap:wrap;
-    gap:7px;
-    color:#667085;
-    font-size:14px;
-    margin-bottom:15px;
-}
-
-.breadcrumb span{
-    color:#4338ca;
-    font-weight:600;
-}
-
-.back-btn{
-    border:0;
-    background:#f1f5f9;
-    color:#334155;
-    padding:10px 15px;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:600;
-    margin-bottom:17px;
-}
-
-.search{
-    width:100%;
-    padding:13px 15px;
-    border:1px solid #dfe3eb;
-    border-radius:12px;
-    outline:none;
-    font-size:15px;
-    margin-bottom:15px;
-}
-
-.chapter{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:15px;
-    padding:15px;
-    border:1px solid #e8ebf1;
-    border-radius:13px;
-    margin-bottom:10px;
-}
-
-.chapter-info{
-    display:flex;
-    align-items:center;
-    gap:12px;
-}
-
-.chapter-number{
-    min-width:38px;
-    height:38px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#f1f5f9;
-    border-radius:10px;
-    font-weight:700;
-}
-
-.open-btn{
-    border:0;
-    background:#4f46e5;
-    color:white;
-    padding:10px 16px;
-    border-radius:9px;
-    cursor:pointer;
-    font-weight:600;
-}
-
-/* FULLSCREEN VIEWER */
-#viewer{
-    display:none;
-    position:fixed;
-    inset:0;
-    z-index:9999;
-    background:#ffffff;
-    flex-direction:column;
-}
-
-#viewer.active{
-    display:flex;
-}
-
-.viewer-top{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:12px 14px;
-    border-bottom:1px solid #e5e7eb;
-    background:#ffffff;
-    flex-shrink:0;
-}
-
-.viewer-title{
-    font-size:16px;
-    font-weight:700;
-    flex:1;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-}
-
-.close-btn{
-    border:0;
-    background:#fee2e2;
-    color:#dc2626;
-    padding:9px 13px;
-    border-radius:9px;
-    cursor:pointer;
-    font-weight:600;
-    flex-shrink:0;
-}
-
-#renderArea{
-    flex:1;
-    width:100%;
-    overflow:hidden;
-    background:#f8fafc;
-}
-
-#renderArea iframe{
-    width:100%;
-    height:100%;
-    border:0;
-    display:block;
-}
-
-.loading{
-    text-align:center;
-    padding:35px;
-    color:#667085;
-}
-
-.spinner{
-    width:35px;
-    height:35px;
-    border:4px solid #e5e7eb;
-    border-top-color:#4f46e5;
-    border-radius:50%;
-    animation:spin .8s linear infinite;
-    margin:0 auto 12px;
-}
-
-@keyframes spin{
-    to{transform:rotate(360deg);}
-}
-
-.error{
-    text-align:center;
-    padding:30px;
-    color:#dc2626;
-}
-
-.empty{
-    text-align:center;
-    padding:30px;
-    color:#667085;
-}
-
-.hidden{
-    display:none!important;
-}
-
-body.viewer-open{
-    overflow:hidden;
-}
-
-body.viewer-open .header,
-body.viewer-open .container{
-    display:none;
-}
-
-@media(max-width:600px){
-    .header h1{ font-size:23px; }
-    .card{ padding:17px; }
-    .grid{ grid-template-columns:1fr 1fr; }
-}
-
-@media(max-width:380px){
-    .grid{ grid-template-columns:1fr; }
-    .chapter{ flex-direction:column; }
-    .open-btn{ width:100%; }
-}
+.vid img{width:96px;height:54px;border-radius:8px;object-fit:cover;background:#e2e8f0}
+.vid b{font-size:.84rem;display:block}
+.loading,.empty{text-align:center;padding:28px;color:#64748b;font-size:.9rem}
+.err{background:#fef2f2;color:#b91c1c;border-radius:12px;padding:12px;font-size:.85rem;margin:10px 0}
+.hidden{display:none}
 </style>
 </head>
-
 <body>
+<div class="wrap">
+  <div id="home">
+    <h1>Exam Courses</h1>
+    <p class="sub">Dynamic playlists · your course first if saved</p>
 
-<header class="header" id="appHeader">
-    <div class="header-inner">
-        <h1>📚 Study Materials</h1>
-        <p>Select your exam, subject and chapter</p>
+    <div class="chips" id="examChips"></div>
+
+    <!-- MAIN FOCUS: user courses -->
+    <div id="myFocus" class="hidden">
+      <div class="focus-box">
+        <h2>Your course (main focus)</h2>
+        <div id="myCourseList"></div>
+      </div>
     </div>
-</header>
 
-<main class="container" id="appContainer">
+    <div class="section" id="discoverTitle">Discover · NDA</div>
+    <div id="discoverList"></div>
+    <div class="loading" id="loadingHome">Loading playlists...</div>
+    <div class="err hidden" id="errHome"></div>
+  </div>
 
-<div id="loading" class="card loading">
-    <div class="spinner"></div>
-    <p>Loading exams...</p>
+  <div id="playlistView" class="hidden">
+    <div class="bar">
+      <button class="btn btn-back" type="button" id="btnBack">← Back</button>
+      <button class="btn btn-save" type="button" id="btnSave">+ Add to my course</button>
+    </div>
+    <div class="section" id="plTitle">Playlist</div>
+    <div class="player-box" id="playerBox">
+      <iframe id="player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div class="section">Videos in this playlist</div>
+    <div id="videoList"></div>
+    <div class="loading hidden" id="loadingPl">Loading...</div>
+    <div class="err hidden" id="errPl"></div>
+  </div>
 </div>
-
-<div id="error" class="card error hidden">
-    <h3>Firebase Error</h3>
-    <p id="errorText"></p>
-</div>
-
-<section id="examSection" class="card hidden">
-    <div class="title">🎯 Select Exam</div>
-    <div id="examGrid" class="grid"></div>
-</section>
-
-<section id="subjectSection" class="card hidden">
-    <div class="breadcrumb">
-        Exam: <span id="selectedExam"></span>
-    </div>
-    <button class="back-btn" onclick="backToExams()">← Change Exam</button>
-    <div class="title">📖 Select Subject</div>
-    <div id="subjectGrid" class="grid"></div>
-</section>
-
-<section id="chapterSection" class="card hidden">
-    <div class="breadcrumb">
-        <span id="breadcrumbExam"></span> →
-        <span id="breadcrumbSubject"></span>
-    </div>
-    <button class="back-btn" onclick="backToSubjects()">← Change Subject</button>
-    <div class="title">📑 Select Chapter</div>
-    <input id="search" class="search" type="text" placeholder="Search chapter..." oninput="searchChapters()">
-    <div id="chapterList"></div>
-</section>
-
-</main>
-
-<!-- FULLSCREEN VIEWER -->
-<section id="viewer">
-    <div class="viewer-top">
-        <button class="close-btn" onclick="closeViewer(true)">← Back</button>
-        <div id="viewerTitle" class="viewer-title">Study Material</div>
-    </div>
-    <div id="renderArea"></div>
-</section>
 
 <script>
-const DATABASE_URL = "https://prepexam-f98bf-default-rtdb.firebaseio.com";
-const DATABASE_PATH = "/Exams.json";
+(function () {
+  // ===== YOUR KEY =====
+  var API_KEY = "AIzaSyCVSN5-wdrjfUHLYbyfdmS5LdtzISaqCcI";
+  // ====================
 
-let examsData = {};
-let selectedExam = "";
-let selectedSubject = "";
-let chapters = [];
-let viewerOpen = false;
+  var EXAMS = [
+    { id: "NDA", q: "NDA exam full preparation playlist" },
+    { id: "CDS", q: "CDS exam preparation complete playlist" },
+    { id: "SSC", q: "SSC CGL complete course playlist" },
+    { id: "AFCAT", q: "AFCAT exam preparation playlist" },
+    { id: "Army", q: "Indian Army GD Agniveer preparation playlist" }
+  ];
 
-const loading = document.getElementById("loading");
-const errorBox = document.getElementById("error");
-const errorText = document.getElementById("errorText");
-const examSection = document.getElementById("examSection");
-const subjectSection = document.getElementById("subjectSection");
-const chapterSection = document.getElementById("chapterSection");
-const viewer = document.getElementById("viewer");
-const examGrid = document.getElementById("examGrid");
-const subjectGrid = document.getElementById("subjectGrid");
-const chapterList = document.getElementById("chapterList");
-const renderArea = document.getElementById("renderArea");
+  var CACHE_MS = 24 * 3600 * 1000; // 24h — quota save
+  var currentExam = "NDA";
+  var currentPlaylist = null;
 
-async function loadFirebase(){
-    try{
-        const response = await fetch(DATABASE_URL + DATABASE_PATH, {
-            method:"GET",
-            cache:"no-cache"
+  function $(id) { return document.getElementById(id); }
+
+  function getCourses() {
+    try { return JSON.parse(localStorage.getItem("my_exam_courses") || "[]"); }
+    catch (e) { return []; }
+  }
+  function setCourses(arr) {
+    localStorage.setItem("my_exam_courses", JSON.stringify(arr));
+  }
+
+  function cacheKey(exam) { return "yt_discover_" + exam; }
+
+  function getCachedPlaylists(exam) {
+    try {
+      var o = JSON.parse(localStorage.getItem(cacheKey(exam)) || "null");
+      if (!o || !o.ts || Date.now() - o.ts > CACHE_MS) return null;
+      return o.items;
+    } catch (e) { return null; }
+  }
+  function setCachedPlaylists(exam, items) {
+    localStorage.setItem(cacheKey(exam), JSON.stringify({ ts: Date.now(), items: items }));
+  }
+
+  function cachePlVideos(pid, items) {
+    localStorage.setItem("yt_videos_" + pid, JSON.stringify({ ts: Date.now(), items: items }));
+  }
+  function getCachedPlVideos(pid) {
+    try {
+      var o = JSON.parse(localStorage.getItem("yt_videos_" + pid) || "null");
+      if (!o || Date.now() - o.ts > CACHE_MS) return null;
+      return o.items;
+    } catch (e) { return null; }
+  }
+
+  function escapeHtml(s) {
+    return String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  function renderChips() {
+    var box = $("examChips");
+    box.innerHTML = "";
+    EXAMS.forEach(function (e) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "chip" + (e.id === currentExam ? " on" : "");
+      b.textContent = e.id;
+      b.onclick = function () {
+        currentExam = e.id;
+        renderChips();
+        loadDiscover();
+      };
+      box.appendChild(b);
+    });
+  }
+
+  function renderMyFocus() {
+    var courses = getCourses();
+    var box = $("myFocus");
+    var list = $("myCourseList");
+    if (!courses.length) {
+      box.classList.add("hidden");
+      return;
+    }
+    box.classList.remove("hidden");
+    list.innerHTML = "";
+    courses.forEach(function (pl) {
+      var row = document.createElement("div");
+      row.className = "mini";
+      row.innerHTML =
+        (pl.thumb
+          ? '<img src="' + pl.thumb + '" alt="">'
+          : '<img src="" alt="" style="background:#e2e8f0">') +
+        "<div><b>" + escapeHtml(pl.title) + "</b><span>" + escapeHtml(pl.exam || "") + "</span></div>";
+      row.onclick = function () { openPlaylist(pl); };
+      list.appendChild(row);
+    });
+  }
+
+  async function searchPlaylists(examId) {
+    var cached = getCachedPlaylists(examId);
+    if (cached && cached.length) return cached;
+
+    if (!API_KEY || API_KEY.indexOf("YOUR_") === 0) {
+      throw new Error("YouTube API key daalo");
+    }
+
+    var exam = EXAMS.find(function (e) { return e.id === examId; }) || EXAMS[0];
+    var url =
+      "https://www.googleapis.com/youtube/v3/search?part=snippet&type=playlist&maxResults=12&q=" +
+      encodeURIComponent(exam.q) +
+      "&key=" + encodeURIComponent(API_KEY);
+
+    var res = await fetch(url);
+    var data = await res.json();
+    if (data.error) throw new Error(data.error.message || "Search failed");
+
+    var items = (data.items || []).map(function (it) {
+      var sn = it.snippet || {};
+      var thumbs = sn.thumbnails || {};
+      var thumb = (thumbs.high || thumbs.medium || thumbs.default || {}).url || "";
+      return {
+        playlistId: it.id && it.id.playlistId,
+        title: sn.title || "Playlist",
+        channel: sn.channelTitle || "",
+        thumb: thumb,
+        exam: examId
+      };
+    }).filter(function (x) { return x.playlistId; });
+
+    // at least try 10
+    if (items.length) setCachedPlaylists(examId, items);
+    return items;
+  }
+
+  async function loadDiscover() {
+    $("discoverTitle").textContent = "Discover · " + currentExam;
+    $("discoverList").innerHTML = "";
+    $("errHome").classList.add("hidden");
+    $("loadingHome").classList.remove("hidden");
+    renderMyFocus();
+
+    try {
+      var items = await searchPlaylists(currentExam);
+      $("loadingHome").classList.add("hidden");
+      if (!items.length) {
+        $("discoverList").innerHTML = '<div class="empty">No playlists found</div>';
+        return;
+      }
+      items.forEach(function (pl) {
+        var card = document.createElement("div");
+        card.className = "banner-card";
+        card.innerHTML =
+          (pl.thumb
+            ? '<img class="banner" src="' + pl.thumb + '" alt="">'
+            : '<div class="banner"></div>') +
+          '<div class="banner-info"><b>' + escapeHtml(pl.title) + '</b>' +
+          "<span>" + escapeHtml(pl.channel) + " · " + escapeHtml(pl.exam) + "</span></div>";
+        card.onclick = function () { openPlaylist(pl); };
+        $("discoverList").appendChild(card);
+      });
+    } catch (e) {
+      $("loadingHome").classList.add("hidden");
+      $("errHome").textContent = String(e.message || e);
+      $("errHome").classList.remove("hidden");
+    }
+  }
+
+  async function fetchVideos(playlistId) {
+    var cached = getCachedPlVideos(playlistId);
+    if (cached) return cached;
+
+    var items = [];
+    var pageToken = "";
+    for (var p = 0; p < 2; p++) {
+      var url =
+        "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&maxResults=50&playlistId=" +
+        encodeURIComponent(playlistId) +
+        "&key=" + encodeURIComponent(API_KEY) +
+        (pageToken ? "&pageToken=" + pageToken : "");
+      var res = await fetch(url);
+      var data = await res.json();
+      if (data.error) throw new Error(data.error.message || "Playlist error");
+      (data.items || []).forEach(function (it) {
+        var sn = it.snippet || {};
+        var vid = (it.contentDetails && it.contentDetails.videoId) ||
+          (sn.resourceId && sn.resourceId.videoId);
+        if (!vid || sn.title === "Private video" || sn.title === "Deleted video") return;
+        var thumbs = sn.thumbnails || {};
+        items.push({
+          id: vid,
+          title: sn.title || "Video",
+          thumb: (thumbs.medium || thumbs.default || {}).url || ""
         });
-
-        if(!response.ok){
-            throw new Error("Firebase returned HTTP " + response.status);
-        }
-
-        const data = await response.json();
-
-        if(data === null){
-            throw new Error("Firebase returned null. Check Exams node and read rules.");
-        }
-
-        if(typeof data !== "object"){
-            throw new Error("Exams data is not an object.");
-        }
-
-        examsData = data;
-        loading.classList.add("hidden");
-        renderExams();
-
-    }catch(err){
-        console.error(err);
-        loading.classList.add("hidden");
-        errorBox.classList.remove("hidden");
-        errorText.textContent = err.message;
+      });
+      pageToken = data.nextPageToken || "";
+      if (!pageToken) break;
     }
-}
+    cachePlVideos(playlistId, items);
+    return items;
+  }
 
-function renderExams(){
-    examGrid.innerHTML = "";
-    const exams = Object.keys(examsData);
+  async function openPlaylist(pl) {
+    currentPlaylist = pl;
+    $("home").classList.add("hidden");
+    $("playlistView").classList.remove("hidden");
+    $("plTitle").textContent = pl.title;
+    $("playerBox").classList.remove("show");
+    $("player").src = "";
+    $("videoList").innerHTML = "";
+    $("errPl").classList.add("hidden");
+    $("loadingPl").classList.remove("hidden");
 
-    if(exams.length === 0){
-        examGrid.innerHTML = '<div class="empty">No exams found.</div>';
-        examSection.classList.remove("hidden");
+    try {
+      var videos = await fetchVideos(pl.playlistId);
+      $("loadingPl").classList.add("hidden");
+      if (!videos.length) {
+        $("errPl").textContent = "No public videos in this playlist";
+        $("errPl").classList.remove("hidden");
         return;
-    }
-
-    exams.forEach(function(exam){
-        const button = document.createElement("button");
-        button.className = "select-card";
-        button.innerHTML = '<div class="icon">🎓</div>' + escapeHTML(exam);
-        button.onclick = function(){ selectExam(exam); };
-        examGrid.appendChild(button);
-    });
-
-    examSection.classList.remove("hidden");
-}
-
-function selectExam(exam){
-    selectedExam = exam;
-    document.getElementById("selectedExam").textContent = exam;
-    examSection.classList.add("hidden");
-    renderSubjects();
-    subjectSection.classList.remove("hidden");
-    history.pushState({ page: "subjects" }, "", "#subjects");
-    goTop();
-}
-
-function renderSubjects(){
-    subjectGrid.innerHTML = "";
-    const examData = examsData[selectedExam];
-
-    if(!examData || typeof examData !== "object"){
-        subjectGrid.innerHTML = '<div class="empty">No subjects found.</div>';
-        return;
-    }
-
-    Object.keys(examData).forEach(function(subject){
-        const button = document.createElement("button");
-        button.className = "select-card";
-        button.innerHTML = '<div class="icon">📘</div>' + escapeHTML(subject);
-        button.onclick = function(){ selectSubject(subject); };
-        subjectGrid.appendChild(button);
-    });
-}
-
-function selectSubject(subject){
-    selectedSubject = subject;
-    document.getElementById("breadcrumbExam").textContent = selectedExam;
-    document.getElementById("breadcrumbSubject").textContent = selectedSubject;
-    subjectSection.classList.add("hidden");
-    document.getElementById("search").value = "";
-    renderChapters();
-    chapterSection.classList.remove("hidden");
-    history.pushState({ page: "chapters" }, "", "#chapters");
-    goTop();
-}
-
-function renderChapters(){
-    const subjectData = examsData[selectedExam][selectedSubject];
-
-    if(!subjectData || typeof subjectData !== "object"){
-        chapters = [];
-        displayChapters([]);
-        return;
-    }
-
-    chapters = Object.entries(subjectData);
-    displayChapters(chapters);
-}
-
-function displayChapters(list){
-    chapterList.innerHTML = "";
-
-    if(list.length === 0){
-        chapterList.innerHTML = '<div class="empty">No chapters found.</div>';
-        return;
-    }
-
-    list.forEach(function(entry, index){
-        var chapterName = entry[0];
-        var link = entry[1];
-
+      }
+      videos.forEach(function (v) {
         var row = document.createElement("div");
-        row.className = "chapter";
+        row.className = "vid";
         row.innerHTML =
-            '<div class="chapter-info">' +
-            '<div class="chapter-number">' + (index + 1) + '</div>' +
-            '<div class="chapter-name">' + escapeHTML(chapterName) + '</div>' +
-            '</div>' +
-            '<button class="open-btn">Open →</button>';
-
-        row.querySelector(".open-btn").onclick = function(){
-            openChapter(chapterName, link);
+          (v.thumb ? '<img src="' + v.thumb + '" alt="">' : "") +
+          "<div><b>" + escapeHtml(v.title) + "</b></div>";
+        row.onclick = function () {
+          $("playerBox").classList.add("show");
+          $("player").src = "https://www.youtube.com/embed/" + v.id + "?autoplay=1&rel=0";
         };
+        $("videoList").appendChild(row);
+      });
+      // auto first
+      $("playerBox").classList.add("show");
+      $("player").src = "https://www.youtube.com/embed/" + videos[0].id + "?autoplay=1&rel=0";
+    } catch (e) {
+      $("loadingPl").classList.add("hidden");
+      $("errPl").textContent = String(e.message || e);
+      $("errPl").classList.remove("hidden");
+    }
+  }
 
-        chapterList.appendChild(row);
+  $("btnBack").onclick = function () {
+    $("playlistView").classList.add("hidden");
+    $("home").classList.remove("hidden");
+    $("player").src = "";
+    renderMyFocus();
+  };
+
+  $("btnSave").onclick = function () {
+    if (!currentPlaylist) return;
+    var courses = getCourses();
+    var exists = courses.some(function (c) { return c.playlistId === currentPlaylist.playlistId; });
+    if (exists) {
+      alert("Already in your course");
+      return;
+    }
+    courses.unshift({
+      playlistId: currentPlaylist.playlistId,
+      title: currentPlaylist.title,
+      thumb: currentPlaylist.thumb || "",
+      exam: currentPlaylist.exam || currentExam
     });
-}
+    setCourses(courses);
+    alert("Added to your course");
+    renderMyFocus();
+  };
 
-async function openChapter(chapterName, link){
-    if(typeof link !== "string" || !link.trim()){
-        alert("This chapter has no valid link.");
-        return;
-    }
-
-    examSection.classList.add("hidden");
-    subjectSection.classList.add("hidden");
-    chapterSection.classList.add("hidden");
-
-    viewer.classList.add("active");
-    document.body.classList.add("viewer-open");
-    viewerOpen = true;
-
-    document.getElementById("viewerTitle").textContent = chapterName;
-
-    renderArea.innerHTML =
-        '<div class="loading"><div class="spinner"></div><p>Loading...</p></div>';
-
-    history.pushState({ page: "viewer" }, "", "#viewer");
-
-    try{
-        const response = await fetch(link, {
-            method:"GET",
-            cache:"no-cache"
-        });
-
-        if(!response.ok){
-            throw new Error("Chapter server returned HTTP " + response.status);
-        }
-
-        const html = await response.text();
-
-        if(!html.trim()){
-            throw new Error("The HTML page is empty.");
-        }
-
-        renderHTML(html);
-
-    }catch(err){
-        console.error(err);
-        renderArea.innerHTML =
-            '<div class="error"><h3>HTML load nahi ho saka</h3>' +
-            '<p style="margin-top:10px;">' + escapeHTML(err.message) + '</p></div>';
-    }
-}
-
-function renderHTML(html){
-    const iframe = document.createElement("iframe");
-    iframe.srcdoc = html;
-    iframe.setAttribute(
-        "sandbox",
-        "allow-scripts allow-forms allow-modals allow-popups allow-same-origin"
-    );
-    renderArea.innerHTML = "";
-    renderArea.appendChild(iframe);
-}
-
-function searchChapters(){
-    const text = document.getElementById("search").value.toLowerCase().trim();
-    const filtered = chapters.filter(function(item){
-        return item[0].toLowerCase().includes(text);
-    });
-    displayChapters(filtered);
-}
-
-function backToExams(){
-    subjectSection.classList.add("hidden");
-    chapterSection.classList.add("hidden");
-    closeViewer(false);
-    examSection.classList.remove("hidden");
-    history.pushState({ page: "exams" }, "", "#exams");
-    goTop();
-}
-
-function backToSubjects(){
-    chapterSection.classList.add("hidden");
-    closeViewer(false);
-    subjectSection.classList.remove("hidden");
-    history.pushState({ page: "subjects" }, "", "#subjects");
-    goTop();
-}
-
-function closeViewer(pushHistory){
-    renderArea.innerHTML = "";
-    viewer.classList.remove("active");
-    document.body.classList.remove("viewer-open");
-    viewerOpen = false;
-
-    if(pushHistory !== false){
-        chapterSection.classList.remove("hidden");
-        history.pushState({ page: "chapters" }, "", "#chapters");
-    }
-}
-
-function escapeHTML(value){
-    return String(value)
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-}
-
-function goTop(){
-    window.scrollTo(0, 0);
-}
-
-/* Phone / browser back button */
-window.addEventListener("popstate", function(e){
-    if(viewerOpen){
-        renderArea.innerHTML = "";
-        viewer.classList.remove("active");
-        document.body.classList.remove("viewer-open");
-        viewerOpen = false;
-        chapterSection.classList.remove("hidden");
-        return;
-    }
-
-    if(!chapterSection.classList.contains("hidden")){
-        chapterSection.classList.add("hidden");
-        subjectSection.classList.remove("hidden");
-        return;
-    }
-
-    if(!subjectSection.classList.contains("hidden")){
-        subjectSection.classList.add("hidden");
-        examSection.classList.remove("hidden");
-        return;
-    }
-});
-
-/* Kodular WebViewString back support (optional) */
-setInterval(function(){
-    try{
-        var s = "";
-        if(window.Kodular && window.Kodular.getWebViewString) s = window.Kodular.getWebViewString();
-        else if(window.AppInventor && window.AppInventor.getWebViewString) s = window.AppInventor.getWebViewString();
-
-        if(s === "BACK"){
-            if(window.Kodular && window.Kodular.setWebViewString) window.Kodular.setWebViewString("");
-            if(window.AppInventor && window.AppInventor.setWebViewString) window.AppInventor.setWebViewString("");
-            history.back();
-        }
-    }catch(err){}
-}, 400);
-
-loadFirebase();
+  renderChips();
+  loadDiscover();
+})();
 </script>
-
 </body>
 </html>

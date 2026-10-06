@@ -126,7 +126,7 @@
         var MSG_OPEN = "OPEN";
         var MSG_BACK = "BACK";
 
-        var AD_IMAGE = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0b7ov1CDzzE51q156C0p8YDGtUaAiibnzn7VhIaioJx0aVUuMYtYF4X7o&s=10";
+        var AD_IMAGE = "https://dishaonline.co.in/admin/assets/images/pages/SSC_FOUNDATION_COURSE.png";
 
         // Ads — chaaho to link bhi de sakte ho (GitHub HTML)
         var ads = [

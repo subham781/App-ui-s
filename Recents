@@ -178,14 +178,7 @@
                 color: "color-5",
                 link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/FLASH%20CARD"
             },
-            {
-                id: "quiz",
-                title: "Daily Quiz",
-                description: "Test your knowledge",
-                icon: "❓",
-                color: "color-6",
-                link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Recents"
-            }
+            
         ];
 
         function sendWebViewString(value) {

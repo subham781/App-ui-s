@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Exam Courses</title>
+<title>Exam Playlists</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -22,34 +22,19 @@ h1{font-size:1.15rem;font-weight:700}
   font-size:.72rem;font-weight:700;color:#6366f1;text-transform:uppercase;
   letter-spacing:.4px;margin:16px 0 10px
 }
-.section.mine{color:#0f766e}
 .banner-card{
   background:#fff;border:1px solid #e8ecf4;border-radius:16px;overflow:hidden;
   margin-bottom:12px;box-shadow:0 2px 12px rgba(15,23,42,.05);cursor:pointer
 }
 .banner-card:active{transform:scale(.99)}
-.banner{
-  width:100%;height:120px;object-fit:cover;background:linear-gradient(135deg,#dbeafe,#e0e7ff);display:block
-}
+.banner-wrap{width:100%;aspect-ratio:16/9;background:#e2e8f0;overflow:hidden}
+.banner-wrap img{width:100%;height:100%;object-fit:cover;display:block}
 .banner-info{padding:12px}
 .banner-info b{display:block;font-size:.9rem;line-height:1.35;margin-bottom:4px}
 .banner-info span{font-size:.72rem;color:#64748b}
-.focus-box{
-  background:linear-gradient(135deg,#ecfdf5,#f0f9ff);border:1px solid #a7f3d0;
-  border-radius:16px;padding:14px;margin-bottom:12px
-}
-.focus-box h2{font-size:.95rem;font-weight:700;color:#0f766e;margin-bottom:8px}
-.mini{
-  display:flex;gap:10px;align-items:center;background:#fff;border-radius:12px;
-  padding:8px;margin-bottom:8px;border:1px solid #e2e8f0;cursor:pointer
-}
-.mini img{width:64px;height:40px;border-radius:8px;object-fit:cover;background:#e2e8f0}
-.mini b{font-size:.82rem;display:block}
-.mini span{font-size:.7rem;color:#64748b}
 .bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .btn{border:0;border-radius:10px;padding:10px 14px;font-weight:600;font-size:.82rem}
 .btn-back{background:#e2e8f0}
-.btn-save{background:#eef2ff;color:#3730a3}
 .player-box{display:none;background:#000;border-radius:14px;overflow:hidden;margin-bottom:12px;aspect-ratio:16/9}
 .player-box.show{display:block}
 .player-box iframe{width:100%;height:100%;border:0}
@@ -67,20 +52,12 @@ h1{font-size:1.15rem;font-weight:700}
 <body>
 <div class="wrap">
   <div id="home">
-    <h1>Exam Courses</h1>
-    <p class="sub">Dynamic playlists · your course first if saved</p>
+    <h1>Exam Playlists</h1>
+    <p class="sub">Choose exam · open playlist · watch in app</p>
 
     <div class="chips" id="examChips"></div>
 
-    <!-- MAIN FOCUS: user courses -->
-    <div id="myFocus" class="hidden">
-      <div class="focus-box">
-        <h2>Your course (main focus)</h2>
-        <div id="myCourseList"></div>
-      </div>
-    </div>
-
-    <div class="section" id="discoverTitle">Discover · NDA</div>
+    <div class="section" id="discoverTitle">Playlists · NDA</div>
     <div id="discoverList"></div>
     <div class="loading" id="loadingHome">Loading playlists...</div>
     <div class="err hidden" id="errHome"></div>
@@ -89,7 +66,6 @@ h1{font-size:1.15rem;font-weight:700}
   <div id="playlistView" class="hidden">
     <div class="bar">
       <button class="btn btn-back" type="button" id="btnBack">← Back</button>
-      <button class="btn btn-save" type="button" id="btnSave">+ Add to my course</button>
     </div>
     <div class="section" id="plTitle">Playlist</div>
     <div class="player-box" id="playerBox">
@@ -104,9 +80,7 @@ h1{font-size:1.15rem;font-weight:700}
 
 <script>
 (function () {
-  // ===== YOUR KEY =====
   var API_KEY = "AIzaSyCVSN5-wdrjfUHLYbyfdmS5LdtzISaqCcI";
-  // ====================
 
   var EXAMS = [
     { id: "NDA", q: "NDA exam full preparation playlist" },
@@ -116,19 +90,10 @@ h1{font-size:1.15rem;font-weight:700}
     { id: "Army", q: "Indian Army GD Agniveer preparation playlist" }
   ];
 
-  var CACHE_MS = 24 * 3600 * 1000; // 24h — quota save
+  var CACHE_MS = 24 * 3600 * 1000;
   var currentExam = "NDA";
-  var currentPlaylist = null;
 
   function $(id) { return document.getElementById(id); }
-
-  function getCourses() {
-    try { return JSON.parse(localStorage.getItem("my_exam_courses") || "[]"); }
-    catch (e) { return []; }
-  }
-  function setCourses(arr) {
-    localStorage.setItem("my_exam_courses", JSON.stringify(arr));
-  }
 
   function cacheKey(exam) { return "yt_discover_" + exam; }
 
@@ -139,6 +104,7 @@ h1{font-size:1.15rem;font-weight:700}
       return o.items;
     } catch (e) { return null; }
   }
+
   function setCachedPlaylists(exam, items) {
     localStorage.setItem(cacheKey(exam), JSON.stringify({ ts: Date.now(), items: items }));
   }
@@ -146,6 +112,7 @@ h1{font-size:1.15rem;font-weight:700}
   function cachePlVideos(pid, items) {
     localStorage.setItem("yt_videos_" + pid, JSON.stringify({ ts: Date.now(), items: items }));
   }
+
   function getCachedPlVideos(pid) {
     try {
       var o = JSON.parse(localStorage.getItem("yt_videos_" + pid) || "null");
@@ -172,29 +139,6 @@ h1{font-size:1.15rem;font-weight:700}
         loadDiscover();
       };
       box.appendChild(b);
-    });
-  }
-
-  function renderMyFocus() {
-    var courses = getCourses();
-    var box = $("myFocus");
-    var list = $("myCourseList");
-    if (!courses.length) {
-      box.classList.add("hidden");
-      return;
-    }
-    box.classList.remove("hidden");
-    list.innerHTML = "";
-    courses.forEach(function (pl) {
-      var row = document.createElement("div");
-      row.className = "mini";
-      row.innerHTML =
-        (pl.thumb
-          ? '<img src="' + pl.thumb + '" alt="">'
-          : '<img src="" alt="" style="background:#e2e8f0">') +
-        "<div><b>" + escapeHtml(pl.title) + "</b><span>" + escapeHtml(pl.exam || "") + "</span></div>";
-      row.onclick = function () { openPlaylist(pl); };
-      list.appendChild(row);
     });
   }
 
@@ -229,17 +173,15 @@ h1{font-size:1.15rem;font-weight:700}
       };
     }).filter(function (x) { return x.playlistId; });
 
-    // at least try 10
     if (items.length) setCachedPlaylists(examId, items);
     return items;
   }
 
   async function loadDiscover() {
-    $("discoverTitle").textContent = "Discover · " + currentExam;
+    $("discoverTitle").textContent = "Playlists · " + currentExam;
     $("discoverList").innerHTML = "";
     $("errHome").classList.add("hidden");
     $("loadingHome").classList.remove("hidden");
-    renderMyFocus();
 
     try {
       var items = await searchPlaylists(currentExam);
@@ -252,10 +194,10 @@ h1{font-size:1.15rem;font-weight:700}
         var card = document.createElement("div");
         card.className = "banner-card";
         card.innerHTML =
-          (pl.thumb
-            ? '<img class="banner" src="' + pl.thumb + '" alt="">'
-            : '<div class="banner"></div>') +
-          '<div class="banner-info"><b>' + escapeHtml(pl.title) + '</b>' +
+          '<div class="banner-wrap">' +
+            (pl.thumb ? '<img src="' + pl.thumb + '" alt="">' : "") +
+          "</div>" +
+          '<div class="banner-info"><b>' + escapeHtml(pl.title) + "</b>" +
           "<span>" + escapeHtml(pl.channel) + " · " + escapeHtml(pl.exam) + "</span></div>";
         card.onclick = function () { openPlaylist(pl); };
         $("discoverList").appendChild(card);
@@ -302,7 +244,6 @@ h1{font-size:1.15rem;font-weight:700}
   }
 
   async function openPlaylist(pl) {
-    currentPlaylist = pl;
     $("home").classList.add("hidden");
     $("playlistView").classList.remove("hidden");
     $("plTitle").textContent = pl.title;
@@ -332,7 +273,6 @@ h1{font-size:1.15rem;font-weight:700}
         };
         $("videoList").appendChild(row);
       });
-      // auto first
       $("playerBox").classList.add("show");
       $("player").src = "https://www.youtube.com/embed/" + videos[0].id + "?autoplay=1&rel=0";
     } catch (e) {
@@ -346,26 +286,6 @@ h1{font-size:1.15rem;font-weight:700}
     $("playlistView").classList.add("hidden");
     $("home").classList.remove("hidden");
     $("player").src = "";
-    renderMyFocus();
-  };
-
-  $("btnSave").onclick = function () {
-    if (!currentPlaylist) return;
-    var courses = getCourses();
-    var exists = courses.some(function (c) { return c.playlistId === currentPlaylist.playlistId; });
-    if (exists) {
-      alert("Already in your course");
-      return;
-    }
-    courses.unshift({
-      playlistId: currentPlaylist.playlistId,
-      title: currentPlaylist.title,
-      thumb: currentPlaylist.thumb || "",
-      exam: currentPlaylist.exam || currentExam
-    });
-    setCourses(courses);
-    alert("Added to your course");
-    renderMyFocus();
   };
 
   renderChips();

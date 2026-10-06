@@ -32,9 +32,8 @@ h1{font-size:1.15rem;font-weight:700}
 .banner-info{padding:12px}
 .banner-info b{display:block;font-size:.9rem;line-height:1.35;margin-bottom:4px}
 .banner-info span{font-size:.72rem;color:#64748b}
-.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:600;font-size:.82rem}
-.btn-back{background:#e2e8f0}
+.bar{margin-bottom:12px}
+.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:600;font-size:.82rem;background:#e2e8f0}
 .player-box{display:none;background:#000;border-radius:14px;overflow:hidden;margin-bottom:12px;aspect-ratio:16/9}
 .player-box.show{display:block}
 .player-box iframe{width:100%;height:100%;border:0}
@@ -53,10 +52,8 @@ h1{font-size:1.15rem;font-weight:700}
 <div class="wrap">
   <div id="home">
     <h1>Exam Playlists</h1>
-    <p class="sub">Choose exam · open playlist · watch in app</p>
-
+    <p class="sub">Choose exam · open playlist · watch</p>
     <div class="chips" id="examChips"></div>
-
     <div class="section" id="discoverTitle">Playlists · NDA</div>
     <div id="discoverList"></div>
     <div class="loading" id="loadingHome">Loading playlists...</div>
@@ -65,7 +62,7 @@ h1{font-size:1.15rem;font-weight:700}
 
   <div id="playlistView" class="hidden">
     <div class="bar">
-      <button class="btn btn-back" type="button" id="btnBack">← Back</button>
+      <button class="btn" type="button" id="btnBack">← Back</button>
     </div>
     <div class="section" id="plTitle">Playlist</div>
     <div class="player-box" id="playerBox">
@@ -90,36 +87,9 @@ h1{font-size:1.15rem;font-weight:700}
     { id: "Army", q: "Indian Army GD Agniveer preparation playlist" }
   ];
 
-  var CACHE_MS = 24 * 3600 * 1000;
   var currentExam = "NDA";
 
   function $(id) { return document.getElementById(id); }
-
-  function cacheKey(exam) { return "yt_discover_" + exam; }
-
-  function getCachedPlaylists(exam) {
-    try {
-      var o = JSON.parse(localStorage.getItem(cacheKey(exam)) || "null");
-      if (!o || !o.ts || Date.now() - o.ts > CACHE_MS) return null;
-      return o.items;
-    } catch (e) { return null; }
-  }
-
-  function setCachedPlaylists(exam, items) {
-    localStorage.setItem(cacheKey(exam), JSON.stringify({ ts: Date.now(), items: items }));
-  }
-
-  function cachePlVideos(pid, items) {
-    localStorage.setItem("yt_videos_" + pid, JSON.stringify({ ts: Date.now(), items: items }));
-  }
-
-  function getCachedPlVideos(pid) {
-    try {
-      var o = JSON.parse(localStorage.getItem("yt_videos_" + pid) || "null");
-      if (!o || Date.now() - o.ts > CACHE_MS) return null;
-      return o.items;
-    } catch (e) { return null; }
-  }
 
   function escapeHtml(s) {
     return String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -143,13 +113,9 @@ h1{font-size:1.15rem;font-weight:700}
   }
 
   async function searchPlaylists(examId) {
-    var cached = getCachedPlaylists(examId);
-    if (cached && cached.length) return cached;
-
     if (!API_KEY || API_KEY.indexOf("YOUR_") === 0) {
       throw new Error("YouTube API key daalo");
     }
-
     var exam = EXAMS.find(function (e) { return e.id === examId; }) || EXAMS[0];
     var url =
       "https://www.googleapis.com/youtube/v3/search?part=snippet&type=playlist&maxResults=12&q=" +
@@ -160,7 +126,7 @@ h1{font-size:1.15rem;font-weight:700}
     var data = await res.json();
     if (data.error) throw new Error(data.error.message || "Search failed");
 
-    var items = (data.items || []).map(function (it) {
+    return (data.items || []).map(function (it) {
       var sn = it.snippet || {};
       var thumbs = sn.thumbnails || {};
       var thumb = (thumbs.high || thumbs.medium || thumbs.default || {}).url || "";
@@ -172,9 +138,6 @@ h1{font-size:1.15rem;font-weight:700}
         exam: examId
       };
     }).filter(function (x) { return x.playlistId; });
-
-    if (items.length) setCachedPlaylists(examId, items);
-    return items;
   }
 
   async function loadDiscover() {
@@ -210,9 +173,6 @@ h1{font-size:1.15rem;font-weight:700}
   }
 
   async function fetchVideos(playlistId) {
-    var cached = getCachedPlVideos(playlistId);
-    if (cached) return cached;
-
     var items = [];
     var pageToken = "";
     for (var p = 0; p < 2; p++) {
@@ -239,7 +199,6 @@ h1{font-size:1.15rem;font-weight:700}
       pageToken = data.nextPageToken || "";
       if (!pageToken) break;
     }
-    cachePlVideos(playlistId, items);
     return items;
   }
 

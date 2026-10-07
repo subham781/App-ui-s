@@ -169,7 +169,7 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
       title: "Study Material Pack",
       image: "https://images.unsplash.com/photo-1481627834876-b7833e1d857a?w=600&q=80",
       link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Recents"
-    },
+    }
   ];
 
   var features = [
@@ -183,8 +183,6 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
       link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Unit%20converter" },
     { id: "formula_sheet", title: "Flash Card", description: "All important formulas", icon: "📝", color: "color-5",
       link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/FLASH%20CARD" }
-    { id: "PYQ", title: "PYQ's", description: "NDA,CDS,CGL PYP's", icon: "🌗", color: "color-5",
-      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Pyp's" } ,
   ];
 
   var wikiLang = "en";

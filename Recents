@@ -1,278 +1,260 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>App Features</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-        body {
-            background: #f5f7fb;
-            min-height: 100vh;
-            color: #1e293b;
-            padding: 16px;
-        }
-        .header { text-align: center; margin-bottom: 18px; }
-        .header h1 { font-size: 1.6rem; font-weight: 700; color: #0f172a; }
-        .header p { color: #64748b; font-size: 0.9rem; margin-top: 4px; }
-        .section-title {
-            font-size: 1.05rem; font-weight: 600; color: #0f172a;
-            margin: 10px 0 12px 4px;
-        }
-        .adds-wrapper {
-            overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px;
-            -webkit-overflow-scrolling: touch; scrollbar-width: none;
-        }
-        .adds-wrapper::-webkit-scrollbar { display: none; }
-        .adds-track {
-            display: flex; gap: 12px; width: max-content;
-            animation: autoScroll 22s linear infinite;
-        }
-        .adds-wrapper:active .adds-track { animation-play-state: paused; }
-        @keyframes autoScroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        .ad-card {
-            width: 220px; height: 120px; border-radius: 16px; overflow: hidden;
-            flex-shrink: 0; cursor: pointer; border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06); position: relative; background: #e2e8f0;
-        }
-        .ad-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .ad-card:active { transform: scale(0.97); }
-        .ad-label {
-            position: absolute; left: 10px; bottom: 10px;
-            background: rgba(15,23,42,0.7); color: #fff;
-            font-size: 0.75rem; font-weight: 600; padding: 4px 8px; border-radius: 8px;
-        }
-        .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-        .feature-card {
-            background: white; border-radius: 18px; padding: 18px 14px; text-align: center;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;
-            cursor: pointer; transition: all 0.2s ease;
-        }
-        .feature-card:active { transform: scale(0.96); background: #f8fafc; }
-        .icon-box {
-            width: 52px; height: 52px; border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px; margin: 0 auto 12px;
-        }
-        .feature-card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 5px; color: #0f172a; }
-        .feature-card p { font-size: 0.75rem; color: #64748b; line-height: 1.35; }
-        .color-1 { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
-        .color-2 { background: linear-gradient(135deg, #fce7f3, #fbcfe8); }
-        .color-3 { background: linear-gradient(135deg, #d1fae5, #a7f3d0); }
-        .color-4 { background: linear-gradient(135deg, #fef3c7, #fde68a); }
-        .color-5 { background: linear-gradient(135deg, #e0e7ff, #c7d2fe); }
-        .color-6 { background: linear-gradient(135deg, #ffedd5, #fed7aa); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>App Features</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:#eef2f7;min-height:100vh;color:#0f172a;padding:16px}
+.wrap{max-width:640px;margin:0 auto}
 
-        #viewer {
-            display: none; position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; background: white;
-            z-index: 9999; flex-direction: column;
-        }
-        .viewer-header {
-            display: flex; align-items: center; gap: 12px;
-            padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #e2e8f0;
-        }
-        .back-btn {
-            width: 40px; height: 40px; border-radius: 12px; border: none;
-            background: #e2e8f0; font-size: 18px; cursor: pointer;
-        }
-        .viewer-title { font-size: 1.05rem; font-weight: 600; }
-        #viewer-frame { flex: 1; width: 100%; border: none; }
-        .loading {
-            flex: 1; display: flex; align-items: center; justify-content: center; color: #64748b;
-        }
-    </style>
+.section-title{
+  font-size:.72rem;font-weight:800;color:#64748b;text-transform:uppercase;
+  letter-spacing:.5px;margin:6px 0 12px 2px
+}
+
+.adds-wrapper{
+  overflow-x:auto;padding-bottom:6px;margin-bottom:22px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none
+}
+.adds-wrapper::-webkit-scrollbar{display:none}
+.adds-track{display:flex;gap:12px;width:max-content;animation:autoScroll 24s linear infinite}
+.adds-wrapper:active .adds-track{animation-play-state:paused}
+@keyframes autoScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+.ad-card{
+  width:240px;height:132px;border-radius:18px;overflow:hidden;flex-shrink:0;
+  cursor:pointer;border:1px solid #e2e8f0;position:relative;
+  box-shadow:0 8px 24px rgba(15,23,42,.08);background:#e2e8f0
+}
+.ad-card img{width:100%;height:100%;object-fit:cover;display:block}
+.ad-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 40%,rgba(15,23,42,.75) 100%)
+}
+.ad-card:active{transform:scale(.97)}
+.ad-label{
+  position:absolute;left:12px;right:12px;bottom:12px;z-index:1;
+  color:#fff;font-size:.82rem;font-weight:700;line-height:1.25
+}
+.ad-pill{
+  position:absolute;top:10px;left:10px;z-index:1;
+  background:rgba(255,255,255,.92);color:#0f172a;
+  font-size:.65rem;font-weight:800;padding:4px 8px;border-radius:999px
+}
+
+.features-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.feature-card{
+  background:#fff;border-radius:20px;padding:18px 14px;text-align:left;
+  box-shadow:0 4px 16px rgba(15,23,42,.05);border:1px solid #e8ecf4;cursor:pointer
+}
+.feature-card:active{transform:scale(.97);background:#f8fafc}
+.icon-box{
+  width:48px;height:48px;border-radius:14px;display:flex;align-items:center;
+  justify-content:center;font-size:22px;margin-bottom:12px
+}
+.feature-card h3{font-size:.92rem;font-weight:700;margin-bottom:4px;color:#0f172a}
+.feature-card p{font-size:.74rem;color:#64748b;line-height:1.4}
+
+.color-1{background:linear-gradient(135deg,#dbeafe,#bfdbfe)}
+.color-2{background:linear-gradient(135deg,#fce7f3,#fbcfe8)}
+.color-3{background:linear-gradient(135deg,#d1fae5,#a7f3d0)}
+.color-4{background:linear-gradient(135deg,#fef3c7,#fde68a)}
+.color-5{background:linear-gradient(135deg,#e0e7ff,#c7d2fe)}
+.color-6{background:linear-gradient(135deg,#ffedd5,#fed7aa)}
+
+#viewer{
+  display:none;position:fixed;inset:0;background:#fff;z-index:9999;flex-direction:column
+}
+.viewer-header{
+  display:flex;align-items:center;gap:12px;padding:12px 16px;
+  background:#f8fafc;border-bottom:1px solid #e2e8f0
+}
+.back-btn{
+  width:40px;height:40px;border-radius:12px;border:0;background:#e2e8f0;font-size:18px
+}
+.viewer-title{font-size:1.02rem;font-weight:700}
+#viewer-frame{flex:1;width:100%;border:none}
+.loading{flex:1;display:flex;align-items:center;justify-content:center;color:#64748b}
+</style>
 </head>
 <body>
-    <div id="main-page">
-        <div class="header">
-            <h1>Educational Tools</h1>
-            <p>Choose a tool or explore resources</p>
-        </div>
+<div class="wrap" id="main-page">
+  <div class="section-title">Sponsored</div>
+  <div class="adds-wrapper">
+    <div class="adds-track" id="addsTrack"></div>
+  </div>
 
-        <div class="section-title">📢 Sponsored</div>
-        <div class="adds-wrapper">
-            <div class="adds-track" id="addsTrack"></div>
-        </div>
+  <div class="section-title">App Features</div>
+  <div class="features-grid" id="featuresContainer"></div>
+</div>
 
-        <div class="section-title">⚡ App Features</div>
-        <div class="features-grid" id="featuresContainer"></div>
-    </div>
+<div id="viewer">
+  <div class="viewer-header">
+    <button class="back-btn" type="button" onclick="closeViewer()">←</button>
+    <div class="viewer-title" id="viewer-title">Loading...</div>
+  </div>
+  <div class="loading" id="loading">Loading design...</div>
+  <iframe id="viewer-frame" style="display:none"></iframe>
+</div>
 
-    <div id="viewer">
-        <div class="viewer-header">
-            <button class="back-btn" onclick="closeViewer()">←</button>
-            <div class="viewer-title" id="viewer-title">Loading...</div>
-        </div>
-        <div class="loading" id="loading">Loading design...</div>
-        <iframe id="viewer-frame" style="display:none;"></iframe>
-    </div>
+<script>
+(function () {
+  var MSG_OPEN = "OPEN";
+  var MSG_BACK = "BACK";
 
-    <script>
-        /* =====================================================
-           FIXED STRINGS (Kodular) — kabhi change mat karna
-           OPEN  = feature/ad open → title bar hide
-           BACK  = back pressed     → title bar show
-           ===================================================== */
-        var MSG_OPEN = "OPEN";
-        var MSG_BACK = "BACK";
+  // Har ad ki alag photo yahan
+  var ads = [
+    {
+      id: "ad_1",
+      title: "SSC Foundation Course",
+      image: "https://dishaonline.co.in/admin/assets/images/pages/SSC_FOUNDATION_COURSE.png",
+      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Recents"
+    },
+    {
+      id: "ad_2",
+      title: "Defence Batch",
+      image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&q=80",
+      link: ""
+    },
+    {
+      id: "ad_3",
+      title: "Mock Test Series",
+      image: "https://images.unsplash.com/photo-14565130808af52f38ab1aeae7baa7?w=600&q=80",
+      link: ""
+    },
+    {
+      id: "ad_4",
+      title: "Study Material Pack",
+      image: "https://images.unsplash.com/photo-14565130808af52f38ab1aeae7baa7?w=600&q=80",
+      link: ""
+    }
+  ];
 
-        var AD_IMAGE = "https://dishaonline.co.in/admin/assets/images/pages/SSC_FOUNDATION_COURSE.png";
+  // Fix broken unsplash if needed - use distinct images:
+  ads[2].image = "https://images.unsplash.com/photo-14565130808-af52f38ab1ae?w=600&q=80";
+  ads[3].image = "https://images.unsplash.com/photo-1481627834876-b7833e1d857a?w=600&q=80";
 
-        // Ads — chaaho to link bhi de sakte ho (GitHub HTML)
-        var ads = [
-            { id: "tax", title: "Ad 1", link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Recents" },
-            { id: "ad_2", title: "Ad 2", link: "" },
-            { id: "ad_3", title: "Ad 3", link: "" },
-            { id: "ad_4", title: "Ad 4", link: "" }
-        ];
+  var features = [
+    {
+      id: "graph_plotter",
+      title: "Graph Plotter",
+      description: "Plot math graphs easily",
+      icon: "📈",
+      color: "color-1",
+      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/GRAPH%20PLOTER"
+    },
+    {
+      id: "synonyms_finder",
+      title: "Synonyms Finder",
+      description: "Find better words fast",
+      icon: "📚",
+      color: "color-2",
+      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Ant%20and%20syn%20finder"
+    },
+    {
+      id: "calculator",
+      title: "Smart Calculator",
+      description: "Scientific calculator",
+      icon: "🧮",
+      color: "color-3",
+      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Smart%20calculator"
+    },
+    {
+      id: "unit_converter",
+      title: "Unit Convertor",
+      description: "Length, weight & more",
+      icon: "🔄",
+      color: "color-4",
+      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Unit%20converter"
+    },
+    {
+      id: "formula_sheet",
+      title: "Flash Card",
+      description: "All important formulas",
+      icon: "📝",
+      color: "color-5",
+      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/FLASH%20CARD"
+    }
+  ];
 
-        // Features — baad mein yahan se add/edit karo, app update ki zaroorat nahi
-        var features = [
-            {
-                id: "graph_plotter",
-                title: "Graph Plotter",
-                description: "Plot math graphs easily",
-                icon: "📈",
-                color: "color-1",
-                link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/GRAPH%20PLOTER"
-            },
-            {
-                id: "synonyms_finder",
-                title: "Synonyms Finder",
-                description: "Find better words fast",
-                icon: "📚",
-                color: "color-2",
-                link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Ant%20and%20syn%20finder"
-            },
-            {
-                id: "calculator",
-                title: "Smart Calculator",
-                description: "Scientific calculator",
-                icon: "🧮",
-                color: "color-3",
-                link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Smart%20calculator"
-            },
-            {
-                id: "unit_converter",
-                title: "Unit Convertor",
-                description: "Length, weight & more",
-                icon: "🔄",
-                color: "color-4",
-                link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Unit%20converter"
-            },
-            {
-                id: "formula_sheet",
-                title: "Flash Card",
-                description: "All important formulas",
-                icon: "📝",
-                color: "color-5",
-                link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/FLASH%20CARD"
-            },
-            
-        ];
+  function sendWebViewString(value) {
+    try {
+      if (window.Kodular && window.Kodular.setWebViewString) window.Kodular.setWebViewString(value);
+      if (window.AppInventor && window.AppInventor.setWebViewString) window.AppInventor.setWebViewString(value);
+    } catch (e) {}
+  }
 
-        function sendWebViewString(value) {
-            try {
-                if (window.Kodular && window.Kodular.setWebViewString) {
-                    window.Kodular.setWebViewString(value);
-                }
-                if (window.AppInventor && window.AppInventor.setWebViewString) {
-                    window.AppInventor.setWebViewString(value);
-                }
-            } catch (e) {}
-            console.log("WebViewString:", value);
-        }
+  var addsTrack = document.getElementById("addsTrack");
+  var allAds = ads.concat(ads);
 
-        // ===== ADS =====
-        var addsTrack = document.getElementById("addsTrack");
-        var allAds = ads.concat(ads);
+  allAds.forEach(function (item) {
+    var card = document.createElement("div");
+    card.className = "ad-card";
+    card.innerHTML =
+      '<img src="' + item.image + '" alt="' + item.title + '">' +
+      '<div class="ad-pill">Ad</div>' +
+      '<div class="ad-label">' + item.title + "</div>";
 
-        allAds.forEach(function (item) {
-            var card = document.createElement("div");
-            card.className = "ad-card";
-            card.innerHTML =
-                '<img src="' + AD_IMAGE + '" alt="ad">' +
-                '<div class="ad-label">' + item.title + '</div>';
+    card.addEventListener("click", function () {
+      sendWebViewString(MSG_OPEN);
+      if (item.link) openViewer(item.title, item.link);
+    });
+    addsTrack.appendChild(card);
+  });
 
-            card.addEventListener("click", function () {
-                // same string for all
-                sendWebViewString(MSG_OPEN);
+  var container = document.getElementById("featuresContainer");
+  features.forEach(function (feature) {
+    var card = document.createElement("div");
+    card.className = "feature-card";
+    card.innerHTML =
+      '<div class="icon-box ' + feature.color + '">' + feature.icon + "</div>" +
+      "<h3>" + feature.title + "</h3>" +
+      "<p>" + feature.description + "</p>";
+    card.addEventListener("click", function () {
+      sendWebViewString(MSG_OPEN);
+      openViewer(feature.title, feature.link);
+    });
+    container.appendChild(card);
+  });
 
-                if (item.link) {
-                    openViewer(item.title, item.link);
-                }
-            });
+  window.openViewer = function (title, url) {
+    document.getElementById("main-page").style.display = "none";
+    document.getElementById("viewer").style.display = "flex";
+    document.getElementById("viewer-title").innerText = title;
+    document.getElementById("loading").style.display = "flex";
+    document.getElementById("loading").innerText = "Loading design...";
+    document.getElementById("viewer-frame").style.display = "none";
 
-            addsTrack.appendChild(card);
-        });
+    fetch(url)
+      .then(function (r) { return r.text(); })
+      .then(function (html) {
+        var frame = document.getElementById("viewer-frame");
+        var doc = frame.contentDocument || frame.contentWindow.document;
+        doc.open();
+        doc.write(html);
+        doc.close();
+        frame.style.display = "block";
+        document.getElementById("loading").style.display = "none";
+      })
+      .catch(function () {
+        document.getElementById("loading").innerText = "Failed to load";
+      });
+  };
 
-        // ===== FEATURES =====
-        var container = document.getElementById("featuresContainer");
-
-        features.forEach(function (feature) {
-            var card = document.createElement("div");
-            card.className = "feature-card";
-            card.innerHTML =
-                '<div class="icon-box ' + feature.color + '">' + feature.icon + '</div>' +
-                '<h3>' + feature.title + '</h3>' +
-                '<p>' + feature.description + '</p>';
-
-            card.addEventListener("click", function () {
-                // same string for all features
-                sendWebViewString(MSG_OPEN);
-                openViewer(feature.title, feature.link);
-            });
-
-            container.appendChild(card);
-        });
-
-        function openViewer(title, url) {
-            document.getElementById("main-page").style.display = "none";
-            document.getElementById("viewer").style.display = "flex";
-            document.getElementById("viewer-title").innerText = title;
-            document.getElementById("loading").style.display = "flex";
-            document.getElementById("loading").innerText = "Loading design...";
-            document.getElementById("viewer-frame").style.display = "none";
-
-            fetch(url)
-                .then(function (response) { return response.text(); })
-                .then(function (html) {
-                    var frame = document.getElementById("viewer-frame");
-                    var doc = frame.contentDocument || frame.contentWindow.document;
-                    doc.open();
-                    doc.write(html);
-                    doc.close();
-                    frame.style.display = "block";
-                    document.getElementById("loading").style.display = "none";
-                })
-                .catch(function () {
-                    document.getElementById("loading").innerText = "Failed to load";
-                });
-        }
-
-        function closeViewer() {
-            // same back string for all
-            sendWebViewString(MSG_BACK);
-
-            document.getElementById("viewer").style.display = "none";
-            document.getElementById("main-page").style.display = "block";
-
-            var frame = document.getElementById("viewer-frame");
-            var doc = frame.contentDocument || frame.contentWindow.document;
-            doc.open();
-            doc.write("");
-            doc.close();
-        }
-    </script>
+  window.closeViewer = function () {
+    sendWebViewString(MSG_BACK);
+    document.getElementById("viewer").style.display = "none";
+    document.getElementById("main-page").style.display = "block";
+    var frame = document.getElementById("viewer-frame");
+    var doc = frame.contentDocument || frame.contentWindow.document;
+    doc.open();
+    doc.write("");
+    doc.close();
+  };
+})();
+</script>
 </body>
 </html>

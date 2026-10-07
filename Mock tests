@@ -150,7 +150,7 @@ async function loadExams(){
   hideTestUI();
   appBox.innerHTML = '<div class="loading">Loading Exams...</div>';
   try{
-    const snapshot = await get(ref(db,"exams"));
+    const snapshot = await get(ref(db,"mockTests"));
     if(!snapshot.exists()){
       appBox.innerHTML = '<div class="empty"><h3>No Exams Found</h3></div>';
       return;

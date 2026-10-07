@@ -184,7 +184,7 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
     { id: "formula_sheet", title: "Flash Card", description: "All important formulas", icon: "📝", color: "color-5",
       link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/FLASH%20CARD" }
     { id: "PYQ", title: "PYQ's", description: "NDA,CDS,CGL PYP's", icon: "🌗", color: "color-5",
-      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Pyp's" }
+      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Pyp's" } ,
   ];
 
   var wikiLang = "en";

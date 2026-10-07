@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Study PDFs - Paper Wise</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:Inter,system-ui,sans-serif;background:#f4f6fb;color:#0f172a;min-height:100vh}
+.wrap{max-width:720px;margin:0 auto;padding:16px 14px 40px}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+h1{font-size:1.2rem;font-weight:700}
+.sub{font-size:.8rem;color:#64748b;margin:4px 0 14px}
+.search{width:100%;border:1.5px solid #e2e8f0;border-radius:12px;padding:12px 14px;font-size:.9rem;font-family:inherit;background:#fff;margin-bottom:14px}
+.breadcrumb{display:flex;align-items:center;gap:6px;overflow:auto;white-space:nowrap;margin-bottom:12px;font-size:.78rem;color:#64748b}
+.breadcrumb button{border:0;background:transparent;color:#2563eb;font:inherit;font-weight:600;cursor:pointer}
+.grid{display:flex;flex-direction:column;gap:10px}
+.section-title{font-size:.82rem;font-weight:700;color:#475569;margin:8px 2px 2px}
+.card{background:#fff;border:1px solid #e8ecf4;border-radius:14px;padding:14px;box-shadow:0 2px 10px rgba(15,23,42,.04);display:flex;gap:12px;align-items:center}
+.icon{width:46px;height:46px;border-radius:12px;background:#eef2ff;color:#3730a3;display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0}
+.pdf .icon{background:#fef2f2;color:#dc2626;font-size:.68rem;font-weight:800}
+.meta{flex:1;min-width:0}
+.meta b{display:block;font-size:.9rem;line-height:1.35;margin-bottom:4px;word-break:break-word}
+.meta span{font-size:.72rem;color:#64748b}
+.actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.btn{border:0;border-radius:10px;padding:8px 12px;font-size:.78rem;font-weight:600;cursor:pointer}
+.btn-open{background:#2563eb;color:#fff}
+.btn-view{background:#eef2ff;color:#3730a3}
+.btn-folder{background:#f1f5f9;color:#334155}
+.back{border:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:9px 12px;font-weight:600;color:#334155;cursor:pointer;margin-bottom:12px}
+.loading,.empty{text-align:center;padding:36px 12px;color:#64748b;font-size:.9rem}
+.err{background:#fef2f2;color:#b91c1c;border-radius:12px;padding:12px;font-size:.85rem;margin-bottom:12px;display:none}
+.err.show{display:block}
+/* viewer */
+.viewer{display:none;position:fixed;inset:0;background:#0f172a;z-index:50;flex-direction:column}
+.viewer.show{display:flex}
+.v-bar{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#1e293b;color:#fff}
+.v-bar button{border:0;background:#334155;color:#fff;border-radius:8px;padding:8px 12px;font-weight:600}
+.v-bar span{flex:1;font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v-frame{flex:1;width:100%;border:0;background:#fff}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>Study PDFs</h1></div>
+  <p class="sub">Paper-wise folders from your Drive</p>
+
+  <div class="err" id="err"></div>
+  <input class="search" id="search" type="search" placeholder="Search folder or PDF name...">
+
+  <div class="breadcrumb" id="breadcrumb"></div>
+  <button class="back" id="backBtn" style="display:none">← Back</button>
+
+  <div class="grid" id="list"></div>
+  <div class="loading" id="loading">Loading folders...</div>
+</div>
+
+<div class="viewer" id="viewer">
+  <div class="v-bar">
+    <button type="button" id="btnClose">← Back</button>
+    <span id="vTitle">PDF</span>
+  </div>
+  <iframe class="v-frame" id="frame"></iframe>
+</div>
+
+<script>
+(function () {
+  // ========== CONFIG ==========
+  var FOLDER_ID = "1gJmhMQiIVCFF8MCEXLDMY01LqCh9U3hU";
+  // Cloud Console → Enable "Google Drive API" → API key
+  var API_KEY = "AIzaSyDtdFn-GBAZE6iKoFGvAe86nFSKJ7NJA_c";
+  // =============================
+
+  var root = {id:FOLDER_ID, name:"All Papers"};
+  var current = root;
+  var stack = [];
+  var cache = {};
+  var allIndex = [];
+
+  function $(id){return document.getElementById(id)}
+
+  function showErr(msg){
+    var e=$("err"); e.textContent=msg; e.classList.add("show");
+  }
+
+  function escapeHtml(s){
+    return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  function formatSize(n){
+    n=Number(n)||0;
+    if(n<1024)return n+" B";
+    if(n<1024*1024)return (n/1024).toFixed(1)+" KB";
+    return (n/(1024*1024)).toFixed(1)+" MB";
+  }
+
+  async function driveList(parentId){
+    if(cache[parentId]) return cache[parentId];
+
+    var out=[], token="";
+    do{
+      var q="'" + parentId + "' in parents and trashed=false";
+      var url="https://www.googleapis.com/drive/v3/files?"
+        +"q="+encodeURIComponent(q)
+        +"&fields=nextPageToken,files(id,name,mimeType,size,modifiedTime,webViewLink)"
+        +"&orderBy=folder,name_natural"
+        +"&pageSize=1000"
+        +"&key="+encodeURIComponent(API_KEY);
+      if(token) url+="&pageToken="+encodeURIComponent(token);
+
+      var res=await fetch(url);
+      var data=await res.json();
+      if(data.error) throw new Error(data.error.message||"Drive API error");
+      out=out.concat(data.files||[]);
+      token=data.nextPageToken||"";
+    }while(token);
+
+    cache[parentId]=out;
+    return out;
+  }
+
+  function setBreadcrumb(){
+    var b=$("breadcrumb");
+    b.innerHTML="";
+    var path=stack.concat([current]);
+    path.forEach(function(p,i){
+      var btn=document.createElement("button");
+      btn.textContent=p.name;
+      btn.onclick=function(){
+        var idx=path.indexOf(p);
+        if(idx===0){stack=[];current=root;}
+        else{current=path[idx];stack=path.slice(0,idx);}
+        loadFolder(current);
+      };
+      b.appendChild(btn);
+      if(i<path.length-1){
+        var sep=document.createElement("span");
+        sep.textContent="›";
+        b.appendChild(sep);
+      }
+    });
+  }
+
+  function openFolder(folder){
+    stack.push(current);
+    current=folder;
+    loadFolder(current);
+  }
+
+  function render(files){
+    var box=$("list");
+    box.innerHTML="";
+
+    var folders=files.filter(function(f){return f.mimeType==="application/vnd.google-apps.folder"})
+                     .sort(function(a,b){return a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:"base"})});
+    var pdfs=files.filter(function(f){return f.mimeType==="application/pdf"})
+                  .sort(function(a,b){return a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:"base"})});
+
+    if(folders.length){
+      var t=document.createElement("div");
+      t.className="section-title";
+      t.textContent="Papers / Folders ("+folders.length+")";
+      box.appendChild(t);
+
+      folders.forEach(function(f){
+        var card=document.createElement("div");
+        card.className="card";
+        card.innerHTML=
+          '<div class="icon">📁</div>'+
+          '<div class="meta"><b>'+escapeHtml(f.name)+'</b>'+
+          '<span>Open this paper folder</span></div>'+
+          '<button class="btn btn-folder" type="button">Open ›</button>';
+        card.querySelector("button").onclick=function(){openFolder(f)};
+        box.appendChild(card);
+      });
+    }
+
+    if(pdfs.length){
+      var t2=document.createElement("div");
+      t2.className="section-title";
+      t2.textContent="PDFs ("+pdfs.length+")";
+      box.appendChild(t2);
+
+      pdfs.forEach(function(f){
+        var card=document.createElement("div");
+        card.className="card pdf";
+        var date=f.modifiedTime?new Date(f.modifiedTime).toLocaleDateString("en-IN"):"";
+        card.innerHTML=
+          '<div class="icon">PDF</div>'+
+          '<div class="meta"><b>'+escapeHtml(f.name)+'</b>'+
+          '<span>'+formatSize(f.size)+(date?" · "+date:"")+'</span>'+
+          '<div class="actions">'+
+          '<button type="button" class="btn btn-view">Preview</button>'+
+          '<button type="button" class="btn btn-open">Open</button>'+
+          '</div></div>';
+        card.querySelector(".btn-view").onclick=function(){openPreview(f)};
+        card.querySelector(".btn-open").onclick=function(){
+          window.open(f.webViewLink||("https://drive.google.com/file/d/"+f.id+"/view"),"_blank");
+        };
+        box.appendChild(card);
+      });
+    }
+
+    if(!folders.length&&!pdfs.length){
+      box.innerHTML='<div class="empty">Is folder me koi paper/folder ya PDF nahi mila.</div>';
+    }
+  }
+
+  async function loadFolder(folder){
+    $("loading").style.display="block";
+    $("list").innerHTML="";
+    $("err").classList.remove("show");
+    setBreadcrumb();
+    $("backBtn").style.display=folder.id===root.id?"none":"block";
+
+    try{
+      var files=await driveList(folder.id);
+      render(files);
+      $("loading").style.display="none";
+    }catch(e){
+      $("loading").style.display="none";
+      showErr(String(e.message||e));
+    }
+  }
+
+  async function buildSearchIndex(){
+    // Recursively index folders/PDFs so search can find any nested paper.
+    var seen={};
+    async function walk(folder, path){
+      if(seen[folder.id]) return;
+      seen[folder.id]=true;
+      var files=await driveList(folder.id);
+      files.forEach(function(f){
+        allIndex.push({file:f,path:path.concat([folder.name]).join(" / ")});
+      });
+      var subs=files.filter(function(f){return f.mimeType==="application/vnd.google-apps.folder"});
+      for(var i=0;i<subs.length;i++) await walk(subs[i],path.concat([folder.name]));
+    }
+    await walk(root,[]);
+  }
+
+  function searchAll(q){
+    q=q.toLowerCase().trim();
+    var box=$("list");
+    box.innerHTML="";
+    $("breadcrumb").innerHTML='<span>Search results</span>';
+    $("backBtn").style.display="none";
+
+    var matches=allIndex.filter(function(x){
+      return (x.file.name||"").toLowerCase().indexOf(q)!==-1 ||
+             (x.path||"").toLowerCase().indexOf(q)!==-1;
+    });
+
+    if(!matches.length){
+      box.innerHTML='<div class="empty">No match</div>';
+      return;
+    }
+
+    matches.forEach(function(x){
+      var f=x.file, isFolder=f.mimeType==="application/vnd.google-apps.folder";
+      var card=document.createElement("div");
+      card.className="card "+(isFolder?"":"pdf");
+      card.innerHTML=
+        '<div class="icon">'+(isFolder?"📁":"PDF")+'</div>'+
+        '<div class="meta"><b>'+escapeHtml(f.name)+'</b>'+
+        '<span>'+escapeHtml(x.path)+'</span></div>'+
+        (isFolder?'<button class="btn btn-folder">Open ›</button>':'<div class="actions"><button class="btn btn-view">Preview</button><button class="btn btn-open">Open</button></div>');
+      if(isFolder){
+        card.querySelector("button").onclick=function(){
+          // Search result folder: rebuild its path by using the folder itself.
+          current=f; stack=[];
+          loadFolder(current);
+        };
+      }else{
+        card.querySelector(".btn-view").onclick=function(){openPreview(f)};
+        card.querySelector(".btn-open").onclick=function(){
+          window.open(f.webViewLink||("https://drive.google.com/file/d/"+f.id+"/view"),"_blank");
+        };
+      }
+      box.appendChild(card);
+    });
+  }
+
+  function openPreview(f){
+    $("vTitle").textContent=f.name||"PDF";
+    $("frame").src="https://drive.google.com/file/d/"+f.id+"/preview";
+    $("viewer").classList.add("show");
+  }
+
+  $("btnClose").onclick=function(){
+    $("viewer").classList.remove("show");
+    $("frame").src="about:blank";
+  };
+
+  $("backBtn").onclick=function(){
+    if(stack.length){
+      current=stack.pop();
+      loadFolder(current);
+    }else{
+      current=root;
+      loadFolder(root);
+    }
+  };
+
+  $("search").oninput=function(){
+    var q=($("search").value||"").trim();
+    if(!q){loadFolder(current);return;}
+    if(!allIndex.length){
+      $("loading").style.display="block";
+      buildSearchIndex().then(function(){
+        $("loading").style.display="none";
+        searchAll(q);
+      }).catch(function(e){
+        $("loading").style.display="none";
+        showErr(String(e.message||e));
+      });
+    }else searchAll(q);
+  };
+
+  if(!FOLDER_ID || FOLDER_ID.indexOf("YOUR_")===0){
+    $("loading").style.display="none";
+    showErr("FOLDER_ID daalo (Drive folder link se)");
+    return;
+  }
+  if(!API_KEY || API_KEY.indexOf("YOUR_")===0){
+    $("loading").style.display="none";
+    showErr("API_KEY daalo + Google Drive API enable karo");
+    return;
+  }
+
+  loadFolder(root);
+})();
+</script>
+</body>
+</html>

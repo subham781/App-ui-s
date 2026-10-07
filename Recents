@@ -3,101 +3,137 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>App Features</title>
+<title>PrepExam Home</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
-body{background:#eef2f7;min-height:100vh;color:#0f172a;padding:16px}
-.wrap{max-width:640px;margin:0 auto}
+body{background:#eef2f7;color:#0f172a;min-height:100vh}
+.page{max-width:640px;margin:0 auto;padding:14px 14px 40px}
+.section-title{font-size:.72rem;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin:8px 0 12px 2px}
 
-.section-title{
-  font-size:.72rem;font-weight:800;color:#64748b;text-transform:uppercase;
-  letter-spacing:.5px;margin:6px 0 12px 2px
-}
-
-.adds-wrapper{
-  overflow-x:auto;padding-bottom:6px;margin-bottom:22px;
-  -webkit-overflow-scrolling:touch;scrollbar-width:none
-}
+.adds-wrapper{overflow-x:auto;padding-bottom:6px;margin-bottom:18px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .adds-wrapper::-webkit-scrollbar{display:none}
 .adds-track{display:flex;gap:12px;width:max-content;animation:autoScroll 24s linear infinite}
 .adds-wrapper:active .adds-track{animation-play-state:paused}
 @keyframes autoScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-
-.ad-card{
-  width:240px;height:132px;border-radius:18px;overflow:hidden;flex-shrink:0;
-  cursor:pointer;border:1px solid #e2e8f0;position:relative;
-  box-shadow:0 8px 24px rgba(15,23,42,.08);background:#e2e8f0
-}
+.ad-card{width:240px;height:132px;border-radius:18px;overflow:hidden;flex-shrink:0;cursor:pointer;border:1px solid #e2e8f0;position:relative;box-shadow:0 8px 24px rgba(15,23,42,.08);background:#e2e8f0}
 .ad-card img{width:100%;height:100%;object-fit:cover;display:block}
-.ad-card::after{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,transparent 40%,rgba(15,23,42,.75) 100%)
-}
+.ad-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(15,23,42,.75) 100%)}
 .ad-card:active{transform:scale(.97)}
-.ad-label{
-  position:absolute;left:12px;right:12px;bottom:12px;z-index:1;
-  color:#fff;font-size:.82rem;font-weight:700;line-height:1.25
-}
-.ad-pill{
-  position:absolute;top:10px;left:10px;z-index:1;
-  background:rgba(255,255,255,.92);color:#0f172a;
-  font-size:.65rem;font-weight:800;padding:4px 8px;border-radius:999px
-}
+.ad-label{position:absolute;left:12px;right:12px;bottom:12px;z-index:1;color:#fff;font-size:.82rem;font-weight:700}
+.ad-pill{position:absolute;top:10px;left:10px;z-index:1;background:rgba(255,255,255,.92);color:#0f172a;font-size:.65rem;font-weight:800;padding:4px 8px;border-radius:999px}
 
-.features-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.feature-card{
-  background:#fff;border-radius:20px;padding:18px 14px;text-align:left;
-  box-shadow:0 4px 16px rgba(15,23,42,.05);border:1px solid #e8ecf4;cursor:pointer
-}
-.feature-card:active{transform:scale(.97);background:#f8fafc}
-.icon-box{
-  width:48px;height:48px;border-radius:14px;display:flex;align-items:center;
-  justify-content:center;font-size:22px;margin-bottom:12px
-}
-.feature-card h3{font-size:.92rem;font-weight:700;margin-bottom:4px;color:#0f172a}
-.feature-card p{font-size:.74rem;color:#64748b;line-height:1.4}
-
+.features-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px}
+.feature-card{background:#fff;border-radius:20px;padding:16px 14px;box-shadow:0 4px 16px rgba(15,23,42,.05);border:1px solid #e8ecf4;cursor:pointer}
+.feature-card:active{transform:scale(.97)}
+.icon-box{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:10px}
+.feature-card h3{font-size:.9rem;font-weight:700;margin-bottom:4px}
+.feature-card p{font-size:.74rem;color:#64748b;line-height:1.35}
 .color-1{background:linear-gradient(135deg,#dbeafe,#bfdbfe)}
 .color-2{background:linear-gradient(135deg,#fce7f3,#fbcfe8)}
 .color-3{background:linear-gradient(135deg,#d1fae5,#a7f3d0)}
 .color-4{background:linear-gradient(135deg,#fef3c7,#fde68a)}
 .color-5{background:linear-gradient(135deg,#e0e7ff,#c7d2fe)}
-.color-6{background:linear-gradient(135deg,#ffedd5,#fed7aa)}
 
-#viewer{
-  display:none;position:fixed;inset:0;background:#fff;z-index:9999;flex-direction:column
-}
-.viewer-header{
-  display:flex;align-items:center;gap:12px;padding:12px 16px;
-  background:#f8fafc;border-bottom:1px solid #e2e8f0
-}
-.back-btn{
-  width:40px;height:40px;border-radius:12px;border:0;background:#e2e8f0;font-size:18px
-}
-.viewer-title{font-size:1.02rem;font-weight:700}
-#viewer-frame{flex:1;width:100%;border:none}
-.loading{flex:1;display:flex;align-items:center;justify-content:center;color:#64748b}
+.feed-title{display:flex;align-items:center;justify-content:space-between;margin:8px 0 12px}
+.feed-title h2{font-size:1rem;font-weight:800}
+.lang-switch{display:flex;background:#e2e8f0;border-radius:10px;padding:3px}
+.lang-btn{border:0;background:transparent;padding:6px 10px;border-radius:8px;font-size:.75rem;font-weight:700;color:#64748b}
+.lang-btn.active{background:#2563eb;color:#fff}
+
+.card{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;border:1px solid #e8ecf4;box-shadow:0 2px 12px rgba(15,23,42,.04)}
+.tag{display:inline-block;font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.3px;padding:4px 8px;border-radius:999px;margin-bottom:10px}
+.tag-mcq{background:#eff6ff;color:#1d4ed8}
+.tag-post{background:#fdf2f8;color:#be185d}
+
+.post-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.avatar{width:36px;height:36px;border-radius:50%;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-weight:700;color:#64748b}
+.uname{font-size:.88rem;font-weight:700}
+.meta{font-size:.72rem;color:#64748b}
+.q{font-size:1rem;font-weight:600;line-height:1.45;margin-bottom:12px}
+.options{display:flex;flex-direction:column;gap:8px}
+.option{border:1.5px solid #e2e8f0;border-radius:10px;padding:11px 12px;font-size:.9rem;cursor:pointer;background:#fff}
+.option.correct{background:#ecfdf5;border-color:#22c55e;color:#15803d;font-weight:600}
+.option.wrong{background:#fef2f2;border-color:#ef4444;color:#b91c1c}
+.option.disabled{pointer-events:none}
+.footer-line{margin-top:12px;padding-top:10px;border-top:1px solid #f1f5f9;font-size:.78rem;color:#64748b}
+
+.post-img{width:100%;max-height:320px;object-fit:cover;border-radius:12px;background:#f1f5f9;margin:8px 0 10px}
+.actions{display:flex;gap:14px;align-items:center;margin-bottom:8px}
+.action{border:0;background:none;padding:0;cursor:pointer}
+.action svg{width:24px;height:24px;stroke:#262626;fill:none;stroke-width:2}
+.action.like.active svg{fill:#ed4956;stroke:#ed4956}
+.action.save{margin-left:auto}
+.action.save.active svg{fill:#262626}
+.likes{font-size:.84rem;font-weight:700;margin-bottom:4px}
+.ptitle{font-size:.9rem;font-weight:700;margin-bottom:4px}
+.pdesc{font-size:.84rem;color:#334155;line-height:1.45}
+
+.loading,.error{text-align:center;padding:28px;color:#64748b;font-size:.9rem}
+.retry{margin-top:10px;border:0;background:#2563eb;color:#fff;padding:10px 14px;border-radius:10px;font-weight:700}
+
+.insight-wrap{display:none;margin-top:12px}
+.insight-wrap.show{display:block}
+.insight-title{font-size:.78rem;font-weight:700;color:#2563eb;margin-bottom:8px}
+.insight-scroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none}
+.insight-scroll::-webkit-scrollbar{display:none}
+.insight-card{min-width:210px;background:#f0f7ff;border:1px solid #dbeafe;border-radius:12px;padding:12px;flex-shrink:0;cursor:pointer}
+.insight-card h4{font-size:.84rem;font-weight:700;margin-bottom:6px}
+.insight-card p{font-size:.75rem;color:#4b5563;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+
+#viewer{display:none;position:fixed;inset:0;background:#fff;z-index:9999;flex-direction:column}
+.viewer-header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#f8fafc;border-bottom:1px solid #e2e8f0}
+.back-btn{width:40px;height:40px;border-radius:12px;border:0;background:#e2e8f0;font-size:18px}
+.viewer-title{font-size:1rem;font-weight:700}
+#viewer-frame{flex:1;width:100%;border:0}
+.v-loading{flex:1;display:flex;align-items:center;justify-content:center;color:#64748b}
+
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;display:none;align-items:flex-end;justify-content:center}
+.sheet-overlay.show{display:flex}
+.sheet{width:100%;max-width:700px;height:85vh;background:#fff;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden}
+.sheet-header{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #e4e6eb}
+.sheet-header h3{flex:1;font-size:.95rem;font-weight:700}
+.sheet-close{border:0;background:#e4e6eb;width:34px;height:34px;border-radius:10px}
+.sheet-frame{flex:1;width:100%;border:0;display:none}
+.sheet-loading{padding:20px;text-align:center;color:#65676b}
 </style>
 </head>
 <body>
-<div class="wrap" id="main-page">
+<div class="page" id="main-page">
   <div class="section-title">Sponsored</div>
-  <div class="adds-wrapper">
-    <div class="adds-track" id="addsTrack"></div>
-  </div>
+  <div class="adds-wrapper"><div class="adds-track" id="addsTrack"></div></div>
 
   <div class="section-title">App Features</div>
   <div class="features-grid" id="featuresContainer"></div>
+
+  <div class="feed-title">
+    <h2>For you</h2>
+    <div class="lang-switch">
+      <button class="lang-btn active" id="btn-en" type="button">EN</button>
+      <button class="lang-btn" id="btn-hi" type="button">हिं</button>
+    </div>
+  </div>
+  <div id="mixedFeed"><div class="loading">Loading feed...</div></div>
 </div>
 
 <div id="viewer">
   <div class="viewer-header">
-    <button class="back-btn" type="button" onclick="closeViewer()">←</button>
+    <button class="back-btn" type="button" id="btnViewerBack">←</button>
     <div class="viewer-title" id="viewer-title">Loading...</div>
   </div>
-  <div class="loading" id="loading">Loading design...</div>
+  <div class="v-loading" id="loading">Loading...</div>
   <iframe id="viewer-frame" style="display:none"></iframe>
+</div>
+
+<div class="sheet-overlay" id="sheetOverlay">
+  <div class="sheet">
+    <div class="sheet-header">
+      <h3 id="sheetTitle">Topic</h3>
+      <button class="sheet-close" type="button" id="btnSheetClose">✕</button>
+    </div>
+    <div class="sheet-loading" id="sheetLoading">Opening...</div>
+    <iframe class="sheet-frame" id="sheetFrame"></iframe>
+  </div>
 </div>
 
 <script>
@@ -105,7 +141,10 @@ body{background:#eef2f7;min-height:100vh;color:#0f172a;padding:16px}
   var MSG_OPEN = "OPEN";
   var MSG_BACK = "BACK";
 
-  // Har ad ki alag photo yahan
+  var MCQ_API = "https://script.google.com/macros/s/AKfycbyICNHxGGgvd7TBcgSxjQm3obJqDOGtHHiwiwUoXnxiNurmqmWDfwOXo5x9rfQqnXs/exec";
+  var POSTS_API = "https://script.google.com/macros/s/AKfycbzVYw5uC-1sASG-6BAMChC3JhCqKK-0LHMgmkQjEmAolRF8_3ozyETPH6cEWBVqDil3/exec";
+
+  // Har ad: alag image + link (link khali = open nahi hoga)
   var ads = [
     {
       id: "ad_1",
@@ -116,70 +155,43 @@ body{background:#eef2f7;min-height:100vh;color:#0f172a;padding:16px}
     {
       id: "ad_2",
       title: "Defence Batch",
-      image:  "https://dishaonline.co.in/admin/assets/images/pages/SSC_FOUNDATION_COURSE.png",
-      link: ""
+      image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&q=80",
+      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Recents"
     },
     {
       id: "ad_3",
       title: "Mock Test Series",
-      image: "https://images.unsplash.com/photo-14565130808af52f38ab1aeae7baa7?w=600&q=80",
-      link: ""
+      image: "https://images.unsplash.com/photo-14565130808-af52f38ab1ae?w=600&q=80",
+      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Recents"
     },
     {
       id: "ad_4",
       title: "Study Material Pack",
-      image: "https://images.unsplash.com/photo-14565130808af52f38ab1aeae7baa7?w=600&q=80",
-      link: ""
+      image: "https://images.unsplash.com/photo-1481627834876-b7833e1d857a?w=600&q=80",
+      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Recents"
     }
   ];
-
-  // Fix broken unsplash if needed - use distinct images:
-  ads[2].image = "https://images.unsplash.com/photo-14565130808-af52f38ab1ae?w=600&q=80";
-  ads[3].image = "https://images.unsplash.com/photo-1481627834876-b7833e1d857a?w=600&q=80";
 
   var features = [
-    {
-      id: "graph_plotter",
-      title: "Graph Plotter",
-      description: "Plot math graphs easily",
-      icon: "📈",
-      color: "color-1",
-      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/GRAPH%20PLOTER"
-    },
-    {
-      id: "synonyms_finder",
-      title: "Synonyms Finder",
-      description: "Find better words fast",
-      icon: "📚",
-      color: "color-2",
-      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Ant%20and%20syn%20finder"
-    },
-    {
-      id: "calculator",
-      title: "Smart Calculator",
-      description: "Scientific calculator",
-      icon: "🧮",
-      color: "color-3",
-      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Smart%20calculator"
-    },
-    {
-      id: "unit_converter",
-      title: "Unit Convertor",
-      description: "Length, weight & more",
-      icon: "🔄",
-      color: "color-4",
-      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Unit%20converter"
-    },
-    {
-      id: "formula_sheet",
-      title: "Flash Card",
-      description: "All important formulas",
-      icon: "📝",
-      color: "color-5",
-      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/FLASH%20CARD"
-    }
+    { id: "graph_plotter", title: "Graph Plotter", description: "Plot math graphs easily", icon: "📈", color: "color-1",
+      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/GRAPH%20PLOTER" },
+    { id: "synonyms_finder", title: "Synonyms Finder", description: "Find better words fast", icon: "📚", color: "color-2",
+      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Ant%20and%20syn%20finder" },
+    { id: "calculator", title: "Smart Calculator", description: "Scientific calculator", icon: "🧮", color: "color-3",
+      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Smart%20calculator" },
+    { id: "unit_converter", title: "Unit Convertor", description: "Length, weight & more", icon: "🔄", color: "color-4",
+      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Unit%20converter" },
+    { id: "formula_sheet", title: "Flash Card", description: "All important formulas", icon: "📝", color: "color-5",
+      link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/FLASH%20CARD" }
   ];
 
+  var wikiLang = "en";
+  var allQuestions = [];
+
+  function $(id) { return document.getElementById(id); }
+  function escapeHTML(v) {
+    return String(v || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
   function sendWebViewString(value) {
     try {
       if (window.Kodular && window.Kodular.setWebViewString) window.Kodular.setWebViewString(value);
@@ -187,73 +199,300 @@ body{background:#eef2f7;min-height:100vh;color:#0f172a;padding:16px}
     } catch (e) {}
   }
 
-  var addsTrack = document.getElementById("addsTrack");
-  var allAds = ads.concat(ads);
-
-  allAds.forEach(function (item) {
+  // ===== ADS (sab links pe viewer + back) =====
+  var track = $("addsTrack");
+  ads.concat(ads).forEach(function (item) {
     var card = document.createElement("div");
     card.className = "ad-card";
     card.innerHTML =
-      '<img src="' + item.image + '" alt="' + item.title + '">' +
+      '<img src="' + item.image + '" alt="">' +
       '<div class="ad-pill">Ad</div>' +
-      '<div class="ad-label">' + item.title + "</div>";
-
-    card.addEventListener("click", function () {
+      '<div class="ad-label">' + escapeHTML(item.title) + "</div>";
+    card.onclick = function () {
       sendWebViewString(MSG_OPEN);
-      if (item.link) openViewer(item.title, item.link);
-    });
-    addsTrack.appendChild(card);
+      if (item.link && String(item.link).trim()) {
+        openViewer(item.title, item.link);
+      }
+    };
+    track.appendChild(card);
   });
 
-  var container = document.getElementById("featuresContainer");
-  features.forEach(function (feature) {
+  // ===== FEATURES =====
+  var fc = $("featuresContainer");
+  features.forEach(function (f) {
     var card = document.createElement("div");
     card.className = "feature-card";
     card.innerHTML =
-      '<div class="icon-box ' + feature.color + '">' + feature.icon + "</div>" +
-      "<h3>" + feature.title + "</h3>" +
-      "<p>" + feature.description + "</p>";
-    card.addEventListener("click", function () {
+      '<div class="icon-box ' + f.color + '">' + f.icon + "</div>" +
+      "<h3>" + escapeHTML(f.title) + "</h3><p>" + escapeHTML(f.description) + "</p>";
+    card.onclick = function () {
       sendWebViewString(MSG_OPEN);
-      openViewer(feature.title, feature.link);
-    });
-    container.appendChild(card);
+      if (f.link) openViewer(f.title, f.link);
+    };
+    fc.appendChild(card);
   });
 
-  window.openViewer = function (title, url) {
-    document.getElementById("main-page").style.display = "none";
-    document.getElementById("viewer").style.display = "flex";
-    document.getElementById("viewer-title").innerText = title;
-    document.getElementById("loading").style.display = "flex";
-    document.getElementById("loading").innerText = "Loading design...";
-    document.getElementById("viewer-frame").style.display = "none";
+  function openViewer(title, url) {
+    $("main-page").style.display = "none";
+    $("viewer").style.display = "flex";
+    $("viewer-title").textContent = title || "Open";
+    $("loading").style.display = "flex";
+    $("loading").textContent = "Loading...";
+    $("viewer-frame").style.display = "none";
 
     fetch(url)
-      .then(function (r) { return r.text(); })
+      .then(function (r) {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.text();
+      })
       .then(function (html) {
-        var frame = document.getElementById("viewer-frame");
+        var frame = $("viewer-frame");
         var doc = frame.contentDocument || frame.contentWindow.document;
         doc.open();
         doc.write(html);
         doc.close();
         frame.style.display = "block";
-        document.getElementById("loading").style.display = "none";
+        $("loading").style.display = "none";
       })
-      .catch(function () {
-        document.getElementById("loading").innerText = "Failed to load";
+      .catch(function (e) {
+        $("loading").textContent = "Failed to load: " + (e.message || e);
       });
-  };
+  }
 
-  window.closeViewer = function () {
+  function closeViewer() {
     sendWebViewString(MSG_BACK);
-    document.getElementById("viewer").style.display = "none";
-    document.getElementById("main-page").style.display = "block";
-    var frame = document.getElementById("viewer-frame");
+    $("viewer").style.display = "none";
+    $("main-page").style.display = "block";
+    var frame = $("viewer-frame");
     var doc = frame.contentDocument || frame.contentWindow.document;
     doc.open();
     doc.write("");
     doc.close();
+  }
+  $("btnViewerBack").onclick = closeViewer;
+
+  // ===== LANG =====
+  $("btn-en").onclick = function () {
+    wikiLang = "en";
+    $("btn-en").classList.add("active");
+    $("btn-hi").classList.remove("active");
   };
+  $("btn-hi").onclick = function () {
+    wikiLang = "hi";
+    $("btn-hi").classList.add("active");
+    $("btn-en").classList.remove("active");
+  };
+
+  // ===== MIXED FEED =====
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  async function loadMixedFeed() {
+    var box = $("mixedFeed");
+    box.innerHTML = '<div class="loading">Loading feed...</div>';
+
+    try {
+      var results = await Promise.allSettled([
+        fetch(MCQ_API + "?t=" + Date.now()).then(function (r) { return r.json(); }),
+        fetch(POSTS_API).then(function (r) { return r.json(); })
+      ]);
+
+      var mcqs = [];
+      var posts = [];
+
+      if (results[0].status === "fulfilled") {
+        var d = results[0].value;
+        if (d && Array.isArray(d.questions)) d = d.questions;
+        if (d && Array.isArray(d.data)) d = d.data;
+        if (Array.isArray(d)) mcqs = d;
+      }
+      if (results[1].status === "fulfilled") {
+        var p = results[1].value;
+        if (p && p.success && Array.isArray(p.posts)) posts = p.posts;
+        else if (Array.isArray(p)) posts = p;
+      }
+
+      allQuestions = mcqs;
+      var items = [];
+      mcqs.forEach(function (q, i) { items.push({ type: "mcq", data: q, index: i }); });
+      posts.forEach(function (post) { items.push({ type: "post", data: post }); });
+
+      if (!items.length) {
+        box.innerHTML = '<div class="error">No feed items<button class="retry" type="button" id="retryFeed">Retry</button></div>';
+        $("retryFeed").onclick = loadMixedFeed;
+        return;
+      }
+
+      items = shuffle(items);
+      box.innerHTML = "";
+      items.forEach(function (it) {
+        if (it.type === "mcq") box.appendChild(renderMcq(it.data, it.index));
+        else box.appendChild(renderPost(it.data));
+      });
+    } catch (e) {
+      box.innerHTML = '<div class="error">Failed to load feed<button class="retry" type="button" id="retryFeed">Retry</button></div>';
+      $("retryFeed").onclick = loadMixedFeed;
+    }
+  }
+
+  function renderMcq(item, index) {
+    var card = document.createElement("div");
+    card.className = "card";
+    var uname = item.username || "Educator";
+    card.innerHTML =
+      '<div class="tag tag-mcq">MCQ</div>' +
+      '<div class="post-header">' +
+        '<div class="avatar">' + escapeHTML(uname.charAt(0)) + '</div>' +
+        '<div><div class="uname">' + escapeHTML(uname) + '</div>' +
+        '<div class="meta">' + escapeHTML(item.subject || "General") + " · " + escapeHTML(item.difficulty || "Medium") + "</div></div>" +
+      "</div>" +
+      '<div class="q">' + escapeHTML(item.q || "") + "</div>" +
+      '<div class="options" id="options-' + index + '"></div>' +
+      '<div class="insight-wrap" id="insight-' + index + '"></div>' +
+      '<div class="footer-line" id="answered-' + index + '">Tap option to answer</div>';
+
+    var optBox = card.querySelector("#options-" + index);
+    (item.options || []).forEach(function (opt, i) {
+      var d = document.createElement("div");
+      d.className = "option";
+      d.textContent = opt || "—";
+      d.onclick = function () { selectOption(index, i, item); };
+      optBox.appendChild(d);
+    });
+    return card;
+  }
+
+  function selectOption(qIndex, selected, item) {
+    var options = document.querySelectorAll("#options-" + qIndex + " .option");
+    options.forEach(function (opt, i) {
+      opt.classList.add("disabled");
+      if (i === item.correct) opt.classList.add("correct");
+      if (i === selected && selected !== item.correct) opt.classList.add("wrong");
+    });
+    var ans = $("answered-" + qIndex);
+    if (ans) ans.textContent = selected === item.correct ? "Correct ✓" : "Wrong ✗";
+    showTopicInsight(qIndex, item);
+  }
+
+  function renderPost(post) {
+    var card = document.createElement("div");
+    card.className = "card";
+    var uname = post.username || "User";
+    var img = post.image
+      ? '<img class="post-img" src="' + escapeHTML(post.image) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">'
+      : "";
+    card.innerHTML =
+      '<div class="tag tag-post">Post</div>' +
+      '<div class="post-header">' +
+        '<div class="avatar">' + escapeHTML(String(uname).charAt(0).toUpperCase()) + "</div>" +
+        '<div><div class="uname">' + escapeHTML(uname) + '</div>' +
+        '<div class="meta">' + escapeHTML(post.time || "") + "</div></div>" +
+      "</div>" +
+      img +
+      '<div class="actions">' +
+        '<button class="action like" type="button" aria-label="Like"><svg viewBox="0 0 24 24"><path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.902-.436-.432-1.793-1.66-4.303-3.902C5.152 14.081 2.5 12.194 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 1.941c.84 1.175.98 1.763 1.12 1.763s.278-.588 1.11-1.766a4.17 4.17 0 0 1 3.679-1.938m0-2a6.04 6.04 0 0 0-4.797 2.127 6.052 6.052 0 0 0-4.787-2.127A6.985 6.985 0 0 0 .5 9.122c0 3.61 2.55 5.827 5.307 8.186a42.86 42.86 0 0 0 4.566 3.606c.192.144.426.22.66.22s.468-.076.66-.221a42.76 42.76 0 0 0 4.565-3.606c2.758-2.358 5.308-4.575 5.308-8.185A6.985 6.985 0 0 0 16.792 1.904z"/></svg></button>' +
+        '<button class="action save" type="button" aria-label="Save"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>' +
+      "</div>" +
+      '<div class="likes"><span class="like-count">' + Number(post.likes || 0).toLocaleString() + "</span> likes</div>" +
+      '<div class="ptitle">' + escapeHTML(post.title || "") + "</div>" +
+      '<div class="pdesc">' + escapeHTML(post.description || "") + "</div>";
+
+    var likeBtn = card.querySelector(".like");
+    var saveBtn = card.querySelector(".save");
+    likeBtn.onclick = function () {
+      var el = card.querySelector(".like-count");
+      var n = parseInt(String(el.textContent).replace(/,/g, ""), 10) || 0;
+      if (likeBtn.classList.contains("active")) { likeBtn.classList.remove("active"); n--; }
+      else { likeBtn.classList.add("active"); n++; }
+      el.textContent = n.toLocaleString();
+    };
+    saveBtn.onclick = function () { saveBtn.classList.toggle("active"); };
+    return card;
+  }
+
+  // ===== WIKI insight (MCQ) =====
+  function wikiHost() { return wikiLang === "hi" ? "https://hi.wikipedia.org" : "https://en.wikipedia.org"; }
+
+  function buildSearchQuery(item) {
+    var chapter = (item.chapter || "").trim();
+    var subject = (item.subject || "").trim();
+    var q = (item.q || "").replace(/[^\w\s\u0900-\u097F]/g, " ");
+    var words = q.split(/\s+/).filter(function (w) { return w.length > 3; }).slice(0, 5).join(" ");
+    if (chapter.length > 2) return chapter + (subject ? " " + subject : "");
+    if (subject.length > 2) return subject + " " + words;
+    return words || "general knowledge";
+  }
+
+  async function showTopicInsight(qIndex, item) {
+    var box = $("insight-" + qIndex);
+    if (!box || box.dataset.loaded === "1") return;
+    box.classList.add("show");
+    box.innerHTML = '<div style="font-size:.8rem;color:#64748b">Loading notes...</div>';
+    try {
+      var host = wikiHost();
+      var searchUrl = host + "/w/api.php?action=query&list=search&srsearch=" +
+        encodeURIComponent(buildSearchQuery(item)) + "&srlimit=4&format=json&origin=*";
+      var searchData = await (await fetch(searchUrl)).json();
+      var results = (searchData.query && searchData.query.search) || [];
+      if (!results.length) {
+        box.innerHTML = '<div class="insight-title">📚 Topic</div><div style="font-size:.8rem;color:#64748b">No related topic</div>';
+        return;
+      }
+      var tasks = results.slice(0, 4).map(function (r) {
+        return fetch(host + "/api/rest_v1/page/summary/" + encodeURIComponent(r.title))
+          .then(function (res) { return res.ok ? res.json() : null; })
+          .then(function (sum) {
+            if (!sum || sum.type === "disambiguation") return null;
+            return {
+              t: sum.title || r.title,
+              d: sum.extract || "",
+              pageUrl: host + "/wiki/" + encodeURIComponent((sum.title || r.title).replace(/ /g, "_"))
+            };
+          })
+          .catch(function () { return null; });
+      });
+      var cards = (await Promise.all(tasks)).filter(Boolean);
+      var html = '<div class="insight-title">📚 Exam notes</div><div class="insight-scroll">';
+      cards.forEach(function (c, idx) {
+        html += '<div class="insight-card" data-i="' + idx + '"><h4>' + escapeHTML(c.t) + "</h4><p>" +
+          escapeHTML(c.d) + '</p></div>';
+      });
+      html += "</div>";
+      box.innerHTML = html;
+      box.dataset.loaded = "1";
+      box.querySelectorAll(".insight-card").forEach(function (el, idx) {
+        el.onclick = function () { openSheet(cards[idx].t, cards[idx].pageUrl); };
+      });
+    } catch (e) {
+      box.innerHTML = '<div class="insight-title">📚 Topic</div><div style="font-size:.8rem;color:#64748b">Wiki load fail</div>';
+    }
+  }
+
+  function openSheet(title, url) {
+    $("sheetTitle").textContent = title;
+    $("sheetOverlay").classList.add("show");
+    var frame = $("sheetFrame");
+    var loading = $("sheetLoading");
+    loading.style.display = "block";
+    frame.style.display = "none";
+    frame.onload = function () { loading.style.display = "none"; frame.style.display = "block"; };
+    frame.src = url;
+  }
+  $("btnSheetClose").onclick = function () {
+    $("sheetOverlay").classList.remove("show");
+    $("sheetFrame").src = "about:blank";
+  };
+  $("sheetOverlay").onclick = function (e) {
+    if (e.target.id === "sheetOverlay") $("btnSheetClose").click();
+  };
+
+  loadMixedFeed();
 })();
 </script>
 </body>

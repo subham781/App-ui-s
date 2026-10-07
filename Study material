@@ -66,7 +66,13 @@ h1{font-size:1.15rem;font-weight:700}
     </div>
     <div class="section" id="plTitle">Playlist</div>
     <div class="player-box" id="playerBox">
-      <iframe id="player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <iframe
+        id="player"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+        allowfullscreen
+        playsinline
+      ></iframe>
     </div>
     <div class="section">Videos in this playlist</div>
     <div id="videoList"></div>
@@ -77,6 +83,7 @@ h1{font-size:1.15rem;font-weight:700}
 
 <script>
 (function () {
+  // Apni key yahan — Cloud me restrict karo (YouTube Data API only)
   var API_KEY = "AIzaSyCVSN5-wdrjfUHLYbyfdmS5LdtzISaqCcI";
 
   var EXAMS = [
@@ -92,7 +99,13 @@ h1{font-size:1.15rem;font-weight:700}
   function $(id) { return document.getElementById(id); }
 
   function escapeHtml(s) {
-    return String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  // Error 153 fix: nocookie + playsinline
+  function playUrl(videoId) {
+    return "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(videoId) +
+      "?autoplay=1&rel=0&playsinline=1&modestbranding=1";
   }
 
   function renderChips() {
@@ -207,7 +220,7 @@ h1{font-size:1.15rem;font-weight:700}
     $("playlistView").classList.remove("hidden");
     $("plTitle").textContent = pl.title;
     $("playerBox").classList.remove("show");
-    $("player").src = "";
+    $("player").src = "about:blank";
     $("videoList").innerHTML = "";
     $("errPl").classList.add("hidden");
     $("loadingPl").classList.remove("hidden");
@@ -228,12 +241,12 @@ h1{font-size:1.15rem;font-weight:700}
           "<div><b>" + escapeHtml(v.title) + "</b></div>";
         row.onclick = function () {
           $("playerBox").classList.add("show");
-          $("player").src = "https://www.youtube.com/embed/" + v.id + "?autoplay=1&rel=0";
+          $("player").src = playUrl(v.id);
         };
         $("videoList").appendChild(row);
       });
       $("playerBox").classList.add("show");
-      $("player").src = "https://www.youtube.com/embed/" + videos[0].id + "?autoplay=1&rel=0";
+      $("player").src = playUrl(videos[0].id);
     } catch (e) {
       $("loadingPl").classList.add("hidden");
       $("errPl").textContent = String(e.message || e);
@@ -244,7 +257,7 @@ h1{font-size:1.15rem;font-weight:700}
   $("btnBack").onclick = function () {
     $("playlistView").classList.add("hidden");
     $("home").classList.remove("hidden");
-    $("player").src = "";
+    $("player").src = "about:blank";
   };
 
   renderChips();

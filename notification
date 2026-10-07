@@ -4,83 +4,102 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Notifications</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{
-  background:#f5f7fb;
-  color:#222;
-  font-family:Arial,Helvetica,sans-serif;
-}
-.app{
+  background:#eef2f7;
+  color:#0f172a;
+  font-family:Inter,system-ui,sans-serif;
   min-height:100vh;
-  max-width:700px;
-  margin:auto;
-  padding:14px;
 }
-.top-row{
-  display:flex;
-  justify-content:flex-end;
-  margin-bottom:12px;
+.app{max-width:640px;margin:0 auto;padding:16px 14px 40px}
+
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;gap:12px
 }
+.header h1{font-size:1.25rem;font-weight:800;letter-spacing:-.3px}
+.header p{font-size:.78rem;color:#64748b;margin-top:2px}
 .refresh{
-  width:36px;height:36px;border:0;border-radius:10px;
-  background:#fff;color:#555;font-size:17px;
-  border:1px solid #e8e8e8;
+  width:42px;height:42px;border:0;border-radius:14px;
+  background:#fff;color:#334155;font-size:18px;
+  border:1px solid #e2e8f0;
+  box-shadow:0 2px 10px rgba(15,23,42,.05)
 }
 .refresh:active{transform:scale(.94)}
+
 .notification{
   background:#fff;
-  border:1px solid #e8e8e8;
-  border-radius:15px;
-  padding:14px;
-  margin-bottom:11px;
+  border:1px solid #e8ecf4;
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:12px;
   cursor:pointer;
+  box-shadow:0 4px 16px rgba(15,23,42,.04);
+  transition:transform .15s,box-shadow .15s
 }
-.notification:active{background:#f8fbfc;transform:scale(.99)}
+.notification:active{transform:scale(.985);background:#f8fafc}
+.notification.expired{opacity:.72}
+
+.top-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
 .category{
-  display:inline-block;
-  font-size:10px;font-weight:700;color:#159ac4;
-  background:#eef9fc;padding:5px 9px;border-radius:7px;
-  margin-bottom:9px;
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.68rem;font-weight:700;letter-spacing:.3px;text-transform:uppercase;
+  color:#1d4ed8;background:#eff6ff;padding:5px 10px;border-radius:999px;
+  border:1px solid #dbeafe
 }
-.title{font-size:15px;font-weight:700;color:#222;line-height:1.4}
-.subtitle{margin-top:6px;font-size:12px;line-height:1.55;color:#777}
+.badge-live{
+  font-size:.65rem;font-weight:700;color:#047857;background:#ecfdf5;
+  border:1px solid #a7f3d0;padding:4px 8px;border-radius:999px
+}
+.badge-expired{
+  font-size:.65rem;font-weight:700;color:#b91c1c;background:#fef2f2;
+  border:1px solid #fecaca;padding:4px 8px;border-radius:999px
+}
+
+.title{font-size:.98rem;font-weight:700;color:#0f172a;line-height:1.4}
+.subtitle{margin-top:7px;font-size:.82rem;line-height:1.55;color:#64748b}
+
 .date{
-  margin-top:11px;padding-top:9px;border-top:1px solid #f0f0f0;
+  margin-top:14px;padding-top:12px;border-top:1px solid #f1f5f9;
   display:flex;justify-content:space-between;align-items:center;
-  font-size:10px;color:#999;
+  font-size:.72rem;color:#94a3b8;font-weight:500
 }
-.time{color:#159ac4;font-weight:700}
-.expired-tag{
-  display:inline-block;margin-left:6px;
-  background:#fff1f1;color:#c0392b;
-  font-size:10px;font-weight:700;padding:3px 7px;border-radius:6px;
-}
-.loading,.empty{text-align:center;padding:50px 20px;color:#888;font-size:13px}
+.time{color:#2563eb;font-weight:700}
+
+.loading,.empty{text-align:center;padding:56px 20px;color:#64748b;font-size:.9rem}
 .spinner{
-  width:27px;height:27px;margin:0 auto 12px;
-  border:3px solid #eee;border-top-color:#159ac4;border-radius:50%;
-  animation:spin .8s linear infinite;
+  width:30px;height:30px;margin:0 auto 14px;
+  border:3px solid #e2e8f0;border-top-color:#2563eb;border-radius:50%;
+  animation:spin .75s linear infinite
 }
 @keyframes spin{to{transform:rotate(360deg)}}
-.error{
-  background:#fff5f5;border:1px solid #f1d4d4;border-radius:12px;
-  padding:13px;color:#a44;font-size:11px;line-height:1.5;
+.empty-ico{
+  width:56px;height:56px;margin:0 auto 12px;border-radius:18px;
+  background:linear-gradient(135deg,#dbeafe,#e0e7ff);
+  display:flex;align-items:center;justify-content:center;font-size:22px
 }
+.error{
+  background:#fef2f2;border:1px solid #fecaca;border-radius:16px;
+  padding:14px;color:#991b1b;font-size:.82rem;line-height:1.5
+}
+
 .toast{
-  position:fixed;bottom:25px;left:50%;
-  transform:translate(-50%,20px);
-  background:#222;color:#fff;padding:10px 15px;border-radius:10px;
-  font-size:11px;opacity:0;pointer-events:none;transition:.25s;z-index:100;
+  position:fixed;bottom:28px;left:50%;
+  transform:translate(-50%,16px);
+  background:#0f172a;color:#fff;padding:12px 16px;border-radius:14px;
+  font-size:.8rem;font-weight:600;opacity:0;pointer-events:none;
+  transition:.25s;z-index:100;box-shadow:0 10px 30px rgba(15,23,42,.25);
+  max-width:90%
 }
 .toast.show{opacity:1;transform:translate(-50%,0)}
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="top-row">
-    <button class="refresh" onclick="loadNotifications()">↻</button>
-  </div>
+
+
   <div id="notificationList">
     <div class="loading">
       <div class="spinner"></div>
@@ -135,7 +154,6 @@ async function loadNotifications(){
       var subtitle = subtitleIndex >= 0 ? clean(row[subtitleIndex]) : "";
       var endDate = dateIndex >= 0 ? clean(row[dateIndex]) : "";
 
-      // empty row skip
       if(!title && !subtitle && !category) continue;
 
       var expired = false;
@@ -155,7 +173,6 @@ async function loadNotifications(){
       });
     }
 
-    // newest / non-expired first
     notifications.sort(function(a, b){
       if(a.expired !== b.expired) return a.expired ? 1 : -1;
       var da = parseDate(a.endDate);
@@ -197,22 +214,28 @@ function displayNotifications(notifications){
 
   notifications.forEach(function(item){
     const card = document.createElement("div");
-    card.className = "notification";
+    card.className = "notification" + (item.expired ? " expired" : "");
     card.onclick = function(){ notificationClicked(item); };
+
+    var status = item.expired
+      ? '<span class="badge-expired">Expired</span>'
+      : (item.endDate ? '<span class="badge-live">Active</span>' : "");
 
     var dateHTML = "";
     if(item.endDate){
       dateHTML =
         '<div class="date"><span>Offer ends</span><span class="time">' +
         escapeHTML(formatDate(item.endDate)) +
-        (item.expired ? '<span class="expired-tag">Expired</span>' : '') +
         '</span></div>';
     }
 
     card.innerHTML =
-      '<div class="category">' + escapeHTML(item.category) + '</div>' +
+      '<div class="top-meta">' +
+        '<div class="category">' + escapeHTML(item.category) + '</div>' +
+        status +
+      '</div>' +
       '<div class="title">' + escapeHTML(item.title) + '</div>' +
-      '<div class="subtitle">' + escapeHTML(item.subtitle) + '</div>' +
+      (item.subtitle ? '<div class="subtitle">' + escapeHTML(item.subtitle) + '</div>' : '') +
       dateHTML;
 
     container.appendChild(card);
@@ -238,8 +261,11 @@ function sendToKodular(value){
 
 function showEmpty(){
   document.getElementById("notificationList").innerHTML =
-    '<div class="empty"><div style="font-size:35px;margin-bottom:10px">🔔</div>' +
-    '<div style="font-weight:700;color:#444">No notifications</div></div>';
+    '<div class="empty">' +
+      '<div class="empty-ico">🔔</div>' +
+      '<div style="font-weight:700;color:#334155;margin-bottom:4px">No notifications</div>' +
+      '<div style="font-size:.8rem">New updates will appear here</div>' +
+    '</div>';
 }
 
 function parseCSV(csv){

@@ -47,6 +47,18 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
 .refresh-btn{border:1px solid #e2e8f0;background:#fff;border-radius:10px;padding:7px 10px;font-size:.72rem;font-weight:800;color:#334155;cursor:pointer}
 .refresh-btn:active{background:#eff6ff;color:#1d4ed8}
 
+.stats-bar{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+  background:#fff;border:1px solid #e8ecf4;border-radius:14px;
+  padding:12px 10px;margin-bottom:12px;box-shadow:0 2px 10px rgba(15,23,42,.04)
+}
+.stat-item{text-align:center}
+.stat-item b{display:block;font-size:1rem;font-weight:800;color:#0f172a;line-height:1.2}
+.stat-item span{font-size:.62rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.3px}
+.stat-item.acc b{color:#2563eb}
+.stat-item.ok b{color:#15803d}
+.stat-item.bad b{color:#b91c1c}
+
 .filter-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:10px;scrollbar-width:none}
 .filter-row::-webkit-scrollbar{display:none}
 .filter-chip{flex-shrink:0;border:1px solid #e2e8f0;background:#fff;border-radius:999px;padding:7px 12px;font-size:.72rem;font-weight:700;color:#475569;cursor:pointer}
@@ -154,6 +166,13 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
     </div>
   </div>
 
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-item"><b id="stAttempted">0</b><span>Attempted</span></div>
+    <div class="stat-item ok"><b id="stCorrect">0</b><span>Correct</span></div>
+    <div class="stat-item bad"><b id="stWrong">0</b><span>Wrong</span></div>
+    <div class="stat-item acc"><b id="stAccuracy">0%</b><span>Accuracy</span></div>
+  </div>
+
   <div class="filter-row" id="filterRow"></div>
   <div id="mixedFeed"><div class="loading">Loading practice...</div></div>
 </div>
@@ -196,10 +215,131 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
   var likedQuestions = {};
   var revisionQuestions = {};
   var followedUsers = {};
+  var analysis = emptyAnalysis();
+  var sessionAnswered = {}; /* qid → true, avoid double count same card */
 
   var allMcqs = [];
   var allPosts = [];
   var activeSubject = "All";
+  var activeType = "All"; /* All | MCQ | Post */
+
+  function emptyAnalysis() {
+    return {
+      allTime: { attempted: 0, correct: 0, wrong: 0, accuracy: 0 },
+      today: { date: "", attempted: 0, correct: 0, wrong: 0, accuracy: 0 },
+      subjects: {}
+    };
+  }
+
+  function todayStr() {
+    var d = new Date();
+    var m = String(d.getMonth() + 1).padStart(2, "0");
+    var day = String(d.getDate()).padStart(2, "0");
+    return d.getFullYear() + "-" + m + "-" + day;
+  }
+
+  function calcAcc(correct, attempted) {
+    if (!attempted) return 0;
+    return Math.round((correct / attempted) * 1000) / 10;
+  }
+
+  function normalizeAnalysis(raw) {
+    var a = emptyAnalysis();
+    if (!raw || typeof raw !== "object") return a;
+    if (raw.allTime) {
+      a.allTime.attempted = Number(raw.allTime.attempted) || 0;
+      a.allTime.correct = Number(raw.allTime.correct) || 0;
+      a.allTime.wrong = Number(raw.allTime.wrong) || 0;
+      a.allTime.accuracy = calcAcc(a.allTime.correct, a.allTime.attempted);
+    }
+    if (raw.today) {
+      a.today.date = raw.today.date || "";
+      a.today.attempted = Number(raw.today.attempted) || 0;
+      a.today.correct = Number(raw.today.correct) || 0;
+      a.today.wrong = Number(raw.today.wrong) || 0;
+      a.today.accuracy = calcAcc(a.today.correct, a.today.attempted);
+    }
+    if (raw.subjects && typeof raw.subjects === "object") {
+      Object.keys(raw.subjects).forEach(function (k) {
+        var s = raw.subjects[k] || {};
+        a.subjects[k] = {
+          attempted: Number(s.attempted) || 0,
+          correct: Number(s.correct) || 0,
+          wrong: Number(s.wrong) || 0,
+          accuracy: calcAcc(Number(s.correct) || 0, Number(s.attempted) || 0)
+        };
+      });
+    }
+    return a;
+  }
+
+  function renderStats() {
+    var at = analysis.allTime || {};
+    var elA = $("stAttempted");
+    var elC = $("stCorrect");
+    var elW = $("stWrong");
+    var elP = $("stAccuracy");
+    if (elA) elA.textContent = String(at.attempted || 0);
+    if (elC) elC.textContent = String(at.correct || 0);
+    if (elW) elW.textContent = String(at.wrong || 0);
+    if (elP) elP.textContent = String(at.accuracy || 0) + "%";
+  }
+
+  async function recordAnswer(item, isCorrect) {
+    var qid = getQid(item) || ("tmp_" + Date.now());
+    if (sessionAnswered[qid]) return;
+    sessionAnswered[qid] = true;
+
+    var subject = getSubject(item) || "General";
+    var today = todayStr();
+
+    if (!analysis.today || analysis.today.date !== today) {
+      analysis.today = { date: today, attempted: 0, correct: 0, wrong: 0, accuracy: 0 };
+    }
+
+    analysis.allTime.attempted += 1;
+    analysis.today.attempted += 1;
+    if (isCorrect) {
+      analysis.allTime.correct += 1;
+      analysis.today.correct += 1;
+    } else {
+      analysis.allTime.wrong += 1;
+      analysis.today.wrong += 1;
+    }
+    analysis.allTime.accuracy = calcAcc(analysis.allTime.correct, analysis.allTime.attempted);
+    analysis.today.accuracy = calcAcc(analysis.today.correct, analysis.today.attempted);
+
+    if (!analysis.subjects[subject]) {
+      analysis.subjects[subject] = { attempted: 0, correct: 0, wrong: 0, accuracy: 0 };
+    }
+    analysis.subjects[subject].attempted += 1;
+    if (isCorrect) analysis.subjects[subject].correct += 1;
+    else analysis.subjects[subject].wrong += 1;
+    analysis.subjects[subject].accuracy = calcAcc(
+      analysis.subjects[subject].correct,
+      analysis.subjects[subject].attempted
+    );
+
+    renderStats();
+
+    if (!userId) return;
+    try {
+      var base = "Users/" + safeKey(userId) + "/analysis";
+      var values = {};
+      values[base + "/allTime"] = analysis.allTime;
+      values[base + "/today"] = analysis.today;
+      values[base + "/subjects/" + safeKey(subject)] = analysis.subjects[subject];
+      values[base + "/lastAnswer"] = {
+        qid: qid,
+        subject: subject,
+        correct: !!isCorrect,
+        ts: Date.now()
+      };
+      await firebasePatch(values);
+    } catch (e) {
+      console.warn("Analysis save failed", e);
+    }
+  }
 
   var EXAM_POOL = ["CGL", "CHSL", "MTS", "GD", "CPO", "NDA", "CDS", "Navy", "Army", "Air Force"];
   var YEAR_POOL = ["2019", "2020", "2021", "2022", "2023", "2024", "2025"];
@@ -313,7 +453,9 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
         likedQuestions = data.likedQuestions || data.consume && data.consume.likedMcq || {};
         revisionQuestions = data.revisionQuestions || data.consume && data.consume.savedMcq || {};
         followedUsers = data.following || {};
+        analysis = normalizeAnalysis(data.analysis);
       }
+      renderStats();
       refreshActionStates();
     } catch (e) {
       console.warn("User load failed", e);
@@ -348,14 +490,41 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
     });
   }
 
-  async function setUserMapValue(mapName, key, enabled) {
+  function packQuestion(item) {
+    if (!item || typeof item !== "object") return null;
+    var options = item.options || [];
+    if (!options.length && (item.OPTIONA || item.optionA)) {
+      options = [
+        item.OPTIONA || item.optionA || "",
+        item.OPTIONB || item.optionB || "",
+        item.OPTIONC || item.optionC || "",
+        item.OPTIOND || item.optionD || ""
+      ];
+    }
+    return {
+      qid: getQid(item),
+      q: item.q || item.question || "",
+      options: options,
+      correct: item.correct,
+      username: item.username || "",
+      subject: getSubject(item),
+      chapter: item.chapter || "",
+      difficulty: item.difficulty || item.level || "",
+      exam: item.exam || "",
+      year: item.year || "",
+      channelId: getTargetUserId(item),
+      ts: Date.now()
+    };
+  }
+
+  async function setUserMapValue(mapName, key, valueOrNull) {
     if (!userId || !key) {
       alert("User ID nahi mila. App se dubara open karo (WebViewString set).");
       return false;
     }
     try {
       var values = {};
-      values["Users/" + safeKey(userId) + "/" + mapName + "/" + safeKey(key)] = enabled ? true : null;
+      values["Users/" + safeKey(userId) + "/" + mapName + "/" + safeKey(key)] = valueOrNull;
       await firebasePatch(values);
       return true;
     } catch (e) {
@@ -365,22 +534,27 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
     }
   }
 
-  async function toggleQuestionLike(qid, btn) {
+  async function toggleQuestionLike(qid, btn, item) {
     if (!qid) return;
     var next = !Boolean(likedQuestions[qid]);
-    var ok = await setUserMapValue("likedQuestions", qid, next);
+    var payload = next ? packQuestion(item) : null;
+    if (next && !payload) return;
+    var ok = await setUserMapValue("likedQuestions", qid, payload);
     if (!ok) return;
-    if (next) likedQuestions[qid] = true; else delete likedQuestions[qid];
+    if (next) likedQuestions[qid] = payload; else delete likedQuestions[qid];
     btn.classList.toggle("active", next);
     btn.textContent = next ? "♥ Liked" : "♡ Like";
   }
 
-  async function toggleRevision(qid, btn) {
+  async function toggleRevision(qid, btn, item) {
     if (!qid) return;
     var next = !Boolean(revisionQuestions[qid]);
-    var ok = await setUserMapValue("revisionQuestions", qid, next);
+    /* Complete question object so later revision screen can show full MCQ */
+    var payload = next ? packQuestion(item) : null;
+    if (next && !payload) return;
+    var ok = await setUserMapValue("revisionQuestions", qid, payload);
     if (!ok) return;
-    if (next) revisionQuestions[qid] = true; else delete revisionQuestions[qid];
+    if (next) revisionQuestions[qid] = payload; else delete revisionQuestions[qid];
     btn.classList.toggle("active", next);
     btn.textContent = next ? "✓ In Revision" : "+ Add to Revision";
   }
@@ -529,26 +703,41 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
     else hint.classList.remove("hide");
   }, { passive: true });
 
-  /* ===== Subject filter ===== */
+  /* ===== Type + Subject filters ===== */
   function buildFilters() {
+    var row = $("filterRow");
+    row.innerHTML = "";
+
+    function addChip(label, isOn, onClick) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "filter-chip" + (isOn ? " on" : "");
+      b.textContent = label;
+      b.onclick = onClick;
+      row.appendChild(b);
+    }
+
+    /* Type filters */
+    ["All", "MCQ", "Post"].forEach(function (t) {
+      addChip(t, activeType === t, function () {
+        activeType = t;
+        buildFilters();
+        renderFeed();
+      });
+    });
+
+    /* Subject filters (from MCQs) */
     var subjects = {};
     allMcqs.forEach(function (q) {
       subjects[getSubject(q)] = true;
     });
-    var list = ["All"].concat(Object.keys(subjects).sort());
-    var row = $("filterRow");
-    row.innerHTML = "";
-    list.forEach(function (s) {
-      var b = document.createElement("button");
-      b.type = "button";
-      b.className = "filter-chip" + (s === activeSubject ? " on" : "");
-      b.textContent = s;
-      b.onclick = function () {
+    ["All"].concat(Object.keys(subjects).sort()).forEach(function (s) {
+      var label = s === "All" ? "All subjects" : s;
+      addChip(label, activeSubject === s, function () {
         activeSubject = s;
         buildFilters();
         renderFeed();
-      };
-      row.appendChild(b);
+      });
     });
   }
 
@@ -605,6 +794,7 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
       }
 
       activeSubject = "All";
+      activeType = "All";
       buildFilters();
       renderFeed();
     } catch (e) {
@@ -617,6 +807,7 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
   function renderFeed() {
     var box = $("mixedFeed");
     var mcqs = allMcqs.slice();
+    var posts = allPosts.slice();
 
     if (activeSubject !== "All") {
       mcqs = mcqs.filter(function (q) {
@@ -624,8 +815,29 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
       });
     }
 
-    mcqs = shuffle(mcqs).slice(0, 15);
-    var posts = shuffle(allPosts.slice());
+    mcqs = shuffle(mcqs);
+    posts = shuffle(posts);
+
+    /* MCQ quantity hamesha posts ke barabar (mixed feed) */
+    if (activeType === "All") {
+      if (mcqs.length && posts.length) {
+        var eq = Math.min(mcqs.length, posts.length);
+        mcqs = mcqs.slice(0, eq);
+        posts = posts.slice(0, eq);
+      } else if (mcqs.length) {
+        mcqs = mcqs.slice(0, 12);
+        posts = [];
+      } else {
+        posts = posts.slice(0, 12);
+        mcqs = [];
+      }
+    } else if (activeType === "MCQ") {
+      mcqs = mcqs.slice(0, 20);
+      posts = [];
+    } else if (activeType === "Post") {
+      posts = posts.slice(0, 20);
+      mcqs = [];
+    }
 
     var items = [];
     mcqs.forEach(function (q, i) { items.push({ type: "mcq", data: q, index: i }); });
@@ -633,9 +845,10 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
     items = shuffle(items);
 
     if (!items.length) {
-      box.innerHTML = '<div class="error">Is subject me kuch nahi mila<br><button class="retry" type="button" id="retryFeed">Show all</button></div>';
+      box.innerHTML = '<div class="error">Is filter me kuch nahi mila<br><button class="retry" type="button" id="retryFeed">Show all</button></div>';
       $("retryFeed").onclick = function () {
         activeSubject = "All";
+        activeType = "All";
         buildFilters();
         renderFeed();
       };
@@ -704,8 +917,8 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
 
     var likeQBtn = card.querySelector('[data-qact="like"]');
     var revBtn = card.querySelector('[data-qact="revision"]');
-    if (likeQBtn) likeQBtn.onclick = function () { toggleQuestionLike(qid, likeQBtn); };
-    if (revBtn) revBtn.onclick = function () { toggleRevision(qid, revBtn); };
+    if (likeQBtn) likeQBtn.onclick = function () { toggleQuestionLike(qid, likeQBtn, item); };
+    if (revBtn) revBtn.onclick = function () { toggleRevision(qid, revBtn, item); };
 
     var followBtn = card.querySelector(".follow-btn");
     if (followBtn) followBtn.onclick = function () { toggleFollow(targetId, followBtn); };
@@ -721,13 +934,18 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
       if (map[correct] !== undefined) correct = map[correct];
       else correct = parseInt(correct, 10);
     }
+    var isCorrect = selected === correct;
     options.forEach(function (opt, i) {
       opt.classList.add("disabled");
       if (i === correct) opt.classList.add("correct");
       if (i === selected && selected !== correct) opt.classList.add("wrong");
     });
     var ans = $("answered-" + qIndex);
-    if (ans) ans.textContent = selected === correct ? "Correct ✓ · notes below" : "Wrong ✗ · revise notes below";
+    if (ans) ans.textContent = isCorrect ? "Correct ✓ · notes below" : "Wrong ✗ · revise notes below";
+
+    /* Firebase analysis: overall + subject-wise */
+    recordAnswer(item, isCorrect);
+
     showTopicInsight(qIndex, item);
   }
 

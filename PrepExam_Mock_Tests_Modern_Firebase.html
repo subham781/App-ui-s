@@ -118,6 +118,15 @@ header h2{letter-spacing:-.02em}
 .section-title{font-size:1rem;font-weight:800;margin:4px 0 8px}
 @media(max-width:520px){.exam-grid{grid-template-columns:1fr 1fr}.exam-card{min-height:132px}}
 
+
+.question-actions{display:flex;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid #eef2f7}
+.action-btn{flex:1;background:#f8fafc;border:1px solid #e2e8f0;color:#475569;border-radius:12px;padding:10px 8px;font-weight:750;font-size:.82rem}
+.action-btn.liked{background:#fff1f2;border-color:#fecdd3;color:#e11d48}
+.action-btn.revised{background:#fff7ed;border-color:#fed7aa;color:#c2410c}
+.action-btn:active{transform:scale(.98)}
+.creator-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.follow-btn{width:auto;padding:9px 14px;background:#2563eb;color:#fff;border-radius:10px}
+.follow-btn.following{background:#e2e8f0;color:#334155}
 </style>
 </head>
 <body>
@@ -176,6 +185,9 @@ let currentSubjectId = "";
 let currentChapterId = "";
 let currentAttemptId = "";
 let attemptStartedAt = null;
+let likedQuestions = {};
+let revisionQuestions = {};
+let followedUsers = {};
 
 
 function getWebViewString(){
@@ -200,6 +212,9 @@ async function loadCurrentUser(){
     if(snap.exists()){
       userProfile = snap.val() || {};
       userAttempts = userProfile.mockTestAttempts || {};
+      likedQuestions = userProfile.likedQuestions || {};
+      revisionQuestions = userProfile.revisionQuestions || {};
+      followedUsers = userProfile.following || {};
     }
   }catch(e){
     console.warn("User profile load failed:",e);
@@ -237,6 +252,70 @@ function formatDate(iso){
   if(!iso) return "";
   try{return new Date(iso).toLocaleString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});}
   catch(e){return iso;}
+}
+
+async function setUserMapValue(mapName, key, value){
+  if(!userId || !key) return false;
+  try{
+    const path = "Users/"+userId+"/"+mapName+"/"+safeKey(key);
+    await update(ref(db,path), value ? true : null);
+    return true;
+  }catch(e){
+    console.warn(mapName+" update failed:",e);
+    return false;
+  }
+}
+
+async function toggleQuestionLike(qid){
+  if(!userId){ alert("User ID not found. Please reopen the app."); return; }
+  const next = !Boolean(likedQuestions[qid]);
+  const ok = await setUserMapValue("likedQuestions", qid, next);
+  if(ok){
+    if(next) likedQuestions[qid]=true; else delete likedQuestions[qid];
+    renderQuestion();
+  }
+}
+
+async function toggleRevision(qid){
+  if(!userId){ alert("User ID not found. Please reopen the app."); return; }
+  const next = !Boolean(revisionQuestions[qid]);
+  const ok = await setUserMapValue("revisionQuestions", qid, next);
+  if(ok){
+    if(next) revisionQuestions[qid]=true; else delete revisionQuestions[qid];
+    renderQuestion();
+  }
+}
+
+async function toggleFollow(targetUserId){
+  if(!userId || !targetUserId || userId===targetUserId) return;
+  const next = !Boolean(followedUsers[targetUserId]);
+  try{
+    const updates = {};
+    updates["Users/"+userId+"/following/"+safeKey(targetUserId)] = next ? true : null;
+    // Keep counters simple and compatible with the current data model.
+    const targetSnap = await get(ref(db,"Users/"+targetUserId+"/publicStats/followers"));
+    const currentFollowers = Number(targetSnap.exists() ? targetSnap.val() : 0);
+    updates["Users/"+targetUserId+"/publicStats/followers"] = Math.max(0,currentFollowers + (next ? 1 : -1));
+    const ownSnap = await get(ref(db,"Users/"+userId+"/publicStats/following"));
+    const currentFollowing = Number(ownSnap.exists() ? ownSnap.val() : 0);
+    updates["Users/"+userId+"/publicStats/following"] = Math.max(0,currentFollowing + (next ? 1 : -1));
+    await update(ref(db),updates);
+    if(next) followedUsers[targetUserId]=true; else delete followedUsers[targetUserId];
+    return next;
+  }catch(e){
+    console.warn("Follow update failed:",e);
+    alert("Follow update nahi ho paya.");
+    return null;
+  }
+}
+
+function renderQuestionActions(qid){
+  const liked=Boolean(likedQuestions[qid]);
+  const revised=Boolean(revisionQuestions[qid]);
+  return '<div class="question-actions">'+
+    '<button class="action-btn '+(liked?'liked':'')+'" id="likeQuestionBtn">'+(liked?'♥':'♡')+' <span>'+(liked?'Liked':'Like')+'</span></button>'+
+    '<button class="action-btn '+(revised?'revised':'')+'" id="revisionQuestionBtn">'+(revised?'🔖':'＋')+' <span>'+(revised?'Added to Revision':'Add to Revision')+'</span></button>'+
+    '</div>';
 }
 
 async function saveAttempt(result){
@@ -482,8 +561,11 @@ function openTestIntro(test, examId, type, subjectId="", chapterId="", testId=""
   }
 
   pageTitle.innerText = test.title || "Test";
+  const creatorId = test.channelId || test.creatorId || test.userId || test.ownerId || "";
+  const followHtml = creatorId && creatorId!==userId ?
+    '<div class="card creator-row"><div><div class="title">Test Creator</div><div class="muted">Follow this creator for more tests</div></div><button class="follow-btn '+(followedUsers[creatorId]?'following':'')+'" id="followCreatorBtn">'+(followedUsers[creatorId]?'Following':'Follow')+'</button></div>' : '';
   appBox.innerHTML =
-    '<button class="back" id="backHome">← Back</button>' +
+    '<button class="back" id="backHome">← Back</button>' + followHtml +
     '<div class="card hero-card">' +
       '<div class="title">' + (test.title || "Mock Test") + '</div>' +
       '<div class="info">Questions: ' + (test.questions ?? "-") + '<br>' +
@@ -494,6 +576,8 @@ function openTestIntro(test, examId, type, subjectId="", chapterId="", testId=""
     '</div>' + historyHtml;
 
   document.getElementById("backHome").onclick = showExams;
+  const followBtn=document.getElementById("followCreatorBtn");
+  if(followBtn) followBtn.onclick=async()=>{ const state=await toggleFollow(creatorId); if(state!==null){ followBtn.textContent=state?'Following':'Follow'; followBtn.classList.toggle('following',state); } };
   document.getElementById("startBtn").onclick = ()=> startTestFromUrl(test.jsonUrl, test);
 }
 async function startTestFromUrl(url, meta){
@@ -592,10 +676,16 @@ function renderQuestion(){
       '<div class="q-meta"><span>Q ' + (currentIndex+1) + ' / ' + questions.length + '</span><span>' + (q.subject || "") + '</span></div>' +
       '<div class="q-text">' + q.question + '</div>' +
       opts +
+      renderQuestionActions(q.id) +
     '</div>' +
     '<div class="card"><div class="title">Question Palette</div><div class="palette">' + palette + '</div>' +
       '<br><button class="btn" id="submitTestBtn">Submit Test</button>' +
     '</div>';
+
+  const likeBtn=document.getElementById("likeQuestionBtn");
+  const revisionBtn=document.getElementById("revisionQuestionBtn");
+  if(likeBtn) likeBtn.onclick=()=>toggleQuestionLike(q.id);
+  if(revisionBtn) revisionBtn.onclick=()=>toggleRevision(q.id);
 
   var optionNodes = appBox.querySelectorAll(".option");
   optionNodes.forEach(function(node){

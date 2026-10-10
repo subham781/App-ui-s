@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PrepExam Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:#eef2f7;color:#0f172a;min-height:100vh}
+.page{max-width:640px;margin:0 auto;padding:12px 12px 90px}
+.section-label{font-size:.68rem;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.45px;margin:0 0 8px 2px}
+
+.adds-wrapper{overflow-x:auto;padding-bottom:4px;margin-bottom:12px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.adds-wrapper::-webkit-scrollbar{display:none}
+.adds-track{display:flex;gap:10px;width:max-content}
+.ad-card{width:200px;height:100px;border-radius:14px;overflow:hidden;flex-shrink:0;cursor:pointer;border:1px solid #e2e8f0;position:relative;background:linear-gradient(135deg,#dbeafe,#e0e7ff)}
+.ad-card img{width:100%;height:100%;object-fit:cover;display:block}
+.ad-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(15,23,42,.8) 100%)}
+.ad-label{position:absolute;left:10px;right:10px;bottom:8px;z-index:1;color:#fff;font-size:.75rem;font-weight:700}
+.ad-pill{position:absolute;top:8px;left:8px;z-index:1;background:rgba(255,255,255,.95);color:#0f172a;font-size:.6rem;font-weight:800;padding:3px 7px;border-radius:999px}
+
+.feat-drop{background:#fff;border:1px solid #e8ecf4;border-radius:16px;margin-bottom:12px;box-shadow:0 2px 12px rgba(15,23,42,.04);overflow:hidden}
+.feat-toggle{width:100%;border:0;background:#fff;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-weight:700;font-size:.88rem}
+.feat-toggle .hint{font-size:.72rem;font-weight:600;color:#64748b}
+.feat-toggle .chev{transition:transform .2s;color:#64748b;font-size:12px}
+.feat-drop.open .chev{transform:rotate(180deg)}
+.feat-body{display:none;padding:0 10px 12px;border-top:1px solid #f1f5f9}
+.feat-drop.open .feat-body{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-top:10px}
+.feature-card{background:#f8fafc;border-radius:14px;padding:12px;border:1px solid #eef2f7;cursor:pointer;text-align:left}
+.feature-card:active{transform:scale(.97)}
+.icon-box{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:8px}
+.feature-card h3{font-size:.82rem;font-weight:700;margin-bottom:2px}
+.feature-card p{font-size:.68rem;color:#64748b;line-height:1.3}
+.color-1{background:linear-gradient(135deg,#dbeafe,#bfdbfe)}
+.color-2{background:linear-gradient(135deg,#fce7f3,#fbcfe8)}
+.color-3{background:linear-gradient(135deg,#d1fae5,#a7f3d0)}
+.color-4{background:linear-gradient(135deg,#fef3c7,#fde68a)}
+.color-5{background:linear-gradient(135deg,#e0e7ff,#c7d2fe)}
+
+.feed-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:4px 0 8px;flex-wrap:wrap}
+.feed-head h2{font-size:1.05rem;font-weight:800}
+.feed-actions{display:flex;align-items:center;gap:8px}
+.live{font-size:.68rem;font-weight:700;color:#059669;background:#ecfdf5;border:1px solid #a7f3d0;padding:4px 8px;border-radius:999px}
+.refresh-btn{border:1px solid #e2e8f0;background:#fff;border-radius:10px;padding:7px 10px;font-size:.72rem;font-weight:800;color:#334155;cursor:pointer}
+
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:#fff;border:1px solid #e8ecf4;border-radius:14px;padding:12px 10px;margin-bottom:10px;box-shadow:0 2px 10px rgba(15,23,42,.04)}
+.stat-item{text-align:center}
+.stat-item b{display:block;font-size:1rem;font-weight:800;line-height:1.2}
+.stat-item span{font-size:.62rem;font-weight:700;color:#64748b;text-transform:uppercase}
+.stat-item.acc b{color:#2563eb}.stat-item.ok b{color:#15803d}.stat-item.bad b{color:#b91c1c}
+
+.panel{background:#fff;border:1px solid #e8ecf4;border-radius:16px;padding:12px;margin-bottom:12px;box-shadow:0 2px 10px rgba(15,23,42,.04)}
+.panel-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.panel-h b{font-size:.85rem;font-weight:800}
+.panel select{border:1px solid #e2e8f0;border-radius:10px;padding:7px 10px;font-size:.75rem;font-weight:700;background:#f8fafc;color:#334155;max-width:55%}
+.bars{display:flex;flex-direction:column;gap:8px}
+.bar-row{display:flex;flex-direction:column;gap:3px}
+.bar-top{display:flex;justify-content:space-between;font-size:.74rem;font-weight:700}
+.bar-top span{color:#64748b;font-weight:600}
+.track{height:7px;background:#eef2ff;border-radius:99px;overflow:hidden}
+.fill{height:100%;background:linear-gradient(90deg,#3b82f6,#6366f1);border-radius:99px}
+
+.filter-box{background:#fff;border:1px solid #e8ecf4;border-radius:16px;padding:12px;margin-bottom:12px;box-shadow:0 2px 10px rgba(15,23,42,.04)}
+.filter-box h3{font-size:.82rem;font-weight:800;margin-bottom:10px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fgrid label{display:block;font-size:.62rem;font-weight:700;color:#64748b;margin-bottom:3px;text-transform:uppercase}
+.fgrid select,.fgrid input{
+  width:100%;border:1px solid #e2e8f0;border-radius:10px;padding:8px 10px;
+  font-size:.78rem;font-weight:600;background:#f8fafc
+}
+.f-actions{display:flex;gap:8px;margin-top:10px}
+.f-actions button{flex:1;border:0;border-radius:10px;padding:10px;font-size:.78rem;font-weight:800;cursor:pointer}
+.btn-apply{background:#2563eb;color:#fff}
+.btn-reset{background:#e2e8f0;color:#0f172a}
+
+.lb-list{display:flex;flex-direction:column;gap:6px}
+.lb-row{display:flex;align-items:center;gap:10px;padding:8px 10px;background:#f8fafc;border-radius:12px;border:1px solid #eef2f7}
+.lb-rank{width:24px;height:24px;border-radius:8px;background:#e0e7ff;color:#3730a3;font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center}
+.lb-row b{flex:1;font-size:.8rem}
+.lb-row span{font-size:.75rem;font-weight:800;color:#2563eb}
+
+.card{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;border:1px solid #e8ecf4;box-shadow:0 2px 12px rgba(15,23,42,.04)}
+.tag{display:inline-block;font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.3px;padding:3px 8px;border-radius:999px;margin-bottom:8px}
+.tag-mcq{background:#eff6ff;color:#1d4ed8}
+.tag-post{background:#fdf2f8;color:#be185d}
+.post-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;flex-shrink:0}
+.uname{font-size:.9rem;font-weight:700}
+.exam-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.exam-chip{font-size:.62rem;font-weight:700;background:#f1f5f9;color:#334155;padding:2px 7px;border-radius:6px}
+.exam-chip.py{background:#fff7ed;color:#c2410c}
+.meta{font-size:.7rem;color:#94a3b8;margin-top:3px}
+.q{font-size:1rem;font-weight:600;line-height:1.45;margin-bottom:12px}
+.options{display:flex;flex-direction:column;gap:8px}
+.option{border:1.5px solid #e2e8f0;border-radius:10px;padding:11px 12px;font-size:.9rem;cursor:pointer;background:#fff}
+.option.correct{background:#ecfdf5;border-color:#22c55e;color:#15803d;font-weight:600}
+.option.wrong{background:#fef2f2;border-color:#ef4444;color:#b91c1c}
+.option.disabled{pointer-events:none}
+.footer-line{margin-top:12px;padding-top:10px;border-top:1px solid #f1f5f9;font-size:.78rem;color:#64748b}
+.q-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.q-action{flex:1;min-width:92px;border:1px solid #e2e8f0;background:#f8fafc;border-radius:10px;padding:9px 8px;font-size:.72rem;font-weight:800;color:#475569;cursor:pointer}
+.q-action.active{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8}
+.q-action.revision.active{background:#ecfdf5;border-color:#86efac;color:#15803d}
+.follow-btn{margin-left:auto;border:1px solid #bfdbfe;background:#eff6ff;color:#2563eb;border-radius:999px;padding:6px 10px;font-size:.68rem;font-weight:800;cursor:pointer}
+.follow-btn.following{background:#f1f5f9;color:#475569;border-color:#e2e8f0}
+.user-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+.post-img-wrap{width:100%;border-radius:12px;overflow:hidden;background:#e2e8f0;margin:6px 0 10px;min-height:120px;max-height:300px}
+.post-img-wrap img{width:100%;max-height:300px;object-fit:cover;display:block}
+.actions{display:flex;gap:14px;align-items:center;margin-bottom:8px}
+.action{border:0;background:none;padding:0;cursor:pointer}
+.action svg{width:24px;height:24px;stroke:#262626;fill:none;stroke-width:2}
+.action.like.active svg{fill:#ed4956;stroke:#ed4956}
+.action.save{margin-left:auto}
+.action.save.active svg{fill:#262626}
+.likes{font-size:.84rem;font-weight:700;margin-bottom:4px}
+.ptitle{font-size:.9rem;font-weight:700;margin-bottom:4px}
+.pdesc{font-size:.84rem;color:#334155;line-height:1.45}
+
+.loading,.error{text-align:center;padding:32px 16px;color:#64748b;font-size:.9rem}
+.retry{margin-top:10px;border:0;background:#2563eb;color:#fff;padding:10px 14px;border-radius:10px;font-weight:700}
+
+.insight-wrap{display:none;margin-top:12px}
+.insight-wrap.show{display:block}
+.insight-title{font-size:.78rem;font-weight:700;color:#2563eb;margin-bottom:8px}
+.insight-scroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none}
+.insight-card{min-width:200px;background:#f0f7ff;border:1px solid #dbeafe;border-radius:12px;padding:11px;flex-shrink:0;cursor:pointer}
+.insight-card h4{font-size:.82rem;font-weight:700;margin-bottom:5px}
+.insight-card p{font-size:.72rem;color:#4b5563;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+.scroll-hint{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:50;display:flex;flex-direction:column;align-items:center;gap:4px;background:rgba(15,23,42,.88);color:#fff;padding:10px 16px;border-radius:999px;font-size:.72rem;font-weight:700;animation:bob 1.4s ease-in-out infinite;pointer-events:none;transition:opacity .4s}
+.scroll-hint.hide{opacity:0}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(5px)}}
+
+#viewer{display:none;position:fixed;inset:0;background:#fff;z-index:9999;flex-direction:column}
+.viewer-header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#f8fafc;border-bottom:1px solid #e2e8f0}
+.back-btn{width:40px;height:40px;border-radius:12px;border:0;background:#e2e8f0;font-size:18px}
+.viewer-title{font-size:1rem;font-weight:700}
+#viewer-frame{flex:1;width:100%;border:0}
+.v-loading{flex:1;display:flex;align-items:center;justify-content:center;color:#64748b}
+
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;display:none;align-items:flex-end;justify-content:center}
+.sheet-overlay.show{display:flex}
+.sheet{width:100%;max-width:700px;height:85vh;background:#fff;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden}
+.sheet-header{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #e4e6eb}
+.sheet-header h3{flex:1;font-size:.95rem;font-weight:700}
+.sheet-close{border:0;background:#e4e6eb;width:34px;height:34px;border-radius:10px}
+.sheet-frame{flex:1;width:100%;border:0;display:none}
+.sheet-loading{padding:20px;text-align:center;color:#65676b}
+</style>
+</head>
+<body>
+<div class="page" id="main-page">
+  <div class="section-label">Sponsored</div>
+  <div class="adds-wrapper"><div class="adds-track" id="addsTrack"></div></div>
+
+  <div class="feat-drop" id="featDrop">
+    <button class="feat-toggle" type="button" id="featToggle">
+      <span>⚡ Tools & Features</span>
+      <span><span class="hint">tap</span> <span class="chev">▼</span></span>
+    </button>
+    <div class="feat-body" id="featuresContainer"></div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filter-box">
+    <h3>🎯 Filter questions</h3>
+    <div class="fgrid">
+      <div><label>Exam</label><select id="fExam"><option value="">All</option></select></div>
+      <div><label>Subject</label><select id="fSubject"><option value="">All</option></select></div>
+      <div><label>Topic</label><select id="fTopic"><option value="">All</option></select></div>
+      <div><label>Level</label><select id="fLevel"><option value="">All</option><option>Easy</option><option>Medium</option><option>Hard</option></select></div>
+      <div><label>Year (PYQ)</label><select id="fYear"><option value="">All</option></select></div>
+      <div><label>Shift</label><select id="fShift"><option value="">All</option></select></div>
+      <div><label>Section</label><select id="fSection"><option value="">All</option></select></div>
+      <div><label>Source</label><select id="fSource"><option value="">All</option><option>PYQ</option><option>Practice</option><option>Mock</option></select></div>
+      <div><label>Language</label><select id="fLang"><option value="">All</option><option value="en">English</option><option value="hi">Hindi</option></select></div>
+      <div><label>Type</label><select id="fType"><option value="All">All</option><option value="MCQ">MCQ</option><option value="Post">Post</option></select></div>
+    </div>
+    <div class="f-actions">
+      <button class="btn-apply" type="button" id="btnApply">Apply filter</button>
+      <button class="btn-reset" type="button" id="btnReset">Reset</button>
+    </div>
+  </div>
+
+  <!-- ANALYSIS -->
+  <div class="panel">
+    <div class="panel-h">
+      <b>📊 Your analysis</b>
+      <select id="analysisMode">
+        <option value="subject">Subject-wise</option>
+        <option value="topic">Topic-wise</option>
+        <option value="exam">Exam-wise</option>
+        <option value="pyq">PYQ year-wise</option>
+      </select>
+    </div>
+    <div class="stats-bar" style="margin:0 0 10px;box-shadow:none;padding:8px 0;border:0">
+      <div class="stat-item"><b id="stAttempted">0</b><span>Attempted</span></div>
+      <div class="stat-item ok"><b id="stCorrect">0</b><span>Correct</span></div>
+      <div class="stat-item bad"><b id="stWrong">0</b><span>Wrong</span></div>
+      <div class="stat-item acc"><b id="stAccuracy">0%</b><span>Accuracy</span></div>
+    </div>
+    <div class="bars" id="analysisBars"><div style="font-size:.8rem;color:#64748b">Attempt questions to see breakdown</div></div>
+  </div>
+
+  <!-- LEADERBOARD -->
+  <div class="panel">
+    <div class="panel-h">
+      <b>🏆 Top accuracy</b>
+      <select id="lbMode">
+        <option value="accuracy">By accuracy</option>
+        <option value="attempted">By attempted</option>
+      </select>
+    </div>
+    <div class="lb-list" id="leaderboard"><div style="font-size:.8rem;color:#64748b">Loading…</div></div>
+  </div>
+
+  <div class="feed-head">
+    <h2>Practice feed</h2>
+    <div class="feed-actions">
+      <span class="live">● Live</span>
+      <button class="refresh-btn" type="button" id="btnRefresh">↻ Refresh</button>
+    </div>
+  </div>
+
+  <div id="mixedFeed"><div class="loading">Loading practice…</div></div>
+</div>
+
+<div class="scroll-hint" id="scrollHint"><span>↓</span><span>Scroll &amp; practice</span></div>
+
+<div id="viewer">
+  <div class="viewer-header">
+    <button class="back-btn" type="button" id="btnViewerBack">←</button>
+    <div class="viewer-title" id="viewer-title">Loading…</div>
+  </div>
+  <div class="v-loading" id="loading">Loading…</div>
+  <iframe id="viewer-frame" style="display:none"></iframe>
+</div>
+
+<div class="sheet-overlay" id="sheetOverlay">
+  <div class="sheet">
+    <div class="sheet-header">
+      <h3 id="sheetTitle">Topic</h3>
+      <button class="sheet-close" type="button" id="btnSheetClose">✕</button>
+    </div>
+    <div class="sheet-loading" id="sheetLoading">Opening…</div>
+    <iframe class="sheet-frame" id="sheetFrame"></iframe>
+  </div>
+</div>
+
+<script>
+(function () {
+  var MSG_OPEN = "OPEN";
+  var MSG_BACK = "BACK";
+
+  /* ===== REPLACE after deploying new Apps Script ===== */
+  var MCQ_API = "https://script.google.com/macros/s/REPLACE_MCQ_SCRIPT_ID/exec";
+  var POSTS_API = "https://script.google.com/macros/s/AKfycbzVYw5uC-1sASG-6BAMChC3JhCqKK-0LHMgmkQjEmAolRF8_3ozyETPH6cEWBVqDil3/exec";
+  var META_API = ""; /* optional: same script ?action=meta — auto uses MCQ_API */
+  var FIREBASE_DB = "https://prepexam-f98bf-default-rtdb.firebaseio.com";
+
+  var userId = "";
+  var userName = "";
+  var likedQuestions = {};
+  var savedQuestions = {};
+  var revisionQuestions = {};
+  var followedUsers = {};
+  var analysis = emptyAnalysis();
+  var sessionAnswered = {};
+  var allMcqs = [];
+  var allPosts = [];
+  var filterMeta = { exams: [], subjects: [], topics: [], years: [], shifts: [], sections: [] };
+
+  var adsPool = [
+    { id: "ad_1", title: "SSC Foundation", image: "https://picsum.photos/seed/sscA/480/260", link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Recents" },
+    { id: "ad_2", title: "Defence Batch", image: "https://picsum.photos/seed/defB/480/260", link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Recents" },
+    { id: "ad_3", title: "Mock Test Series", image: "https://picsum.photos/seed/mockC/480/260", link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Recents" },
+    { id: "ad_4", title: "PYQ Pack", image: "https://picsum.photos/seed/pyqD/480/260", link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Recents" },
+    { id: "ad_5", title: "Agniveer Crash", image: "https://picsum.photos/seed/agnE/480/260", link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Recents" },
+    { id: "ad_6", title: "English Booster", image: "https://picsum.photos/seed/engF/480/260", link: "https://raw.githubusercontent.com/subham781/App-ui-s/refs/heads/main/Recents" }
+  ];
+
+  var features = [
+    { id: "f1", title: "Mock Tests", description: "Full length papers", icon: "📝", color: "color-1", link: "" },
+    { id: "f2", title: "PYQ Vault", description: "Previous papers", icon: "📚", color: "color-2", link: "" },
+    { id: "f3", title: "Revision", description: "Saved & wrong", icon: "🔁", color: "color-3", link: "" },
+    { id: "f4", title: "Books", description: "Subject PDFs", icon: "📖", color: "color-4", link: "" }
+  ];
+
+  function $(id) { return document.getElementById(id); }
+  function emptyAnalysis() {
+    return {
+      allTime: { attempted: 0, correct: 0, wrong: 0, accuracy: 0 },
+      today: { date: "", attempted: 0, correct: 0, wrong: 0, accuracy: 0 },
+      subjects: {}, topics: {}, exams: {}, pyqYears: {}
+    };
+  }
+  function todayStr() {
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  function calcAcc(c, a) { return a ? Math.round((c / a) * 1000) / 10 : 0; }
+  function safeKey(v) { return String(v || "").replace(/[.#$\[\]\/]/g, "_"); }
+  function escapeHTML(s) {
+    return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function sendWebViewString(v) {
+    try { if (window.AppInventor && window.AppInventor.setWebViewString) window.AppInventor.setWebViewString(v); } catch (e) {}
+    try { if (window.Kodular && window.Kodular.setWebViewString) window.Kodular.setWebViewString(v); } catch (e) {}
+  }
+  function getWebViewString() {
+    try {
+      if (window.AppInventor && window.AppInventor.getWebViewString)
+        return String(window.AppInventor.getWebViewString() || "").trim();
+    } catch (e) {}
+    try {
+      if (window.Kodular && window.Kodular.getWebViewString)
+        return String(window.Kodular.getWebViewString() || "").trim();
+    } catch (e) {}
+    return "";
+  }
+
+  async function firebaseGet(path) {
+    var r = await fetch(FIREBASE_DB + "/" + path + ".json?t=" + Date.now());
+    if (!r.ok) throw new Error("Firebase GET " + r.status);
+    return await r.json();
+  }
+  async function firebasePatch(values) {
+    var r = await fetch(FIREBASE_DB + "/.json", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values)
+    });
+    if (!r.ok) throw new Error("Firebase PATCH " + r.status);
+  }
+
+  function getQid(item) {
+    return String((item && (item.qid || item.questionId || item.QUESTION_ID || item.uid || item.id)) || "").trim();
+  }
+  function getChannelId(item) {
+    return String((item && (item.channelId || item.CHANNEL_ID || item.ownerId || item.userId)) || "").trim();
+  }
+  function getSubject(item) {
+    return String((item && (item.subject || item.SUBJECT || "General")) || "General").trim() || "General";
+  }
+  function getTopic(item) {
+    return String((item && (item.topic || item.topics || item.TOPICS || item.chapter || "")) || "").trim();
+  }
+  function getExam(item) {
+    return String((item && (item.exam || item.examName || item.EXAM_NAME || "")) || "").trim();
+  }
+  function getYear(item) {
+    return String((item && (item.year || item.pyqYear || item.PREVIOUS_YEAR_QUESTION_YEAR || "")) || "").trim();
+  }
+  function normalizeMcq(raw) {
+    if (!raw || typeof raw !== "object") return null;
+    var opts = raw.options;
+    if (!opts || !opts.length) {
+      opts = [
+        raw.optionA || raw.OPTIONA || raw.OptionA || "",
+        raw.optionB || raw.OPTIONB || raw.OptionB || "",
+        raw.optionC || raw.OPTIONC || raw.OptionC || "",
+        raw.optionD || raw.OPTIOND || raw.OptionD || ""
+      ];
+    }
+    var correct = raw.correct != null ? raw.correct : (raw.CORRECTANSWER || raw.correctAnswer || raw.answer);
+    var map = { A: 0, B: 1, C: 2, D: 3, a: 0, b: 1, c: 2, d: 3 };
+    if (typeof correct === "string" && map[correct.trim()] !== undefined) correct = map[correct.trim()];
+    else if (typeof correct === "string" && /^\d+$/.test(correct)) correct = parseInt(correct, 10);
+    if (typeof correct === "number" && correct >= 1 && correct <= 4 && !raw.options) {
+      /* sometimes 1-4 instead of 0-3 */
+      if (correct >= 1 && correct <= 4 && (!opts[correct] || correct > 3)) {
+        /* keep as 0-based if already 0-3 */
+      }
+    }
+    return {
+      q: raw.q || raw.question || raw.Question || raw.QUESTION || "",
+      options: opts,
+      correct: correct,
+      username: raw.username || raw.channelName || raw.CHANNEL_NAME || "Educator",
+      subject: raw.subject || raw.SUBJECT || "General",
+      topic: raw.topic || raw.topics || raw.TOPICS || raw.chapter || "",
+      difficulty: raw.difficulty || raw.level || raw.LEVEL || "Medium",
+      exam: raw.exam || raw.examName || raw.EXAM_NAME || "",
+      year: raw.year || raw.pyqYear || raw.PREVIOUS_YEAR_QUESTION_YEAR || "",
+      shift: raw.shift || raw.SHIFT || "",
+      section: raw.section || raw.SECTION || "",
+      source: raw.source || raw.SOURCE || "",
+      language: raw.language || raw.LANGUAGE || "",
+      qid: getQid(raw),
+      channelId: getChannelId(raw)
+    };
+  }
+
+  /* ===== Ads random each load ===== */
+  function renderAds() {
+    var track = $("addsTrack");
+    track.innerHTML = "";
+    var pick = shuffle(adsPool).slice(0, 4);
+    pick.concat(pick).forEach(function (ad) {
+      var el = document.createElement("div");
+      el.className = "ad-card";
+      el.innerHTML = '<span class="ad-pill">Ad</span><img src="' + ad.image + '" alt=""><div class="ad-label">' + escapeHTML(ad.title) + "</div>";
+      el.onclick = function () {
+        sendWebViewString(MSG_OPEN);
+        if (ad.link) openViewer(ad.title, ad.link);
+      };
+      track.appendChild(el);
+    });
+  }
+
+  function renderFeatures() {
+    var box = $("featuresContainer");
+    box.innerHTML = "";
+    features.forEach(function (f) {
+      var c = document.createElement("div");
+      c.className = "feature-card";
+      c.innerHTML = '<div class="icon-box ' + f.color + '">' + f.icon + "</div><h3>" + escapeHTML(f.title) + "</h3><p>" + escapeHTML(f.description) + "</p>";
+      c.onclick = function () {
+        sendWebViewString(MSG_OPEN);
+        if (f.link) openViewer(f.title, f.link);
+        else sendWebViewString("feature|" + f.id);
+      };
+      box.appendChild(c);
+    });
+  }
+  $("featToggle").onclick = function () { $("featDrop").classList.toggle("open"); };
+
+  function openViewer(title, url) {
+    $("main-page").style.display = "none";
+    $("viewer").style.display = "flex";
+    $("viewer-title").textContent = title;
+    $("loading").style.display = "flex";
+    $("viewer-frame").style.display = "none";
+    fetch(url).then(function (r) { return r.text(); }).then(function (html) {
+      var frame = $("viewer-frame");
+      var doc = frame.contentDocument || frame.contentWindow.document;
+      doc.open(); doc.write(html); doc.close();
+      frame.style.display = "block";
+      $("loading").style.display = "none";
+    }).catch(function () { $("loading").textContent = "Failed to load"; });
+  }
+  $("btnViewerBack").onclick = function () {
+    sendWebViewString(MSG_BACK);
+    $("viewer").style.display = "none";
+    $("main-page").style.display = "block";
+    var frame = $("viewer-frame");
+    var doc = frame.contentDocument || frame.contentWindow.document;
+    doc.open(); doc.write(""); doc.close();
+  };
+
+  /* ===== Filters UI ===== */
+  function fillSelect(id, values, keepFirst) {
+    var sel = $(id);
+    var cur = sel.value;
+    var first = sel.options[0] ? sel.options[0].outerHTML : '<option value="">All</option>';
+    sel.innerHTML = keepFirst !== false ? first : "";
+    (values || []).forEach(function (v) {
+      if (!v) return;
+      var o = document.createElement("option");
+      o.value = v;
+      o.textContent = v;
+      sel.appendChild(o);
+    });
+    if (cur) sel.value = cur;
+  }
+
+  function applyMetaToFilters() {
+    fillSelect("fExam", filterMeta.exams);
+    fillSelect("fSubject", filterMeta.subjects);
+    fillSelect("fTopic", filterMeta.topics);
+    fillSelect("fYear", filterMeta.years);
+    fillSelect("fShift", filterMeta.shifts);
+    fillSelect("fSection", filterMeta.sections);
+  }
+
+  function currentFilters() {
+    return {
+      exam: $("fExam").value,
+      subject: $("fSubject").value,
+      topic: $("fTopic").value,
+      level: $("fLevel").value,
+      year: $("fYear").value,
+      shift: $("fShift").value,
+      section: $("fSection").value,
+      source: $("fSource").value,
+      language: $("fLang").value,
+      type: $("fType").value || "All",
+      limit: 40
+    };
+  }
+
+  function buildMcqUrl(filters) {
+    var u = MCQ_API + (MCQ_API.indexOf("?") >= 0 ? "&" : "?");
+    var q = ["action=questions", "t=" + Date.now()];
+    Object.keys(filters).forEach(function (k) {
+      if (filters[k] !== "" && filters[k] != null && k !== "type")
+        q.push(encodeURIComponent(k) + "=" + encodeURIComponent(filters[k]));
+    });
+    return u + q.join("&");
+  }
+
+  /* ===== User / analysis / leaderboard ===== */
+  function normalizeAnalysis(raw) {
+    var a = emptyAnalysis();
+    if (!raw || typeof raw !== "object") return a;
+    ["allTime", "today"].forEach(function (k) {
+      if (raw[k]) {
+        a[k].attempted = Number(raw[k].attempted) || 0;
+        a[k].correct = Number(raw[k].correct) || 0;
+        a[k].wrong = Number(raw[k].wrong) || 0;
+        a[k].accuracy = calcAcc(a[k].correct, a[k].attempted);
+        if (k === "today") a.today.date = raw.today.date || "";
+      }
+    });
+    ["subjects", "topics", "exams", "pyqYears"].forEach(function (bucket) {
+      if (raw[bucket] && typeof raw[bucket] === "object") {
+        Object.keys(raw[bucket]).forEach(function (key) {
+          var s = raw[bucket][key] || {};
+          a[bucket][key] = {
+            attempted: Number(s.attempted) || 0,
+            correct: Number(s.correct) || 0,
+            wrong: Number(s.wrong) || 0,
+            accuracy: calcAcc(Number(s.correct) || 0, Number(s.attempted) || 0)
+          };
+        });
+      }
+    });
+    return a;
+  }
+
+  function renderStats() {
+    var at = analysis.allTime;
+    $("stAttempted").textContent = at.attempted || 0;
+    $("stCorrect").textContent = at.correct || 0;
+    $("stWrong").textContent = at.wrong || 0;
+    $("stAccuracy").textContent = (at.accuracy || 0) + "%";
+    renderAnalysisBars();
+  }
+
+  function renderAnalysisBars() {
+    var mode = $("analysisMode").value;
+    var map = analysis.subjects;
+    if (mode === "topic") map = analysis.topics;
+    if (mode === "exam") map = analysis.exams;
+    if (mode === "pyq") map = analysis.pyqYears;
+
+    var entries = Object.keys(map || {}).map(function (k) {
+      return { k: k, v: map[k] };
+    }).filter(function (e) { return e.v.attempted > 0; });
+    entries.sort(function (a, b) { return b.v.attempted - a.v.attempted; });
+
+    var box = $("analysisBars");
+    if (!entries.length) {
+      box.innerHTML = '<div style="font-size:.8rem;color:#64748b">Attempt questions to see breakdown</div>';
+      return;
+    }
+    var max = entries[0].v.attempted || 1;
+    box.innerHTML = entries.slice(0, 8).map(function (e) {
+      var pct = Math.round((e.v.attempted / max) * 100);
+      return '<div class="bar-row"><div class="bar-top"><b>' + escapeHTML(e.k) +
+        "</b><span>" + e.v.accuracy + "% · " + e.v.attempted + ' Q</span></div>' +
+        '<div class="track"><div class="fill" style="width:' + pct + '%"></div></div></div>';
+    }).join("");
+  }
+  $("analysisMode").onchange = renderAnalysisBars;
+
+  async function loadCurrentUser() {
+    userId = getWebViewString();
+    if (userId.indexOf("|") > 0) userId = userId.split("|").pop();
+    if (userId.indexOf("@") > 0) userId = userId.split("@")[0];
+    userId = userId.replace(/[.#$\[\]\/]/g, "_").trim();
+    if (!userId) {
+      await new Promise(function (r) { setTimeout(r, 400); });
+      userId = getWebViewString();
+      if (userId.indexOf("|") > 0) userId = userId.split("|").pop();
+      if (userId.indexOf("@") > 0) userId = userId.split("@")[0];
+      userId = String(userId || "").replace(/[.#$\[\]\/]/g, "_").trim();
+    }
+    if (!userId) return;
+    try {
+      var data = await firebaseGet("Users/" + safeKey(userId));
+      if (data && typeof data === "object") {
+        userName = (data.profile && (data.profile.name || data.profile.channelName)) || userId;
+        likedQuestions = data.likedQuestions || (data.consume && data.consume.likedMcq) || {};
+        savedQuestions = data.savedQuestions || (data.consume && data.consume.savedMcq) || {};
+        revisionQuestions = data.revisionQuestions || {};
+        followedUsers = data.following || {};
+        analysis = normalizeAnalysis(data.analysis);
+      }
+      renderStats();
+      refreshActionStates();
+    } catch (e) { console.warn(e); }
+  }
+
+  function bumpBucket(bucket, key, isCorrect) {
+    if (!key) return;
+    if (!bucket[key]) bucket[key] = { attempted: 0, correct: 0, wrong: 0, accuracy: 0 };
+    bucket[key].attempted++;
+    if (isCorrect) bucket[key].correct++; else bucket[key].wrong++;
+    bucket[key].accuracy = calcAcc(bucket[key].correct, bucket[key].attempted);
+  }
+
+  async function recordAnswer(item, isCorrect) {
+    var qid = getQid(item) || ("tmp_" + Date.now());
+    if (sessionAnswered[qid]) return;
+    sessionAnswered[qid] = true;
+
+    var subject = getSubject(item);
+    var topic = getTopic(item) || "General";
+    var exam = getExam(item) || "General";
+    var year = getYear(item);
+    var today = todayStr();
+
+    if (!analysis.today || analysis.today.date !== today) {
+      analysis.today = { date: today, attempted: 0, correct: 0, wrong: 0, accuracy: 0 };
+    }
+    analysis.allTime.attempted++;
+    analysis.today.attempted++;
+    if (isCorrect) { analysis.allTime.correct++; analysis.today.correct++; }
+    else { analysis.allTime.wrong++; analysis.today.wrong++; }
+    analysis.allTime.accuracy = calcAcc(analysis.allTime.correct, analysis.allTime.attempted);
+    analysis.today.accuracy = calcAcc(analysis.today.correct, analysis.today.attempted);
+
+    bumpBucket(analysis.subjects, subject, isCorrect);
+    bumpBucket(analysis.topics, topic, isCorrect);
+    bumpBucket(analysis.exams, exam, isCorrect);
+    if (year) bumpBucket(analysis.pyqYears, String(year), isCorrect);
+
+    /* wrong → auto revision by qid */
+    if (!isCorrect && qid) {
+      revisionQuestions[qid] = true;
+    }
+
+    renderStats();
+    if (!userId) return;
+
+    try {
+      var base = "Users/" + safeKey(userId) + "/analysis";
+      var values = {};
+      values[base + "/allTime"] = analysis.allTime;
+      values[base + "/today"] = analysis.today;
+      values[base + "/subjects/" + safeKey(subject)] = analysis.subjects[subject];
+      values[base + "/topics/" + safeKey(topic)] = analysis.topics[topic];
+      values[base + "/exams/" + safeKey(exam)] = analysis.exams[exam];
+      if (year) values[base + "/pyqYears/" + safeKey(year)] = analysis.pyqYears[year];
+      values[base + "/lastAnswer"] = { qid: qid, subject: subject, topic: topic, exam: exam, year: year || null, correct: !!isCorrect, ts: Date.now() };
+      if (!isCorrect && qid) {
+        values["Users/" + safeKey(userId) + "/revisionQuestions/" + safeKey(qid)] = true;
+      }
+      /* leaderboard entry */
+      values["leaderboard/" + safeKey(userId)] = {
+        name: userName || userId,
+        accuracy: analysis.allTime.accuracy,
+        attempted: analysis.allTime.attempted,
+        correct: analysis.allTime.correct,
+        ts: Date.now()
+      };
+      await firebasePatch(values);
+      loadLeaderboard();
+    } catch (e) { console.warn("Analysis save failed", e); }
+  }
+
+  async function loadLeaderboard() {
+    var box = $("leaderboard");
+    try {
+      var data = await firebaseGet("leaderboard");
+      if (!data || typeof data !== "object") {
+        box.innerHTML = '<div style="font-size:.8rem;color:#64748b">No leaderboard data yet</div>';
+        return;
+      }
+      var mode = $("lbMode").value;
+      var rows = Object.keys(data).map(function (id) {
+        var x = data[id] || {};
+        return {
+          id: id,
+          name: x.name || id,
+          accuracy: Number(x.accuracy) || 0,
+          attempted: Number(x.attempted) || 0
+        };
+      }).filter(function (r) { return r.attempted >= 3; });
+
+      rows.sort(function (a, b) {
+        if (mode === "attempted") return b.attempted - a.attempted;
+        if (b.accuracy !== a.accuracy) return b.accuracy - a.accuracy;
+        return b.attempted - a.attempted;
+      });
+      rows = rows.slice(0, 10);
+      if (!rows.length) {
+        box.innerHTML = '<div style="font-size:.8rem;color:#64748b">Need ≥3 attempts to rank</div>';
+        return;
+      }
+      box.innerHTML = rows.map(function (r, i) {
+        return '<div class="lb-row"><div class="lb-rank">' + (i + 1) + "</div><b>" +
+          escapeHTML(r.name) + "</b><span>" + r.accuracy + "% · " + r.attempted + "Q</span></div>";
+      }).join("");
+    } catch (e) {
+      box.innerHTML = '<div style="font-size:.8rem;color:#64748b">Leaderboard unavailable</div>';
+    }
+  }
+  $("lbMode").onchange = loadLeaderboard;
+
+  /* ===== Save / Like / Follow — IDs only ===== */
+  async function setUserFlag(path, key, enabled) {
+    if (!userId || !key) {
+      alert("User ID nahi mili (WebViewString).");
+      return false;
+    }
+    try {
+      var values = {};
+      values["Users/" + safeKey(userId) + "/" + path + "/" + safeKey(key)] = enabled ? true : null;
+      await firebasePatch(values);
+      return true;
+    } catch (e) {
+      alert("Save failed");
+      return false;
+    }
+  }
+
+  async function toggleSave(qid, btn) {
+    if (!qid) return;
+    var next = !Boolean(savedQuestions[qid]);
+    var ok = await setUserFlag("savedQuestions", qid, next);
+    if (!ok) return;
+    if (next) savedQuestions[qid] = true; else delete savedQuestions[qid];
+    btn.classList.toggle("active", next);
+    btn.textContent = next ? "✓ Saved" : "Save";
+  }
+
+  async function toggleLike(qid, btn) {
+    if (!qid) return;
+    var next = !Boolean(likedQuestions[qid]);
+    var ok = await setUserFlag("likedQuestions", qid, next);
+    if (!ok) return;
+    if (next) likedQuestions[qid] = true; else delete likedQuestions[qid];
+    btn.classList.toggle("active", next);
+    btn.textContent = next ? "♥ Liked" : "♡ Like";
+  }
+
+  async function toggleRevision(qid, btn) {
+    if (!qid) return;
+    var next = !Boolean(revisionQuestions[qid]);
+    var ok = await setUserFlag("revisionQuestions", qid, next);
+    if (!ok) return;
+    if (next) revisionQuestions[qid] = true; else delete revisionQuestions[qid];
+    btn.classList.toggle("active", next);
+    btn.textContent = next ? "✓ In Revision" : "+ Revision";
+  }
+
+  async function toggleFollow(channelId, btn) {
+    if (!channelId) return;
+    if (channelId === userId) return;
+    var next = !Boolean(followedUsers[channelId]);
+    var ok = await setUserFlag("following", channelId, next);
+    if (!ok) return;
+    if (next) followedUsers[channelId] = true; else delete followedUsers[channelId];
+    btn.classList.toggle("following", next);
+    btn.textContent = next ? "Following" : "Follow";
+  }
+
+  function refreshActionStates() {
+    document.querySelectorAll(".card[data-qid]").forEach(function (card) {
+      var qid = card.getAttribute("data-qid") || "";
+      var likeBtn = card.querySelector('[data-qact="like"]');
+      var saveBtn = card.querySelector('[data-qact="save"]');
+      var revBtn = card.querySelector('[data-qact="revision"]');
+      if (likeBtn) {
+        var liked = Boolean(likedQuestions[qid]);
+        likeBtn.classList.toggle("active", liked);
+        likeBtn.textContent = liked ? "♥ Liked" : "♡ Like";
+      }
+      if (saveBtn) {
+        var saved = Boolean(savedQuestions[qid]);
+        saveBtn.classList.toggle("active", saved);
+        saveBtn.textContent = saved ? "✓ Saved" : "Save";
+      }
+      if (revBtn) {
+        var rev = Boolean(revisionQuestions[qid]);
+        revBtn.classList.toggle("active", rev);
+        revBtn.textContent = rev ? "✓ In Revision" : "+ Revision";
+      }
+    });
+    document.querySelectorAll(".card[data-channel]").forEach(function (card) {
+      var cid = card.getAttribute("data-channel") || "";
+      var btn = card.querySelector(".follow-btn");
+      if (btn && cid) {
+        var f = Boolean(followedUsers[cid]);
+        btn.classList.toggle("following", f);
+        btn.textContent = f ? "Following" : "Follow";
+      }
+    });
+  }
+
+  /* ===== Feed ===== */
+  async function loadMeta() {
+    try {
+      var url = (META_API || MCQ_API) + (MCQ_API.indexOf("?") >= 0 ? "&" : "?") + "action=meta&t=" + Date.now();
+      var res = await fetch(url, { cache: "no-store", redirect: "follow" });
+      if (!res.ok) return;
+      var data = await res.json();
+      filterMeta = {
+        exams: data.exams || data.examNames || [],
+        subjects: data.subjects || [],
+        topics: data.topics || data.topicList || [],
+        years: data.years || [],
+        shifts: data.shifts || [],
+        sections: data.sections || []
+      };
+      applyMetaToFilters();
+    } catch (e) { console.warn("meta fail", e); }
+  }
+
+  async function loadMixedFeed() {
+    var box = $("mixedFeed");
+    box.innerHTML = '<div class="loading">Loading practice…</div>';
+    renderAds();
+    var filters = currentFilters();
+
+    try {
+      var tasks = [];
+      if (filters.type !== "Post") {
+        tasks.push(
+          fetch(buildMcqUrl(filters), { cache: "no-store", redirect: "follow" })
+            .then(function (r) {
+              if (!r.ok) throw new Error("MCQ HTTP " + r.status);
+              return r.json();
+            })
+        );
+      } else tasks.push(Promise.resolve([]));
+
+      if (filters.type !== "MCQ") {
+        tasks.push(
+          fetch(POSTS_API + (POSTS_API.indexOf("?") >= 0 ? "&" : "?") + "t=" + Date.now(), {
+            cache: "no-store", redirect: "follow"
+          }).then(function (r) {
+            if (!r.ok) throw new Error("Posts HTTP " + r.status);
+            return r.json();
+          })
+        );
+      } else tasks.push(Promise.resolve([]));
+
+      var results = await Promise.allSettled(tasks);
+      allMcqs = [];
+      allPosts = [];
+
+      if (results[0].status === "fulfilled") {
+        var d = results[0].value;
+        if (d && Array.isArray(d.questions)) d = d.questions;
+        else if (d && Array.isArray(d.data)) d = d.data;
+        if (Array.isArray(d)) {
+          allMcqs = d.map(normalizeMcq).filter(Boolean);
+        }
+      } else console.warn(results[0].reason);
+
+      if (results[1].status === "fulfilled") {
+        var p = results[1].value;
+        if (p && p.success && Array.isArray(p.posts)) allPosts = p.posts;
+        else if (Array.isArray(p)) allPosts = p;
+        else if (p && Array.isArray(p.data)) allPosts = p.data;
+      }
+
+      /* enrich filter options from loaded data if meta empty */
+      allMcqs.forEach(function (q) {
+        if (q.exam && filterMeta.exams.indexOf(q.exam) < 0) filterMeta.exams.push(q.exam);
+        if (q.subject && filterMeta.subjects.indexOf(q.subject) < 0) filterMeta.subjects.push(q.subject);
+        if (q.topic && filterMeta.topics.indexOf(q.topic) < 0) filterMeta.topics.push(q.topic);
+        if (q.year && filterMeta.years.indexOf(String(q.year)) < 0) filterMeta.years.push(String(q.year));
+        if (q.shift && filterMeta.shifts.indexOf(q.shift) < 0) filterMeta.shifts.push(q.shift);
+        if (q.section && filterMeta.sections.indexOf(q.section) < 0) filterMeta.sections.push(q.section);
+      });
+      applyMetaToFilters();
+
+      if (!allMcqs.length && !allPosts.length) {
+        box.innerHTML = '<div class="error">No questions for this filter<br><button class="retry" type="button" id="retryFeed">Reset</button></div>';
+        $("retryFeed").onclick = function () { $("btnReset").click(); };
+        return;
+      }
+      renderFeed(filters.type);
+    } catch (e) {
+      box.innerHTML = '<div class="error">Failed: ' + escapeHTML(e.message || e) +
+        '<br><button class="retry" type="button" id="retryFeed">Retry</button></div>';
+      $("retryFeed").onclick = loadMixedFeed;
+    }
+  }
+
+  function renderFeed(type) {
+    var box = $("mixedFeed");
+    var mcqs = shuffle(allMcqs);
+    var posts = shuffle(allPosts);
+    type = type || "All";
+
+    if (type === "All" && mcqs.length && posts.length) {
+      var eq = Math.min(mcqs.length, posts.length, 20);
+      mcqs = mcqs.slice(0, eq);
+      posts = posts.slice(0, eq);
+    } else if (type === "MCQ") {
+      mcqs = mcqs.slice(0, 30);
+      posts = [];
+    } else if (type === "Post") {
+      posts = posts.slice(0, 20);
+      mcqs = [];
+    } else {
+      mcqs = mcqs.slice(0, 20);
+      posts = posts.slice(0, 10);
+    }
+
+    var items = [];
+    mcqs.forEach(function (q, i) { items.push({ type: "mcq", data: q, index: i }); });
+    posts.forEach(function (p) { items.push({ type: "post", data: p }); });
+    items = shuffle(items);
+
+    box.innerHTML = "";
+    items.forEach(function (it) {
+      if (it.type === "mcq") box.appendChild(renderMcq(it.data, it.index));
+      else box.appendChild(renderPost(it.data));
+    });
+    refreshActionStates();
+  }
+
+  function examTagsHtml(item) {
+    var chips = [];
+    if (item.exam) chips.push(item.exam);
+    if (item.year) chips.push("PYQ " + item.year);
+    if (item.shift) chips.push("Shift " + item.shift);
+    if (item.section) chips.push(item.section);
+    if (!chips.length) chips.push(item.subject || "Practice");
+    return chips.map(function (c, i) {
+      var cls = /PYQ|year/i.test(c) || i === 1 ? "exam-chip py" : "exam-chip";
+      return '<span class="' + cls + '">' + escapeHTML(String(c)) + "</span>";
+    }).join("");
+  }
+
+  function renderMcq(item, index) {
+    var card = document.createElement("div");
+    card.className = "card";
+    var uname = item.username || "Educator";
+    var qid = getQid(item);
+    var channelId = getChannelId(item);
+    if (qid) card.setAttribute("data-qid", qid);
+    if (channelId) card.setAttribute("data-channel", channelId);
+
+    var followHtml = "";
+    if (channelId && channelId !== userId) {
+      followHtml = '<button class="follow-btn' + (followedUsers[channelId] ? " following" : "") + '" type="button">' +
+        (followedUsers[channelId] ? "Following" : "Follow") + "</button>";
+    }
+
+    card.innerHTML =
+      '<div class="tag tag-mcq">MCQ' + (item.source ? " · " + escapeHTML(item.source) : "") + "</div>" +
+      '<div class="post-header">' +
+        '<div class="avatar">' + escapeHTML(String(uname).charAt(0).toUpperCase()) + "</div>" +
+        '<div style="flex:1;min-width:0">' +
+          '<div class="user-line"><div class="uname">' + escapeHTML(uname) + "</div>" + followHtml + "</div>" +
+          '<div class="exam-row">' + examTagsHtml(item) + "</div>" +
+          '<div class="meta">' + escapeHTML(item.subject || "") +
+            (item.topic ? " · " + escapeHTML(item.topic) : "") +
+            " · " + escapeHTML(item.difficulty || "Medium") + "</div>" +
+        "</div></div>" +
+      '<div class="q">' + escapeHTML(item.q || "") + "</div>" +
+      '<div class="options" id="options-' + index + '"></div>' +
+      '<div class="insight-wrap" id="insight-' + index + '"></div>' +
+      '<div class="footer-line" id="answered-' + index + '">Tap an option</div>' +
+      '<div class="q-actions">' +
+        '<button class="q-action" type="button" data-qact="like">♡ Like</button>' +
+        '<button class="q-action" type="button" data-qact="save">Save</button>' +
+        '<button class="q-action revision" type="button" data-qact="revision">+ Revision</button>' +
+      "</div>";
+
+    var optBox = card.querySelector("#options-" + index);
+    (item.options || []).forEach(function (opt, i) {
+      var d = document.createElement("div");
+      d.className = "option";
+      d.textContent = opt || "—";
+      d.onclick = function () { selectOption(index, i, item); };
+      optBox.appendChild(d);
+    });
+
+    card.querySelector('[data-qact="like"]').onclick = function () { toggleLike(qid, this); };
+    card.querySelector('[data-qact="save"]').onclick = function () { toggleSave(qid, this); };
+    card.querySelector('[data-qact="revision"]').onclick = function () { toggleRevision(qid, this); };
+    var fb = card.querySelector(".follow-btn");
+    if (fb) fb.onclick = function () { toggleFollow(channelId, fb); };
+    return card;
+  }
+
+  function selectOption(qIndex, selected, item) {
+    var options = document.querySelectorAll("#options-" + qIndex + " .option");
+    var correct = item.correct;
+    if (typeof correct === "string") {
+      var map = { A: 0, B: 1, C: 2, D: 3, a: 0, b: 1, c: 2, d: 3 };
+      if (map[correct] !== undefined) correct = map[correct];
+      else correct = parseInt(correct, 10);
+    }
+    /* support 1-4 indexing */
+    if (typeof correct === "number" && correct >= 1 && correct <= 4 && options.length === 4 && correct > 3) {
+      correct = correct - 1;
+    }
+    if (typeof correct === "number" && correct >= 1 && correct <= 4) {
+      var asZero = correct - 1;
+      if (options[correct] === undefined && options[asZero]) correct = asZero;
+    }
+    var isCorrect = selected === correct;
+    options.forEach(function (opt, i) {
+      opt.classList.add("disabled");
+      if (i === correct) opt.classList.add("correct");
+      if (i === selected && !isCorrect) opt.classList.add("wrong");
+    });
+    var ans = $("answered-" + qIndex);
+    if (ans) ans.textContent = isCorrect ? "Correct ✓" : "Wrong ✗ · added to revision";
+    recordAnswer(item, isCorrect);
+    showTopicInsight(qIndex, item);
+  }
+
+  function renderPost(post) {
+    var card = document.createElement("div");
+    card.className = "card";
+    var uname = post.username || "User";
+    var channelId = getChannelId(post);
+    if (channelId) card.setAttribute("data-channel", channelId);
+    var followHtml = "";
+    if (channelId && channelId !== userId) {
+      followHtml = '<button class="follow-btn' + (followedUsers[channelId] ? " following" : "") + '" type="button">' +
+        (followedUsers[channelId] ? "Following" : "Follow") + "</button>";
+    }
+    var imgUrl = post.image || "";
+    var imgBlock = imgUrl
+      ? '<div class="post-img-wrap"><img src="' + escapeHTML(imgUrl) + '" alt="" loading="lazy" onerror="this.parentNode.style.display=\'none\'"></div>'
+      : "";
+    card.innerHTML =
+      '<div class="tag tag-post">Post</div>' +
+      '<div class="post-header"><div class="avatar">' + escapeHTML(String(uname).charAt(0).toUpperCase()) + "</div>" +
+      '<div style="flex:1"><div class="user-line"><div class="uname">' + escapeHTML(uname) + "</div>" + followHtml + "</div>" +
+      '<div class="meta">' + escapeHTML(post.time || "Recent") + "</div></div></div>" +
+      imgBlock +
+      '<div class="ptitle">' + escapeHTML(post.title || "") + "</div>" +
+      '<div class="pdesc">' + escapeHTML(post.description || "") + "</div>";
+    var fb = card.querySelector(".follow-btn");
+    if (fb) fb.onclick = function () { toggleFollow(channelId, fb); };
+    return card;
+  }
+
+  /* wiki insight */
+  async function showTopicInsight(qIndex, item) {
+    var box = $("insight-" + qIndex);
+    if (!box || box.dataset.loaded === "1") return;
+    box.classList.add("show");
+    box.innerHTML = '<div style="font-size:.8rem;color:#64748b">Loading notes…</div>';
+    try {
+      var q = (item.topic || item.subject || item.q || "general knowledge").toString();
+      var searchUrl = "https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=" +
+        encodeURIComponent(q) + "&srlimit=3&format=json&origin=*";
+      var searchData = await (await fetch(searchUrl)).json();
+      var results = (searchData.query && searchData.query.search) || [];
+      if (!results.length) {
+        box.innerHTML = '<div class="insight-title">📚 Topic</div><div style="font-size:.8rem;color:#64748b">No notes</div>';
+        return;
+      }
+      var cards = [];
+      for (var i = 0; i < Math.min(3, results.length); i++) {
+        var t = results[i].title;
+        try {
+          var sum = await (await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(t))).json();
+          if (sum && sum.type !== "disambiguation") {
+            cards.push({ t: sum.title || t, d: sum.extract || "", pageUrl: "https://en.wikipedia.org/wiki/" + encodeURIComponent((sum.title || t).replace(/ /g, "_")) });
+          }
+        } catch (e) {}
+      }
+      var html = '<div class="insight-title">📚 Quick notes</div><div class="insight-scroll">';
+      cards.forEach(function (c) {
+        html += '<div class="insight-card"><h4>' + escapeHTML(c.t) + "</h4><p>" + escapeHTML(c.d) + "</p></div>";
+      });
+      html += "</div>";
+      box.innerHTML = html;
+      box.dataset.loaded = "1";
+      box.querySelectorAll(".insight-card").forEach(function (el, idx) {
+        el.onclick = function () { openSheet(cards[idx].t, cards[idx].pageUrl); };
+      });
+    } catch (e) {
+      box.innerHTML = '<div class="insight-title">📚 Topic</div><div style="font-size:.8rem;color:#64748b">Unavailable</div>';
+    }
+  }
+
+  function openSheet(title, url) {
+    $("sheetTitle").textContent = title;
+    $("sheetOverlay").classList.add("show");
+    var frame = $("sheetFrame");
+    var loading = $("sheetLoading");
+    loading.style.display = "block";
+    frame.style.display = "none";
+    frame.onload = function () { loading.style.display = "none"; frame.style.display = "block"; };
+    frame.src = url;
+  }
+  $("btnSheetClose").onclick = function () {
+    $("sheetOverlay").classList.remove("show");
+    $("sheetFrame").src = "about:blank";
+  };
+  $("sheetOverlay").onclick = function (e) {
+    if (e.target.id === "sheetOverlay") $("btnSheetClose").click();
+  };
+
+  $("btnApply").onclick = loadMixedFeed;
+  $("btnReset").onclick = function () {
+    ["fExam", "fSubject", "fTopic", "fLevel", "fYear", "fShift", "fSection", "fSource", "fLang"].forEach(function (id) {
+      $(id).value = "";
+    });
+    $("fType").value = "All";
+    loadMixedFeed();
+  };
+  $("btnRefresh").onclick = loadMixedFeed;
+
+  window.addEventListener("scroll", function () {
+    $("scrollHint").classList.toggle("hide", window.scrollY > 80);
+  }, { passive: true });
+
+  renderFeatures();
+  renderAds();
+  loadMeta().then(loadMixedFeed).then(function () {
+    return Promise.all([loadCurrentUser(), loadLeaderboard()]);
+  });
+})();
+</script>
+</body>
+</html>

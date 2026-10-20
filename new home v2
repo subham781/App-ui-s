@@ -371,6 +371,9 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
   }
   function calcAcc(c, a) { return a ? Math.round((c / a) * 1000) / 10 : 0; }
   function safeKey(v) { return String(v || "").replace(/[.#$\[\]\/]/g, "_"); }
+  function domId(v) {
+    return String(v || "").replace(/[^a-zA-Z0-9_-]/g, "_");
+  }
   function escapeHTML(s) {
     return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
@@ -474,6 +477,7 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
   /* ===== Ads random each load ===== */
   function renderAds() {
     var track = $("addsTrack");
+    if (!track) return;
     track.innerHTML = "";
     var pick = shuffle(adsPool).slice(0, 4);
     pick.concat(pick).forEach(function (ad) {
@@ -490,6 +494,7 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
 
   function renderFeatures() {
     var box = $("featuresContainer");
+    if (!box) return;
     box.innerHTML = "";
     features.forEach(function (f) {
       var c = document.createElement("div");
@@ -900,6 +905,7 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
 
   async function loadMixedFeed() {
     var box = $("mixedFeed");
+    if (!box) { console.error("mixedFeed missing"); return; }
     box.innerHTML = '<div class="loading">Loading practice…</div>';
     renderAds();
     var filters = currentFilters();
@@ -1019,6 +1025,7 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
 
   function renderFeed(type) {
     var box = $("mixedFeed");
+    if (!box) return;
     var filters = currentFilters();
     type = type || filters.type || "All";
     updateFilterHint();
@@ -1072,7 +1079,7 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
         var sc = document.createElement("div");
         sc.className = "topic-scroll";
         byTopic[t].slice(0, 12).forEach(function (q, i) {
-          sc.appendChild(renderMcq(q, "t_" + safeKey(t) + "_" + i));
+          sc.appendChild(renderMcq(q, "t_" + domId(t) + "_" + i));
         });
         block.appendChild(head);
         block.appendChild(sc);
@@ -1135,23 +1142,27 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
             " · " + escapeHTML(item.difficulty || "Medium") + "</div>" +
         "</div></div>" +
       '<div class="q">' + escapeHTML(item.q || "") + "</div>" +
-      '<div class="options" id="options-' + index + '"></div>' +
-      '<div class="insight-wrap" id="insight-' + index + '"></div>' +
-      '<div class="footer-line" id="answered-' + index + '">Tap an option</div>' +
+      '<div class="options" id="options-' + domId(index) + '"></div>' +
+      '<div class="insight-wrap" id="insight-' + domId(index) + '"></div>' +
+      '<div class="footer-line" id="answered-' + domId(index) + '">Tap an option</div>' +
       '<div class="q-actions">' +
         '<button class="q-action" type="button" data-qact="like">♡ Like</button>' +
         '<button class="q-action" type="button" data-qact="save">Save</button>' +
         '<button class="q-action revision" type="button" data-qact="revision">+ Revision</button>' +
       "</div>";
 
-    var optBox = card.querySelector("#options-" + index);
-    (item.options || []).forEach(function (opt, i) {
-      var d = document.createElement("div");
-      d.className = "option";
-      d.textContent = opt || "—";
-      d.onclick = function () { selectOption(index, i, item); };
-      optBox.appendChild(d);
-    });
+    var oid = "options-" + domId(index);
+    var optBox = card.querySelector("#" + oid) || card.querySelector(".options");
+    if (optBox) {
+      optBox.id = oid;
+      (item.options || []).forEach(function (opt, i) {
+        var d = document.createElement("div");
+        d.className = "option";
+        d.textContent = opt || "—";
+        d.onclick = function () { selectOption(index, i, item); };
+        optBox.appendChild(d);
+      });
+    }
 
     card.querySelector('[data-qact="like"]').onclick = function () { toggleLike(qid, this); };
     card.querySelector('[data-qact="save"]').onclick = function () { toggleSave(qid, this); };
@@ -1162,7 +1173,8 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
   }
 
   function selectOption(qIndex, selected, item) {
-    var options = document.querySelectorAll("#options-" + qIndex + " .option");
+    var sid = domId(qIndex);
+    var options = document.querySelectorAll("#options-" + sid + " .option");
     var correct = item.correct;
     if (typeof correct === "string") {
       var map = { A: 0, B: 1, C: 2, D: 3, a: 0, b: 1, c: 2, d: 3 };
@@ -1183,7 +1195,7 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
       if (i === correct) opt.classList.add("correct");
       if (i === selected && !isCorrect) opt.classList.add("wrong");
     });
-    var ans = $("answered-" + qIndex);
+    var ans = $("answered-" + sid);
     if (ans) ans.textContent = isCorrect ? "Correct ✓" : "Wrong ✗ · added to revision";
     if (isCorrect && options[selected]) showCorrectBurst(options[selected]);
     recordAnswer(item, isCorrect);
@@ -1220,7 +1232,7 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
 
   /* wiki insight */
   async function showTopicInsight(qIndex, item) {
-    var box = $("insight-" + qIndex);
+    var box = $("insight-" + domId(qIndex));
     if (!box || box.dataset.loaded === "1") return;
     box.classList.add("show");
     box.innerHTML = '<div style="font-size:.8rem;color:#64748b">Loading notes…</div>';

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 <title>PrepExam Home</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -106,8 +106,17 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
 .follow-btn.following{background:#f1f5f9;color:#475569;border-color:#e2e8f0}
 .user-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 
-.post-img-wrap{width:100%;border-radius:12px;overflow:hidden;background:#e2e8f0;margin:6px 0 10px;min-height:120px;max-height:300px}
-.post-img-wrap img{width:100%;max-height:300px;object-fit:cover;display:block}
+.post-img-wrap{width:100%;border-radius:12px;overflow:hidden;background:#e2e8f0;margin:6px 0 10px;min-height:120px;cursor:zoom-in;position:relative}
+.post-img-wrap img{width:100%;max-height:none;object-fit:contain;display:block;background:#f1f5f9}
+.post-img-wrap .zoom-hint{position:absolute;right:8px;bottom:8px;background:rgba(15,23,42,.75);color:#fff;font-size:.62rem;font-weight:700;padding:4px 8px;border-radius:999px;pointer-events:none}
+
+/* Image lightbox / zoom viewer */
+.img-lightbox{display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.92);align-items:center;justify-content:center;flex-direction:column;touch-action:none}
+.img-lightbox.show{display:flex}
+.img-lightbox .lb-close{position:absolute;top:12px;right:12px;width:40px;height:40px;border:0;border-radius:12px;background:rgba(255,255,255,.15);color:#fff;font-size:20px;cursor:pointer;z-index:2}
+.img-lightbox .lb-stage{width:100%;height:100%;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative}
+.img-lightbox .lb-stage img{max-width:100%;max-height:100%;object-fit:contain;transform-origin:center center;transition:transform .05s linear;user-select:none;-webkit-user-drag:none;cursor:grab}
+.img-lightbox .lb-hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.7);font-size:.72rem;font-weight:600;pointer-events:none}
 .actions{display:flex;gap:14px;align-items:center;margin-bottom:8px}
 .action{border:0;background:none;padding:0;cursor:pointer}
 .action svg{width:24px;height:24px;stroke:#262626;fill:none;stroke-width:2}
@@ -312,6 +321,14 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
     <div class="sheet-loading" id="sheetLoading">Opening…</div>
     <iframe class="sheet-frame" id="sheetFrame"></iframe>
   </div>
+</div>
+
+<div class="img-lightbox" id="imgLightbox">
+  <button class="lb-close" type="button" id="btnLbClose">✕</button>
+  <div class="lb-stage" id="lbStage">
+    <img id="lbImg" src="" alt="">
+  </div>
+  <div class="lb-hint">Pinch / scroll to zoom · drag to pan · tap ✕ to close</div>
 </div>
 
 <script>
@@ -1172,35 +1189,205 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
     return card;
   }
 
-  function selectOption(qIndex, selected, item) {
-    var sid = domId(qIndex);
-    var options = document.querySelectorAll("#options-" + sid + " .option");
+  function hasValidCorrect(item, optionsLen) {
+    var c = item && item.correct;
+    if (c === null || c === undefined || c === "") return false;
+    if (typeof c === "string") {
+      var map = { A: 0, B: 1, C: 2, D: 3, a: 0, b: 1, c: 2, d: 3 };
+      if (map[c.trim()] !== undefined) return true;
+      if (/^\d+$/.test(c.trim())) {
+        var n = parseInt(c, 10);
+        return n >= 0 && n < optionsLen;
+      }
+      return false;
+    }
+    if (typeof c === "number") {
+      if (c >= 0 && c < optionsLen) return true;
+      if (c >= 1 && c <= optionsLen) return true;
+    }
+    return false;
+  }
+
+  function resolveCorrectIndex(item, optionsLen) {
     var correct = item.correct;
     if (typeof correct === "string") {
       var map = { A: 0, B: 1, C: 2, D: 3, a: 0, b: 1, c: 2, d: 3 };
-      if (map[correct] !== undefined) correct = map[correct];
+      if (map[correct.trim()] !== undefined) correct = map[correct.trim()];
       else correct = parseInt(correct, 10);
     }
-    /* support 1-4 indexing */
-    if (typeof correct === "number" && correct >= 1 && correct <= 4 && options.length === 4 && correct > 3) {
+    if (typeof correct === "number" && correct >= 1 && correct <= optionsLen && correct > optionsLen - 1) {
       correct = correct - 1;
     }
-    if (typeof correct === "number" && correct >= 1 && correct <= 4) {
+    if (typeof correct === "number" && correct >= 1 && correct <= optionsLen) {
       var asZero = correct - 1;
-      if (options[correct] === undefined && options[asZero]) correct = asZero;
+      if (asZero >= 0 && asZero < optionsLen) {
+        /* prefer 0-based when both possible */
+        if (correct >= optionsLen) correct = asZero;
+      }
     }
+    return correct;
+  }
+
+  /* Random community poll when answer is missing */
+  function randomPollPercents(n, selectedIdx) {
+    var weights = [];
+    var sum = 0;
+    for (var i = 0; i < n; i++) {
+      var w = 8 + Math.floor(Math.random() * 40);
+      if (i === selectedIdx) w += 10 + Math.floor(Math.random() * 18);
+      weights.push(w);
+      sum += w;
+    }
+    var pcts = weights.map(function (w) { return Math.round((w / sum) * 1000) / 10; });
+    /* fix rounding to ~100 */
+    var total = pcts.reduce(function (a, b) { return a + b; }, 0);
+    var diff = Math.round((100 - total) * 10) / 10;
+    pcts[selectedIdx] = Math.round((pcts[selectedIdx] + diff) * 10) / 10;
+    return pcts;
+  }
+
+  function selectOption(qIndex, selected, item) {
+    var sid = domId(qIndex);
+    var options = document.querySelectorAll("#options-" + sid + " .option");
+    var n = options.length;
+    var ans = $("answered-" + sid);
+
+    /* No answer → show random community selection stats */
+    if (!hasValidCorrect(item, n)) {
+      var pcts = randomPollPercents(n, selected);
+      options.forEach(function (opt, i) {
+        opt.classList.add("disabled");
+        if (i === selected) opt.classList.add("correct");
+        var bar = document.createElement("div");
+        bar.style.cssText = "margin-top:6px;height:6px;background:#e2e8f0;border-radius:99px;overflow:hidden";
+        bar.innerHTML = '<div style="height:100%;width:' + pcts[i] + '%;background:linear-gradient(90deg,#3b82f6,#6366f1);border-radius:99px"></div>';
+        var label = document.createElement("div");
+        label.style.cssText = "font-size:.72rem;font-weight:700;color:#64748b;margin-top:4px";
+        label.textContent = pcts[i] + "% students selected this";
+        opt.appendChild(bar);
+        opt.appendChild(label);
+      });
+      if (ans) ans.textContent = "Community poll · " + pcts[selected] + "% chose same as you";
+      showTopicInsight(qIndex, item);
+      return;
+    }
+
+    var correct = resolveCorrectIndex(item, n);
     var isCorrect = selected === correct;
     options.forEach(function (opt, i) {
       opt.classList.add("disabled");
       if (i === correct) opt.classList.add("correct");
       if (i === selected && !isCorrect) opt.classList.add("wrong");
     });
-    var ans = $("answered-" + sid);
     if (ans) ans.textContent = isCorrect ? "Correct ✓" : "Wrong ✗ · added to revision";
     if (isCorrect && options[selected]) showCorrectBurst(options[selected]);
     recordAnswer(item, isCorrect);
     showTopicInsight(qIndex, item);
   }
+
+  /* ===== Image lightbox (pinch zoom + pan) ===== */
+  var lbScale = 1, lbX = 0, lbY = 0;
+  var lbPinching = false, lbLastDist = 0, lbLastX = 0, lbLastY = 0, lbDragging = false;
+
+  function openImageLightbox(src) {
+    var box = $("imgLightbox");
+    var img = $("lbImg");
+    if (!box || !img || !src) return;
+    lbScale = 1; lbX = 0; lbY = 0;
+    img.style.transform = "translate(0px,0px) scale(1)";
+    img.src = src;
+    box.classList.add("show");
+  }
+  function closeImageLightbox() {
+    var box = $("imgLightbox");
+    if (box) box.classList.remove("show");
+    var img = $("lbImg");
+    if (img) img.src = "";
+    lbScale = 1; lbX = 0; lbY = 0;
+  }
+  function applyLbTransform() {
+    var img = $("lbImg");
+    if (!img) return;
+    img.style.transform = "translate(" + lbX + "px," + lbY + "px) scale(" + lbScale + ")";
+  }
+  function lbDist(t1, t2) {
+    var dx = t1.clientX - t2.clientX, dy = t1.clientY - t2.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+  (function bindLightbox() {
+    var stage = $("lbStage");
+    var img = $("lbImg");
+    var closeBtn = $("btnLbClose");
+    if (closeBtn) closeBtn.onclick = closeImageLightbox;
+    var box = $("imgLightbox");
+    if (box) box.addEventListener("click", function (e) {
+      if (e.target === box || e.target.id === "lbStage") closeImageLightbox();
+    });
+    if (!stage || !img) return;
+
+    stage.addEventListener("wheel", function (e) {
+      e.preventDefault();
+      var delta = e.deltaY > 0 ? 0.9 : 1.1;
+      lbScale = Math.min(5, Math.max(1, lbScale * delta));
+      if (lbScale === 1) { lbX = 0; lbY = 0; }
+      applyLbTransform();
+    }, { passive: false });
+
+    stage.addEventListener("touchstart", function (e) {
+      if (e.touches.length === 2) {
+        lbPinching = true;
+        lbLastDist = lbDist(e.touches[0], e.touches[1]);
+      } else if (e.touches.length === 1) {
+        lbDragging = true;
+        lbLastX = e.touches[0].clientX;
+        lbLastY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    stage.addEventListener("touchmove", function (e) {
+      if (lbPinching && e.touches.length === 2) {
+        e.preventDefault();
+        var d = lbDist(e.touches[0], e.touches[1]);
+        var ratio = d / (lbLastDist || d);
+        lbScale = Math.min(5, Math.max(1, lbScale * ratio));
+        lbLastDist = d;
+        if (lbScale === 1) { lbX = 0; lbY = 0; }
+        applyLbTransform();
+      } else if (lbDragging && e.touches.length === 1 && lbScale > 1) {
+        e.preventDefault();
+        var tx = e.touches[0].clientX, ty = e.touches[0].clientY;
+        lbX += tx - lbLastX;
+        lbY += ty - lbLastY;
+        lbLastX = tx; lbLastY = ty;
+        applyLbTransform();
+      }
+    }, { passive: false });
+
+    stage.addEventListener("touchend", function () {
+      lbPinching = false;
+      lbDragging = false;
+    });
+
+    /* mouse drag for desktop */
+    var mouseDown = false, mx = 0, my = 0;
+    stage.addEventListener("mousedown", function (e) {
+      if (e.target !== img && e.target !== stage) return;
+      mouseDown = true;
+      mx = e.clientX; my = e.clientY;
+      img.style.cursor = "grabbing";
+    });
+    window.addEventListener("mousemove", function (e) {
+      if (!mouseDown || lbScale <= 1) return;
+      lbX += e.clientX - mx;
+      lbY += e.clientY - my;
+      mx = e.clientX; my = e.clientY;
+      applyLbTransform();
+    });
+    window.addEventListener("mouseup", function () {
+      mouseDown = false;
+      if (img) img.style.cursor = "grab";
+    });
+  })();
 
   function renderPost(post) {
     var card = document.createElement("div");
@@ -1215,7 +1402,7 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
     }
     var imgUrl = post.image || "";
     var imgBlock = imgUrl
-      ? '<div class="post-img-wrap"><img src="' + escapeHTML(imgUrl) + '" alt="" loading="lazy" onerror="this.parentNode.style.display=\'none\'"></div>'
+      ? '<div class="post-img-wrap"><img src="' + escapeHTML(imgUrl) + '" alt="" loading="lazy" onerror="this.parentNode.style.display=\'none\'"><span class="zoom-hint">🔍 Tap to zoom</span></div>'
       : "";
     card.innerHTML =
       '<div class="tag tag-post">Post</div>' +
@@ -1227,6 +1414,10 @@ body{background:#eef2f7;color:#0f172a;min-height:100vh}
       '<div class="pdesc">' + escapeHTML(post.description || "") + "</div>";
     var fb = card.querySelector(".follow-btn");
     if (fb) fb.onclick = function () { toggleFollow(channelId, fb); };
+    var imgWrap = card.querySelector(".post-img-wrap");
+    if (imgWrap && imgUrl) {
+      imgWrap.onclick = function () { openImageLightbox(imgUrl); };
+    }
     return card;
   }
 

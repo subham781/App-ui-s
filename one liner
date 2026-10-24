@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>One-Liner Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:Inter,system-ui,sans-serif;background:#f0f2f5;color:#0f172a;min-height:100vh}
+.wrap{max-width:560px;margin:0 auto;padding:12px 12px 36px}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.top h1{font-size:1.1rem;font-weight:800}
+.lang{display:flex;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:3px;gap:2px}
+.lang button{border:0;background:transparent;border-radius:9px;padding:7px 12px;font-size:.75rem;font-weight:700;color:#64748b;cursor:pointer}
+.lang button.on{background:#2563eb;color:#fff}
+
+.modes{display:flex;gap:8px;margin-bottom:10px}
+.mode{flex:1;border:1.5px solid #e2e8f0;background:#fff;border-radius:12px;padding:10px;font-size:.78rem;font-weight:700;color:#475569;cursor:pointer;text-align:center}
+.mode.on{border-color:#2563eb;background:#eff6ff;color:#1d4ed8}
+
+.toolbar{display:flex;gap:8px;margin-bottom:12px}
+.btn{
+  border:1px solid #e2e8f0;background:#fff;border-radius:12px;
+  padding:10px 14px;font-size:.78rem;font-weight:700;color:#334155;cursor:pointer
+}
+.btn.primary{background:#2563eb;border-color:#2563eb;color:#fff}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.5}
+
+.search-wrap{position:relative;margin-bottom:10px;flex:1}
+.search{
+  width:100%;border:0;border-radius:14px;padding:12px 14px 12px 40px;
+  font:inherit;font-size:.9rem;background:#fff;box-shadow:0 2px 12px rgba(15,23,42,.05);outline:none
+}
+.search-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#94a3b8}
+
+.meta{font-size:.75rem;font-weight:600;color:#64748b;margin:0 2px 10px;line-height:1.4}
+
+.feed{display:flex;flex-direction:column;gap:10px}
+.card{background:#fff;border-radius:16px;padding:14px;border:1px solid #e8ecf4;box-shadow:0 2px 10px rgba(15,23,42,.04)}
+.q{font-size:.95rem;font-weight:600;line-height:1.5;margin-bottom:10px}
+.ans-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:10px 12px;font-size:.88rem;line-height:1.45;display:none}
+.ans-box.show{display:block}
+.ans-box.ok{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
+.ans-box.bad{background:#fef2f2;border-color:#fecaca;color:#991b1b}
+.actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.input{width:100%;border:1.5px solid #e2e8f0;border-radius:12px;padding:11px 12px;font:inherit;font-size:.9rem;background:#fafbfc;margin-top:4px}
+.input:focus{outline:none;border-color:#93c5fd}
+.hint{font-size:.72rem;color:#94a3b8;margin-top:6px}
+.loading,.empty,.err{text-align:center;padding:36px 14px;color:#64748b;font-size:.9rem;background:#fff;border-radius:16px;border:1px dashed #e2e8f0}
+.err{border-color:#fecaca;color:#b91c1c;background:#fef2f2}
+.num{font-size:.68rem;font-weight:800;color:#94a3b8;margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1>One-Liners</h1>
+    <div class="lang">
+      <button type="button" class="on" id="btnEn">EN</button>
+      <button type="button" id="btnHi">हिं</button>
+    </div>
+  </div>
+
+  <div class="modes">
+    <button type="button" class="mode on" id="modeFlash">📖 One-liner</button>
+    <button type="button" class="mode" id="modeQuiz">✍️ Answer</button>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-wrap">
+      <span class="search-ico">⌕</span>
+      <input class="search" id="search" type="search" placeholder="Search in these 50...">
+    </div>
+    <button type="button" class="btn primary" id="btnShuffle">Random 50</button>
+  </div>
+
+  <div class="meta" id="meta">Loading…</div>
+  <div class="feed" id="feed"></div>
+</div>
+
+<script>
+(function () {
+  /*** PASTE YOUR APPS SCRIPT /exec URL ***/
+  var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwLtMNNkWyRAhKbyXXhEK3Cg46n2XQfUsFEFgsg1ys4HLjjnCSGKxeDG61efsmMBsd3Dg/exec";
+  var LIMIT = 50;
+
+  var lang = "en";
+  var mode = "flash";
+  var query = "";
+  var RAW = [];
+  var TOTAL = 0;
+  var CACHE_TR = {};
+  var loading = false;
+
+  function $(id) { return document.getElementById(id); }
+
+  function escapeHtml(s) {
+    return String(s || "")
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function normKey(s) {
+    return String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
+  }
+
+  async function loadRandom() {
+    if (loading) return;
+    loading = true;
+    $("btnShuffle").disabled = true;
+    $("feed").innerHTML = '<div class="loading">Random 50 load ho rahe hain (24k me se)…</div>';
+    $("meta").textContent = "Fetching…";
+
+    try {
+      var list = [];
+      if (SCRIPT_URL && SCRIPT_URL.indexOf("YOUR_") < 0) {
+        var url = SCRIPT_URL +
+          (SCRIPT_URL.indexOf("?") >= 0 ? "&" : "?") +
+          "limit=" + LIMIT + "&t=" + Date.now();
+        var res = await fetch(url, { cache: "no-store", redirect: "follow" });
+        if (!res.ok) throw new Error("Script HTTP " + res.status);
+        var data = await res.json();
+
+        if (Array.isArray(data)) {
+          list = data;
+          TOTAL = data.length;
+        } else if (data && Array.isArray(data.rows)) {
+          list = data.rows;
+          TOTAL = data.total || list.length;
+        } else if (data && Array.isArray(data.data)) {
+          list = data.data;
+          TOTAL = data.total || list.length;
+        } else {
+          throw new Error("JSON format galat");
+        }
+      } else {
+        // demo
+        var demo = [];
+        for (var d = 1; d <= 80; d++) {
+          demo.push({
+            question: "Demo question number " + d + "?",
+            answer: "Answer " + d,
+            question_hi: "डेमो प्रश्न संख्या " + d + "?",
+            answer_hi: "उत्तर " + d
+          });
+        }
+        list = sampleClient(demo, LIMIT);
+        TOTAL = 24000;
+        $("meta").textContent = "Demo mode — SCRIPT_URL set karo";
+      }
+
+      RAW = list.map(function (r, i) {
+        return {
+          id: "ol_" + Date.now() + "_" + i,
+          question: String(r.question || r.Question || "").trim(),
+          answer: String(r.answer || r.Answer || "").trim(),
+          question_hi: String(r.question_hi || r.Question_HI || "").trim(),
+          answer_hi: String(r.answer_hi || r.Answer_HI || "").trim()
+        };
+      }).filter(function (r) { return r.question && r.answer; });
+
+      query = "";
+      $("search").value = "";
+      $("meta").textContent = RAW.length + " random of ~" + (TOTAL || "?") + " · tap Random 50 for new set";
+      await render();
+    } catch (e) {
+      $("feed").innerHTML = '<div class="err">Failed: ' + escapeHtml(e.message || e) + "</div>";
+      $("meta").textContent = "Error";
+    }
+    loading = false;
+    $("btnShuffle").disabled = false;
+  }
+
+  function sampleClient(arr, n) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a.slice(0, n);
+  }
+
+  async function translate(text, to) {
+    var key = to + "::" + text;
+    if (CACHE_TR[key]) return CACHE_TR[key];
+    if (!text) return "";
+    try {
+      var url = "https://api.mymemory.translated.net/get?q=" +
+        encodeURIComponent(text.slice(0, 450)) +
+        "&langpair=" + (to === "hi" ? "en|hi" : "hi|en");
+      var res = await fetch(url);
+      var data = await res.json();
+      var out = (data && data.responseData && data.responseData.translatedText) || text;
+      if (/MYMEMORY WARNING/i.test(out)) out = text;
+      CACHE_TR[key] = out;
+      return out;
+    } catch (e) { return text; }
+  }
+
+  async function displayQA(item) {
+    if (lang === "hi") {
+      return {
+        q: item.question_hi || await translate(item.question, "hi"),
+        a: item.answer_hi || await translate(item.answer, "hi")
+      };
+    }
+    return { q: item.question, a: item.answer };
+  }
+
+  function filtered() {
+    var q = normKey(query);
+    if (!q) return RAW.slice();
+    return RAW.filter(function (r) {
+      return normKey(r.question + " " + r.answer + " " + r.question_hi + " " + r.answer_hi).indexOf(q) >= 0;
+    });
+  }
+
+  function answersMatch(user, correct) {
+    var u = normKey(user).replace(/^(the|a|an)\s+/, "");
+    var c = normKey(correct).replace(/^(the|a|an)\s+/, "");
+    if (!u || !c) return false;
+    if (u === c) return true;
+    if (c.length <= 28 && (c.indexOf(u) >= 0 || u.indexOf(c) >= 0)) return true;
+    return false;
+  }
+
+  async function render() {
+    var list = filtered();
+    $("meta").textContent = list.length + " showing · batch of " + RAW.length +
+      " (sheet ~" + (TOTAL || "?") + ") · " +
+      (mode === "flash" ? "One-liner" : "Answer") + " · " +
+      (lang === "hi" ? "हिंदी" : "EN");
+
+    var feed = $("feed");
+    if (!list.length) {
+      feed.innerHTML = '<div class="empty">No match in this batch. Clear search or Random 50.</div>';
+      return;
+    }
+
+    feed.innerHTML = '<div class="loading">Preparing…</div>';
+    var htmlCards = [];
+
+    for (var i = 0; i < list.length; i++) {
+      var item = list[i];
+      var qa = await displayQA(item);
+      var card = document.createElement("div");
+      card.className = "card";
+
+      if (mode === "flash") {
+        card.innerHTML =
+          '<div class="num">#' + (i + 1) + "</div>" +
+          '<div class="q">' + escapeHtml(qa.q) + "</div>" +
+          '<div class="ans-box" id="ans-' + item.id + '"><b>Answer:</b> ' + escapeHtml(qa.a) + "</div>" +
+          '<div class="actions">' +
+            '<button type="button" class="btn primary" data-act="reveal">Show answer</button>' +
+            '<button type="button" class="btn" data-act="hide">Hide</button>' +
+          "</div>";
+        (function (id) {
+          card.querySelector('[data-act="reveal"]').onclick = function () {
+            var el = document.getElementById("ans-" + id);
+            if (el) el.classList.add("show");
+          };
+          card.querySelector('[data-act="hide"]').onclick = function () {
+            var el = document.getElementById("ans-" + id);
+            if (el) el.classList.remove("show");
+          };
+        })(item.id);
+      } else {
+        card.innerHTML =
+          '<div class="num">#' + (i + 1) + "</div>" +
+          '<div class="q">' + escapeHtml(qa.q) + "</div>" +
+          '<input class="input" id="inp-' + item.id + '" type="text" placeholder="Type answer…" autocomplete="off">' +
+          '<div class="actions">' +
+            '<button type="button" class="btn primary" data-act="check">Check</button>' +
+            '<button type="button" class="btn" data-act="show">Show answer</button>' +
+          "</div>" +
+          '<div class="ans-box" id="res-' + item.id + '"></div>' +
+          '<div class="hint">Direct answer — no options</div>';
+        (function (id, answerDisp, answerRaw) {
+          card.querySelector('[data-act="check"]').onclick = function () {
+            var val = (document.getElementById("inp-" + id).value || "").trim();
+            var box = document.getElementById("res-" + id);
+            var ok = answersMatch(val, answerDisp) || answersMatch(val, answerRaw);
+            box.className = "ans-box show " + (ok ? "ok" : "bad");
+            box.innerHTML = ok ? ("✓ Correct — " + escapeHtml(answerDisp)) : "✗ Try again";
+          };
+          card.querySelector('[data-act="show"]').onclick = function () {
+            var box = document.getElementById("res-" + id);
+            box.className = "ans-box show";
+            box.innerHTML = "<b>Answer:</b> " + escapeHtml(answerDisp);
+          };
+          document.getElementById("inp-" + id).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") card.querySelector('[data-act="check"]').click();
+          });
+        })(item.id, qa.a, item.answer);
+      }
+      htmlCards.push(card);
+    }
+
+    feed.innerHTML = "";
+    htmlCards.forEach(function (c) { feed.appendChild(c); });
+  }
+
+  $("btnEn").onclick = function () {
+    lang = "en"; $("btnEn").classList.add("on"); $("btnHi").classList.remove("on"); render();
+  };
+  $("btnHi").onclick = function () {
+    lang = "hi"; $("btnHi").classList.add("on"); $("btnEn").classList.remove("on"); render();
+  };
+  $("modeFlash").onclick = function () {
+    mode = "flash"; $("modeFlash").classList.add("on"); $("modeQuiz").classList.remove("on"); render();
+  };
+  $("modeQuiz").onclick = function () {
+    mode = "quiz"; $("modeQuiz").classList.add("on"); $("modeFlash").classList.remove("on"); render();
+  };
+  $("btnShuffle").onclick = function () { loadRandom(); };
+
+  var t;
+  $("search").oninput = function () {
+    query = ($("search").value || "").trim();
+    clearTimeout(t);
+    t = setTimeout(render, 180);
+  };
+
+  loadRandom();
+})();
+</script>
+</body>
+</html>

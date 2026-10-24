@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>PrepExam</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,sans-serif;background:#fafafa;color:#0f172a}
+:root{
+  --nav-h:56px;
+  --title-h:52px;
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --primary:#2563eb;
+  --primary-soft:#eff6ff;
+  --border:#e5e7eb;
+  --muted:#6b7280;
+  --bg:#fafafa;
+  --card:#fff;
+}
+
+/* ===== Title bar ===== */
+.titlebar{
+  height:var(--title-h);
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 14px;position:relative;z-index:20;
+  flex-shrink:0;
+}
+.titlebar .brand{display:flex;align-items:center;gap:10px;min-width:0}
+.titlebar .logo{
+  width:32px;height:32px;border-radius:10px;
+  background:linear-gradient(135deg,#2563eb,#4f46e5);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.titlebar .logo svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.2}
+.titlebar .titles{min-width:0}
+.titlebar .app-name{font-size:.95rem;font-weight:800;letter-spacing:-.02em;line-height:1.15}
+.titlebar .page-name{font-size:.68rem;font-weight:600;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.titlebar .right{display:flex;align-items:center;gap:6px}
+.icon-btn{
+  width:38px;height:38px;border:0;border-radius:12px;background:transparent;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:#0f172a;
+}
+.icon-btn:active{background:#f3f4f6}
+.icon-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.badge-dot{
+  position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;
+  background:#ef4444;border:1.5px solid #fff;display:none
+}
+.badge-dot.on{display:block}
+
+/* ===== Content ===== */
+.app{display:flex;flex-direction:column;height:100%;height:100dvh}
+.content{
+  flex:1;min-height:0;position:relative;background:var(--bg);
+}
+.content iframe{
+  position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff;
+}
+.frame-loading{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:#fff;z-index:5;flex-direction:column;gap:12px;color:var(--muted);font-size:.88rem;font-weight:600
+}
+.frame-loading.hide{display:none}
+.spinner{
+  width:28px;height:28px;border:3px solid #e5e7eb;border-top-color:var(--primary);
+  border-radius:50%;animation:spin .7s linear infinite
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.frame-error{
+  position:absolute;inset:0;display:none;align-items:center;justify-content:center;
+  background:#fff;z-index:6;flex-direction:column;gap:10px;padding:24px;text-align:center
+}
+.frame-error.show{display:flex}
+.frame-error p{font-size:.9rem;color:var(--muted);line-height:1.45}
+.frame-error button{
+  margin-top:6px;border:0;background:var(--primary);color:#fff;font-weight:700;
+  font-size:.82rem;padding:10px 18px;border-radius:12px;cursor:pointer
+}
+
+/* ===== Bottom nav (Instagram-style) ===== */
+.bottomnav{
+  height:calc(var(--nav-h) + var(--safe-b));
+  padding-bottom:var(--safe-b);
+  background:#fff;
+  border-top:1px solid var(--border);
+  display:flex;align-items:stretch;justify-content:space-around;
+  flex-shrink:0;z-index:30;
+}
+.nav-item{
+  flex:1;border:0;background:transparent;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;padding:6px 2px 4px;color:#262626;position:relative;
+  -webkit-user-select:none;user-select:none;
+}
+.nav-item svg{
+  width:24px;height:24px;stroke:currentColor;fill:none;
+  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+  transition:transform .15s ease;
+}
+.nav-item .label{
+  font-size:.62rem;font-weight:600;letter-spacing:-.01em;color:#8e8e8e;
+  line-height:1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
+.nav-item.active{color:#0f172a}
+.nav-item.active .label{color:#0f172a;font-weight:700}
+.nav-item.active svg{stroke-width:2.1}
+.nav-item:active svg{transform:scale(.92)}
+/* filled variant when active */
+.nav-item .ico-outline{display:block}
+.nav-item .ico-fill{display:none}
+.nav-item.active .ico-outline{display:none}
+.nav-item.active .ico-fill{display:block}
+.nav-item .ico-fill{fill:currentColor;stroke:none}
+
+.nav-notif-dot{
+  position:absolute;top:6px;right:calc(50% - 14px);
+  width:7px;height:7px;border-radius:50%;background:#ef4444;display:none
+}
+.nav-notif-dot.on{display:block}
+
+/* Offline / user chip */
+.user-chip{
+  font-size:.68rem;font-weight:700;color:var(--muted);
+  background:#f3f4f6;padding:4px 8px;border-radius:999px;max-width:90px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- Title bar -->
+  <header class="titlebar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M8 7h8M8 11h6"/></svg>
+      </div>
+      <div class="titles">
+        <div class="app-name">PrepExam</div>
+        <div class="page-name" id="pageName">Home</div>
+      </div>
+    </div>
+    <div class="right">
+      <span class="user-chip" id="userChip" title="User">…</span>
+      <button type="button" class="icon-btn" id="btnRefresh" title="Refresh" aria-label="Refresh">
+        <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.2"/><polyline points="21 3 21 9 15 9"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <main class="content" id="content">
+    <div class="frame-loading" id="frameLoading">
+      <div class="spinner"></div>
+      <span>Loading…</span>
+    </div>
+    <div class="frame-error" id="frameError">
+      <p id="frameErrorMsg">Page load nahi hua.</p>
+      <button type="button" id="btnRetry">Retry</button>
+    </div>
+    <iframe id="pageFrame" title="PrepExam page" allow="fullscreen"></iframe>
+  </main>
+
+  <!-- Bottom nav — Instagram-style SVG icons (no emoji) -->
+  <nav class="bottomnav" role="tablist" aria-label="Main">
+    <!-- Home -->
+    <button type="button" class="nav-item active" data-page="home" role="tab" aria-selected="true">
+      <svg class="ico-outline" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
+      <svg class="ico-fill" viewBox="0 0 24 24"><path d="M12 3 3 10.5V20a1 1 0 0 0 1 1h6v-7h4v7h6a1 1 0 0 0 1-1v-9.5L12 3z"/></svg>
+      <span class="label">Home</span>
+    </button>
+
+    <!-- Study material -->
+    <button type="button" class="nav-item" data-page="study" role="tab" aria-selected="false">
+      <svg class="ico-outline" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <svg class="ico-fill" viewBox="0 0 24 24"><path d="M6.5 2A2.5 2.5 0 0 0 4 4.5v15A2.5 2.5 0 0 0 6.5 22H20V2H6.5z"/></svg>
+      <span class="label">Study</span>
+    </button>
+
+    <!-- Mock tests -->
+    <button type="button" class="nav-item" data-page="mock" role="tab" aria-selected="false">
+      <svg class="ico-outline" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h4M7 13h10M7 17h7"/></svg>
+      <svg class="ico-fill" viewBox="0 0 24 24"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm2 6h4v1.5H7V9zm0 4h10v1.5H7V13zm0 4h7v1.5H7V17z"/></svg>
+      <span class="label">Mocks</span>
+    </button>
+
+    <!-- Notification -->
+    <button type="button" class="nav-item" data-page="notification" role="tab" aria-selected="false">
+      <span class="nav-notif-dot" id="navNotifDot"></span>
+      <svg class="ico-outline" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+      <svg class="ico-fill" viewBox="0 0 24 24"><path d="M12 2a6 6 0 0 0-6 6c0 7-3 9-3 9h18s-3-2-3-9a6 6 0 0 0-6-6zm-1.7 19a1.94 1.94 0 0 0 3.4 0h-3.4z"/></svg>
+      <span class="label">Alerts</span>
+    </button>
+
+    <!-- Profile -->
+    <button type="button" class="nav-item" data-page="profile" role="tab" aria-selected="false">
+      <svg class="ico-outline" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+      <svg class="ico-fill" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6H4z"/></svg>
+      <span class="label">Profile</span>
+    </button>
+  </nav>
+</div>
+
+<script>
+(function () {
+  /* =========================================================
+     CONFIG — GitHub raw base + page map
+     Change only these when you rename / move files on GitHub
+     ========================================================= */
+  var GITHUB_BASE = "https://raw.githubusercontent.com/subham781/App-ui-s/main/";
+
+  var PAGES = {
+    home: {
+      title: "Home",
+      file: "new home v2"
+    },
+    study: {
+      title: "Study material",
+      file: "Study material"
+    },
+    mock: {
+      title: "Mock tests",
+      file: "PrepExam_Mock_Tests_Modern_Firebase.html"
+    },
+    notification: {
+      title: "Notifications",
+      file: "notification"
+    },
+    profile: {
+      title: "Profile",
+      file: "Profile"
+    }
+  };
+
+  var FIREBASE_DB = "https://prepexam-f98bf-default-rtdb.firebaseio.com";
+
+  /* ========================================================= */
+
+  var userId = "";
+  var userName = "";
+  var currentPage = "home";
+  var frame = document.getElementById("pageFrame");
+  var loading = document.getElementById("frameLoading");
+  var errBox = document.getElementById("frameError");
+  var errMsg = document.getElementById("frameErrorMsg");
+  var pageNameEl = document.getElementById("pageName");
+  var userChip = document.getElementById("userChip");
+
+  function $(id) { return document.getElementById(id); }
+
+  function getWebViewString() {
+    try {
+      if (window.AppInventor && window.AppInventor.getWebViewString)
+        return String(window.AppInventor.getWebViewString() || "").trim();
+    } catch (e) {}
+    try {
+      if (window.Kodular && window.Kodular.getWebViewString)
+        return String(window.Kodular.getWebViewString() || "").trim();
+    } catch (e) {}
+    return "";
+  }
+
+  function sendWebViewString(v) {
+    try { if (window.AppInventor && window.AppInventor.setWebViewString) window.AppInventor.setWebViewString(v); } catch (e) {}
+    try { if (window.Kodular && window.Kodular.setWebViewString) window.Kodular.setWebViewString(v); } catch (e) {}
+  }
+
+  function normalizeUserId(raw) {
+    var id = String(raw || "").trim();
+    if (id.indexOf("|") > 0) id = id.split("|").pop();
+    if (id.indexOf("@") > 0) id = id.split("@")[0];
+    return id.replace(/[.#$\[\]\/]/g, "_").trim();
+  }
+
+  function pageUrl(key) {
+    var p = PAGES[key];
+    if (!p) return "";
+    /* encode path segments for spaces / special chars */
+    var parts = String(p.file).split("/").map(function (s) { return encodeURIComponent(s); });
+    return GITHUB_BASE + parts.join("/");
+  }
+
+  function setActiveNav(key) {
+    document.querySelectorAll(".nav-item").forEach(function (btn) {
+      var on = btn.getAttribute("data-page") === key;
+      btn.classList.toggle("active", on);
+      btn.setAttribute("aria-selected", on ? "true" : "false");
+    });
+  }
+
+  function showLoading(on) {
+    loading.classList.toggle("hide", !on);
+  }
+
+  function showError(msg) {
+    errMsg.textContent = msg || "Page load nahi hua.";
+    errBox.classList.add("show");
+    showLoading(false);
+  }
+
+  function hideError() {
+    errBox.classList.remove("show");
+  }
+
+  /**
+   * Load a GitHub HTML into the iframe.
+   * We fetch as text and write into iframe so:
+   * - relative assets still work poorly on raw GH, but same as your current viewer
+   * - we can inject userId for child pages that read WebViewString (limited);
+   *   primary: keep WebViewString on parent; child pages that call getWebViewString
+   *   only work if Kodular injects into that WebView — for iframe child, we
+   *   also stash userId on window for optional postMessage later.
+   */
+  async function loadPage(key, force) {
+    if (!PAGES[key]) return;
+    if (key === currentPage && !force) return;
+
+    currentPage = key;
+    setActiveNav(key);
+    pageNameEl.textContent = PAGES[key].title;
+    hideError();
+    showLoading(true);
+
+    var url = pageUrl(key);
+    try {
+      var res = await fetch(url + (url.indexOf("?") >= 0 ? "&" : "?") + "t=" + Date.now(), {
+        cache: "no-store",
+        redirect: "follow"
+      });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+
+      var html = await res.text();
+      if (!html || html.length < 40) throw new Error("Empty page");
+
+      /* Optional: inject a small bridge so child can read userId if it checks window.parent */
+      var bridge =
+        "\n<script>(function(){try{" +
+        "window.__PREPEXAM_USER_ID__=" + JSON.stringify(userId) + ";" +
+        "window.__PREPEXAM_USER_NAME__=" + JSON.stringify(userName) + ";" +
+        "if(!window.AppInventor){window.AppInventor={};}" +
+        "if(!window.AppInventor.getWebViewString){" +
+        "window.AppInventor.getWebViewString=function(){return window.__PREPEXAM_USER_ID__||'';};}" +
+        "if(!window.Kodular){window.Kodular={};}" +
+        "if(!window.Kodular.getWebViewString){" +
+        "window.Kodular.getWebViewString=function(){return window.__PREPEXAM_USER_ID__||'';};}" +
+        "}catch(e){}})();<\/script>\n";
+
+      /* inject before </head> or at start of body */
+      if (/<\/head>/i.test(html)) {
+        html = html.replace(/<\/head>/i, bridge + "</head>");
+      } else if (/<body[^>]*>/i.test(html)) {
+        html = html.replace(/<body([^>]*)>/i, "<body$1>" + bridge);
+      } else {
+        html = bridge + html;
+      }
+
+      var doc = frame.contentDocument || frame.contentWindow.document;
+      doc.open();
+      doc.write(html);
+      doc.close();
+
+      /* hide loading shortly after write (child may still fetch APIs) */
+      setTimeout(function () { showLoading(false); }, 280);
+    } catch (e) {
+      console.warn(e);
+      showError((e && e.message) ? e.message : "Network error");
+      try {
+        var d = frame.contentDocument || frame.contentWindow.document;
+        d.open(); d.write(""); d.close();
+      } catch (x) {}
+    }
+  }
+
+  async function resolveUser() {
+    var raw = getWebViewString();
+    userId = normalizeUserId(raw);
+    if (!userId) {
+      await new Promise(function (r) { setTimeout(r, 450); });
+      userId = normalizeUserId(getWebViewString());
+    }
+    if (!userId) {
+      userChip.textContent = "Guest";
+      return;
+    }
+    userChip.textContent = userId.length > 12 ? userId.slice(0, 10) + "…" : userId;
+    try {
+      var r = await fetch(FIREBASE_DB + "/Users/" + encodeURIComponent(userId) + ".json?t=" + Date.now());
+      if (!r.ok) return;
+      var data = await r.json();
+      if (data && typeof data === "object") {
+        userName = (data.profile && (data.profile.name || data.profile.channelName)) || userId;
+        userChip.textContent = userName.length > 14 ? userName.slice(0, 12) + "…" : userName;
+        userChip.title = userName + " · " + userId;
+      }
+    } catch (e) { console.warn(e); }
+  }
+
+  /* Nav clicks */
+  document.querySelectorAll(".nav-item").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var key = btn.getAttribute("data-page");
+      loadPage(key, false);
+    });
+  });
+
+  $("btnRefresh").onclick = function () {
+    loadPage(currentPage, true);
+  };
+  $("btnRetry").onclick = function () {
+    loadPage(currentPage, true);
+  };
+
+  /* Boot */
+  (async function init() {
+    await resolveUser();
+    await loadPage("home", true);
+  })();
+})();
+</script>
+</body>
+</html>

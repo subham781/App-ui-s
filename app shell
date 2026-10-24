@@ -162,7 +162,7 @@ html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,
   var PAGES = {
     home:         { title: "Home",          file: "app shell home" },
     study:        { title: "Study material", file: "Study material" },
-    mock:         { title: "Mock tests",    file: "PrepExam_Mock_Tests_Modern_Firebase.html" },
+    mock:         { title: "Mock tests",    file: "app shell mock tests" },
     notification: { title: "Notifications", file: "notification" },
     profile:      { title: "Profile",       file: "app shell profile" }
   };

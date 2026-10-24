@@ -7,10 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{
-  font-family:Inter,system-ui,sans-serif;
-  background:#f1f5f9;color:#0f172a;min-height:100vh;
-}
+body{font-family:Inter,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min-height:100vh}
 .page{max-width:640px;margin:0 auto;padding:14px 14px 100px}
 .hero{
   background:linear-gradient(135deg,#1d4ed8,#4f46e5);
@@ -20,12 +17,9 @@ body{
 .hero h1{font-size:1.15rem;font-weight:800;letter-spacing:-.02em}
 .hero p{font-size:.8rem;opacity:.88;margin-top:4px;line-height:1.4}
 .hero-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px}
-.hero-stat{
-  background:rgba(255,255,255,.15);border-radius:12px;padding:10px 12px;flex:1;text-align:center;
-}
+.hero-stat{background:rgba(255,255,255,.15);border-radius:12px;padding:10px 12px;flex:1;text-align:center}
 .hero-stat b{display:block;font-size:1.05rem;font-weight:800}
 .hero-stat span{font-size:.62rem;opacity:.85;font-weight:600}
-
 .card{
   background:#fff;border-radius:16px;border:1px solid #e8ecf4;
   box-shadow:0 2px 12px rgba(15,23,42,.04);padding:14px;margin-bottom:12px;
@@ -38,29 +32,19 @@ body{
   border:1px solid #e2e8f0;border-radius:10px;padding:5px 8px;font-size:.7rem;font-weight:700;
   background:#f8fafc;color:#334155;text-transform:none;letter-spacing:0;
 }
-
-/* Leaderboard */
 .lb-list{display:flex;flex-direction:column;gap:8px}
-.lb-row{
-  display:flex;align-items:center;gap:10px;padding:10px 12px;
-  background:#f8fafc;border-radius:12px;border:1px solid #eef2f7;
-}
-.lb-rank{
-  width:28px;height:28px;border-radius:9px;background:#e0e7ff;color:#3730a3;
-  font-size:.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
+.lb-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f8fafc;border-radius:12px;border:1px solid #eef2f7}
+.lb-rank{width:28px;height:28px;border-radius:9px;background:#e0e7ff;color:#3730a3;font-size:.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .lb-rank.gold{background:#fef3c7;color:#b45309}
 .lb-rank.silver{background:#e2e8f0;color:#475569}
 .lb-rank.bronze{background:#ffedd5;color:#c2410c}
 .lb-row .name{flex:1;font-size:.84rem;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lb-row .score{font-size:.78rem;font-weight:800;color:#2563eb;white-space:nowrap}
 .lb-me{border-color:#93c5fd;background:#eff6ff}
-
-/* Exam / test cards */
 .exam-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .exam-card{
   background:#fff;border:1px solid #e8ecf4;border-radius:16px;padding:14px;
-  box-shadow:0 2px 10px rgba(15,23,42,.04);cursor:pointer;min-height:120px;
+  box-shadow:0 2px 10px rgba(15,23,42,.04);cursor:pointer;min-height:118px;
   display:flex;flex-direction:column;justify-content:space-between;
 }
 .exam-card:active{transform:scale(.98)}
@@ -75,7 +59,6 @@ body{
 }
 .exam-card h3{font-size:.88rem;font-weight:800;line-height:1.25;margin-bottom:4px}
 .exam-card p{font-size:.68rem;color:#64748b;font-weight:600}
-
 .test-item{
   display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #f1f5f9;cursor:pointer;
 }
@@ -83,27 +66,21 @@ body{
 .test-item:active{opacity:.85}
 .test-ico{
   width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#dbeafe,#e0e7ff);
-  color:#1d4ed8;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:800;font-size:.85rem;
+  color:#1d4ed8;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:800;font-size:.75rem;
 }
 .test-body{flex:1;min-width:0}
-.test-body h4{font-size:.9rem;font-weight:700;line-height:1.3}
+.test-body h4{font-size:.88rem;font-weight:700;line-height:1.3}
 .test-body p{font-size:.72rem;color:#64748b;margin-top:3px;line-height:1.35}
 .pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
-.pill{
-  font-size:.65rem;font-weight:700;background:#f1f5f9;color:#334155;
-  padding:3px 8px;border-radius:999px;
-}
+.pill{font-size:.65rem;font-weight:700;background:#f1f5f9;color:#334155;padding:3px 8px;border-radius:999px}
 .pill.blue{background:#eff6ff;color:#1d4ed8}
 .pill.green{background:#ecfdf5;color:#047857}
-
-.btn{
-  border:0;border-radius:12px;padding:12px 16px;font-size:.88rem;font-weight:800;cursor:pointer;width:100%;
-}
+.pill.red{background:#fef2f2;color:#b91c1c}
+.btn{border:0;border-radius:12px;padding:12px 16px;font-size:.88rem;font-weight:800;cursor:pointer;width:100%}
 .btn-primary{background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff}
 .btn-ghost{background:#e2e8f0;color:#0f172a}
 .btn-row{display:flex;gap:8px;margin-top:12px}
 .btn-row .btn{flex:1}
-
 .loading,.empty,.error{text-align:center;padding:36px 16px;color:#64748b;font-size:.9rem}
 .error{color:#b91c1c}
 .muted{color:#64748b;font-size:.78rem}
@@ -111,8 +88,6 @@ body{
   display:inline-flex;align-items:center;gap:6px;border:0;background:#e2e8f0;color:#0f172a;
   font-weight:700;font-size:.8rem;padding:8px 12px;border-radius:10px;cursor:pointer;margin-bottom:12px;
 }
-
-/* In-test UI */
 #testView{display:none}
 .q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:.8rem;color:#64748b;font-weight:600}
 .q-text{font-size:1.02rem;font-weight:600;line-height:1.5;margin-bottom:14px}
@@ -123,27 +98,18 @@ body{
 .option.selected{border-color:#2563eb;background:#eff6ff;color:#1d4ed8;font-weight:700}
 .option.correct{border-color:#16a34a;background:#dcfce7;color:#166534;font-weight:700}
 .option.wrong{border-color:#dc2626;background:#fee2e2;color:#991b1b;font-weight:700}
-.option.disabled{pointer-events:none}
 .footer-bar{
   position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #e5e7eb;
   padding:10px 14px;display:flex;gap:8px;z-index:30;max-width:640px;margin:0 auto;
 }
 .footer-bar button{flex:1}
-.timer-chip{
-  background:#eff6ff;color:#1d4ed8;font-weight:800;font-size:.82rem;
-  padding:6px 10px;border-radius:999px;
-}
+.timer-chip{background:#eff6ff;color:#1d4ed8;font-weight:800;font-size:.82rem;padding:6px 10px;border-radius:999px}
 .palette{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:10px}
-.pal{
-  height:32px;border-radius:8px;border:1px solid #dbe3f0;background:#fff;
-  font-size:.72rem;font-weight:700;color:#334155;cursor:pointer;
-}
+.pal{height:32px;border-radius:8px;border:1px solid #dbe3f0;background:#fff;font-size:.72rem;font-weight:700;color:#334155;cursor:pointer}
 .pal.answered{background:#dbeafe;border-color:#93c5fd;color:#1d4ed8}
 .pal.current{outline:2px solid #2563eb}
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
-.stat-box{
-  background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:14px;text-align:center;
-}
+.stat-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:14px;text-align:center}
 .stat-box b{display:block;font-size:1.3rem;color:#2563eb;margin-bottom:4px}
 .stat-box span{font-size:.72rem;color:#64748b;font-weight:600}
 </style>
@@ -151,12 +117,12 @@ body{
 <body>
 <div class="page" id="listView">
   <div class="hero">
-    <h1>Mock Tests</h1>
-    <p>Full-length & subject tests · track rank live</p>
+    <h1>Full Length Mocks</h1>
+    <p>Only full-length tests · live ranking</p>
     <div class="hero-row">
-      <div class="hero-stat"><b id="hAttempted">0</b><span>Your attempts</span></div>
+      <div class="hero-stat"><b id="hAttempted">0</b><span>Attempts</span></div>
       <div class="hero-stat"><b id="hBest">—</b><span>Best score</span></div>
-      <div class="hero-stat"><b id="hRank">—</b><span>Your rank</span></div>
+      <div class="hero-stat"><b id="hRank">—</b><span>Rank</span></div>
     </div>
   </div>
 
@@ -173,11 +139,11 @@ body{
 
   <div class="card">
     <div class="section-title">Exams</div>
-    <div class="exam-grid" id="examGrid"><div class="loading">Loading exams…</div></div>
+    <div class="exam-grid" id="examGrid"><div class="loading">Loading…</div></div>
   </div>
 
   <div class="card" id="testsCard" style="display:none">
-    <div class="section-title" id="testsTitle">Tests</div>
+    <div class="section-title" id="testsTitle">Full length tests</div>
     <div id="testsList"></div>
   </div>
 </div>
@@ -185,12 +151,10 @@ body{
 <div class="page" id="testView">
   <button type="button" class="back-link" id="btnBackList">← Back</button>
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px">
-    <div style="font-weight:800;font-size:.95rem" id="testTitle">Test</div>
+    <div style="font-weight:800;font-size:.92rem;line-height:1.3;flex:1" id="testTitle">Test</div>
     <div class="timer-chip" id="timerBox">00:00</div>
   </div>
-  <div class="card" id="questionCard">
-    <div class="loading">Preparing…</div>
-  </div>
+  <div class="card" id="questionCard"><div class="loading">Loading questions…</div></div>
   <div class="card" id="paletteCard" style="display:none">
     <div class="section-title">Questions</div>
     <div class="palette" id="palette"></div>
@@ -205,418 +169,420 @@ body{
 <script>
 (function () {
   var FIREBASE_DB = "https://prepexam-f98bf-default-rtdb.firebaseio.com";
-  /* Optional: your mock data path in Firebase */
-  var MOCKS_PATH = "Mocks"; /* or Exams — adjust if your tree differs */
-  var EXAMS_PATH = "Exams";
+  var EXAMS_PATH = "Exams"; /* Firebase path */
 
-  var userId = "";
-  var userName = "";
-  var userProfile = {};
-  var analysis = {};
-  var userAttempts = {};
-  var examData = null;
-  var currentExamId = "";
-  var questions = [];
-  var answers = {};
-  var currentIndex = 0;
-  var timer = null;
-  var remainingSec = 0;
-  var testFinished = false;
-  var currentTestMeta = null;
+  var userId = "", userName = "", userProfile = {}, analysis = {}, userAttempts = {};
+  var examData = null, currentExamId = "", currentTestKey = "";
+  var questions = [], answers = {}, currentIndex = 0;
+  var timer = null, remainingSec = 0, testFinished = false;
+  var currentMeta = null; /* duration, marks, negativeMarks, title, jsonUrl */
 
-  function $(id) { return document.getElementById(id); }
-  function escapeHTML(s) {
-    return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-  }
-  function safeKey(v) { return String(v || "").replace(/[.#$\[\]\/]/g, "_"); }
-  function calcAcc(c, a) { return a ? Math.round((c / a) * 1000) / 10 : 0; }
+  function $(id){ return document.getElementById(id); }
+  function escapeHTML(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  function safeKey(v){ return String(v||"").replace(/[.#$\[\]\/]/g,"_"); }
+  function calcAcc(c,a){ return a ? Math.round((c/a)*1000)/10 : 0; }
 
-  function getWebViewString() {
-    try {
-      if (window.AppInventor && window.AppInventor.getWebViewString)
-        return String(window.AppInventor.getWebViewString() || "").trim();
-    } catch (e) {}
-    try {
-      if (window.Kodular && window.Kodular.getWebViewString)
-        return String(window.Kodular.getWebViewString() || "").trim();
-    } catch (e) {}
-    if (window.__PREPEXAM_USER_ID__) return String(window.__PREPEXAM_USER_ID__);
+  function getWebViewString(){
+    try{ if(window.AppInventor&&window.AppInventor.getWebViewString) return String(window.AppInventor.getWebViewString()||"").trim(); }catch(e){}
+    try{ if(window.Kodular&&window.Kodular.getWebViewString) return String(window.Kodular.getWebViewString()||"").trim(); }catch(e){}
+    if(window.__PREPEXAM_USER_ID__) return String(window.__PREPEXAM_USER_ID__);
     return "";
   }
-  function normalizeUserId(raw) {
-    var id = String(raw || "").trim();
-    if (id.indexOf("|") > 0) id = id.split("|").pop();
-    if (id.indexOf("@") > 0) id = id.split("@")[0];
-    return id.replace(/[.#$\[\]\/]/g, "_").trim();
+  function normalizeUserId(raw){
+    var id=String(raw||"").trim();
+    if(id.indexOf("|")>0) id=id.split("|").pop();
+    if(id.indexOf("@")>0) id=id.split("@")[0];
+    return id.replace(/[.#$\[\]\/]/g,"_").trim();
   }
-
-  async function firebaseGet(path) {
-    var r = await fetch(FIREBASE_DB + "/" + path + ".json?t=" + Date.now());
-    if (!r.ok) throw new Error("GET " + r.status);
+  async function firebaseGet(path){
+    var r=await fetch(FIREBASE_DB+"/"+path+".json?t="+Date.now());
+    if(!r.ok) throw new Error("GET "+r.status);
     return await r.json();
   }
-  async function firebasePatch(values) {
-    var r = await fetch(FIREBASE_DB + "/.json", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values)
-    });
-    if (!r.ok) throw new Error("PATCH " + r.status);
+  async function firebasePatch(values){
+    var r=await fetch(FIREBASE_DB+"/.json",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(values)});
+    if(!r.ok) throw new Error("PATCH "+r.status);
   }
 
-  async function loadUser() {
-    userId = normalizeUserId(getWebViewString());
-    if (!userId) {
-      await new Promise(function (r) { setTimeout(r, 400); });
-      userId = normalizeUserId(getWebViewString());
-    }
-    if (!userId) return;
-    try {
-      var data = await firebaseGet("Users/" + safeKey(userId));
-      if (data && typeof data === "object") {
-        userProfile = data;
-        userName = (data.profile && (data.profile.name || data.profile.channelName)) || userId;
-        analysis = data.analysis || {};
-        userAttempts = data.mockTestAttempts || {};
-        var at = (analysis.allTime) || {};
-        $("hAttempted").textContent = Object.keys(userAttempts).length || at.attempted || 0;
-        var best = 0;
-        Object.keys(userAttempts).forEach(function (k) {
-          var sc = Number(userAttempts[k].scorePct || userAttempts[k].accuracy || 0);
-          if (sc > best) best = sc;
+  async function loadUser(){
+    userId=normalizeUserId(getWebViewString());
+    if(!userId){ await new Promise(function(r){setTimeout(r,400);}); userId=normalizeUserId(getWebViewString()); }
+    if(!userId) return;
+    try{
+      var data=await firebaseGet("Users/"+safeKey(userId));
+      if(data&&typeof data==="object"){
+        userProfile=data;
+        userName=(data.profile&&(data.profile.name||data.profile.channelName))||userId;
+        analysis=data.analysis||{};
+        userAttempts=data.mockTestAttempts||{};
+        var at=analysis.allTime||{};
+        $("hAttempted").textContent=Object.keys(userAttempts).length||at.attempted||0;
+        var best=0;
+        Object.keys(userAttempts).forEach(function(k){
+          var sc=Number(userAttempts[k].scorePct||userAttempts[k].accuracy||0);
+          if(sc>best) best=sc;
         });
-        $("hBest").textContent = best ? best + "%" : "—";
+        $("hBest").textContent=best?best+"%":"—";
       }
-    } catch (e) { console.warn(e); }
+    }catch(e){ console.warn(e); }
   }
 
-  async function loadLeaderboard() {
-    var box = $("leaderboard");
-    try {
-      var data = await firebaseGet("leaderboard");
-      if (!data || typeof data !== "object") {
-        box.innerHTML = '<div class="muted">No ranks yet — attempt mocks / practice</div>';
+  async function loadLeaderboard(){
+    var box=$("leaderboard");
+    try{
+      var data=await firebaseGet("leaderboard");
+      if(!data||typeof data!=="object"){ box.innerHTML='<div class="muted">No ranks yet</div>'; return; }
+      var mode=$("lbMode").value;
+      var rows=Object.keys(data).map(function(id){
+        var x=data[id]||{};
+        return {id:id,name:x.name||id,accuracy:Number(x.accuracy)||0,attempted:Number(x.attempted)||0};
+      }).filter(function(r){ return r.attempted>=1; });
+      rows.sort(function(a,b){
+        if(mode==="attempted") return b.attempted-a.attempted;
+        if(b.accuracy!==a.accuracy) return b.accuracy-a.accuracy;
+        return b.attempted-a.attempted;
+      });
+      if(userId){
+        var myIdx=rows.findIndex(function(r){ return r.id===userId||r.id===safeKey(userId); });
+        $("hRank").textContent=myIdx>=0?"#"+(myIdx+1):"—";
+      }
+      rows=rows.slice(0,12);
+      if(!rows.length){ box.innerHTML='<div class="muted">Need attempts to rank</div>'; return; }
+      box.innerHTML=rows.map(function(r,i){
+        var rankCls=i===0?" gold":i===1?" silver":i===2?" bronze":"";
+        var me=(r.id===userId||r.id===safeKey(userId))?" lb-me":"";
+        return '<div class="lb-row'+me+'"><div class="lb-rank'+rankCls+'">'+(i+1)+'</div><div class="name">'+escapeHTML(r.name)+'</div><div class="score">'+r.accuracy+'% · '+r.attempted+'Q</div></div>';
+      }).join("");
+    }catch(e){ box.innerHTML='<div class="muted">Leaderboard unavailable</div>'; }
+  }
+  $("lbMode").onchange=loadLeaderboard;
+
+  function targetExamName(){
+    var p=(userProfile&&userProfile.profile)||{};
+    return String(p.targetExam||p.examTarget||"").trim().toLowerCase();
+  }
+
+  function countFullLength(ex){
+    var fl=ex&&ex.fullLength; if(!fl||typeof fl!=="object") return 0;
+    return Object.keys(fl).length;
+  }
+
+  async function loadExams(){
+    var grid=$("examGrid");
+    try{
+      var data=await firebaseGet(EXAMS_PATH);
+      if(!data||typeof data!=="object"){
+        grid.innerHTML='<div class="error">No exams in Firebase /Exams</div>';
         return;
       }
-      var mode = $("lbMode").value;
-      var rows = Object.keys(data).map(function (id) {
-        var x = data[id] || {};
-        return {
-          id: id,
-          name: x.name || id,
-          accuracy: Number(x.accuracy) || 0,
-          attempted: Number(x.attempted) || 0
-        };
-      }).filter(function (r) { return r.attempted >= 1; });
-
-      rows.sort(function (a, b) {
-        if (mode === "attempted") return b.attempted - a.attempted;
-        if (b.accuracy !== a.accuracy) return b.accuracy - a.accuracy;
-        return b.attempted - a.attempted;
+      examData=data;
+      var target=targetExamName();
+      var keys=Object.keys(data);
+      /* sort: target first, then alpha */
+      keys.sort(function(a,b){
+        var na=String((data[a]&&data[a].name)||a).toLowerCase();
+        var nb=String((data[b]&&data[b].name)||b).toLowerCase();
+        var ta=target&&(na===target||a.toLowerCase()===target);
+        var tb=target&&(nb===target||b.toLowerCase()===target);
+        if(ta&&!tb) return -1; if(tb&&!ta) return 1;
+        return na.localeCompare(nb);
       });
-
-      if (userId) {
-        var myIdx = rows.findIndex(function (r) { return r.id === userId || r.id === safeKey(userId); });
-        $("hRank").textContent = myIdx >= 0 ? "#" + (myIdx + 1) : "—";
-      }
-
-      rows = rows.slice(0, 12);
-      if (!rows.length) {
-        box.innerHTML = '<div class="muted">Need attempts to rank</div>';
-        return;
-      }
-      box.innerHTML = rows.map(function (r, i) {
-        var rankCls = i === 0 ? " gold" : i === 1 ? " silver" : i === 2 ? " bronze" : "";
-        var me = (r.id === userId || r.id === safeKey(userId)) ? " lb-me" : "";
-        return '<div class="lb-row' + me + '"><div class="lb-rank' + rankCls + '">' + (i + 1) +
-          '</div><div class="name">' + escapeHTML(r.name) + '</div><div class="score">' +
-          r.accuracy + '% · ' + r.attempted + 'Q</div></div>';
+      grid.innerHTML=keys.map(function(id){
+        var ex=data[id]||{};
+        var name=ex.name||id;
+        var n=countFullLength(ex);
+        var isTarget=target&&(String(name).toLowerCase()===target||id.toLowerCase()===target);
+        var letter=String(name).charAt(0).toUpperCase();
+        return '<div class="exam-card'+(isTarget?" target":"")+'" data-exam="'+escapeHTML(id)+'">'+
+          '<div><div class="exam-icon">'+escapeHTML(letter)+'</div><h3>'+escapeHTML(name)+'</h3></div>'+
+          '<p>'+n+' full length</p></div>';
       }).join("");
-    } catch (e) {
-      box.innerHTML = '<div class="muted">Leaderboard unavailable</div>';
-    }
-  }
-  $("lbMode").onchange = loadLeaderboard;
-
-  function targetExamName() {
-    var p = (userProfile && userProfile.profile) || {};
-    if (Array.isArray(p.targetExams) && p.targetExams.length) return String(p.targetExams[0]);
-    return String(p.targetExam || p.examTarget || "").trim();
-  }
-
-  async function loadExams() {
-    var grid = $("examGrid");
-    try {
-      var data = await firebaseGet(EXAMS_PATH);
-      if (!data || typeof data !== "object") {
-        /* fallback demo exams if empty */
-        data = {
-          ssc_cgl: { name: "SSC CGL", id: "ssc_cgl", testsCount: 12 },
-          ssc_chsl: { name: "SSC CHSL", id: "ssc_chsl", testsCount: 8 },
-          nda: { name: "NDA", id: "nda", testsCount: 6 },
-          cds: { name: "CDS", id: "cds", testsCount: 5 }
-        };
-      }
-      examData = data;
-      var target = targetExamName().toLowerCase();
-      var keys = Object.keys(data);
-      grid.innerHTML = keys.map(function (id) {
-        var ex = data[id] || {};
-        var name = ex.name || ex.title || id;
-        var isTarget = target && (String(name).toLowerCase() === target || String(id).toLowerCase() === target);
-        var letter = String(name).charAt(0).toUpperCase();
-        var count = ex.testsCount || (ex.tests ? Object.keys(ex.tests).length : 0) || "—";
-        return '<div class="exam-card' + (isTarget ? " target" : "") + '" data-exam="' + escapeHTML(id) + '">' +
-          '<div><div class="exam-icon">' + escapeHTML(letter) + '</div><h3>' + escapeHTML(name) + '</h3></div>' +
-          '<p>' + count + ' tests</p></div>';
-      }).join("");
-
-      grid.querySelectorAll(".exam-card").forEach(function (el) {
-        el.onclick = function () { openExam(el.getAttribute("data-exam")); };
+      grid.querySelectorAll(".exam-card").forEach(function(el){
+        el.onclick=function(){ openExam(el.getAttribute("data-exam")); };
       });
-    } catch (e) {
-      grid.innerHTML = '<div class="error">Exams load failed</div>';
+    }catch(e){
+      grid.innerHTML='<div class="error">Exams load failed</div>';
     }
   }
 
-  function openExam(examId) {
-    currentExamId = examId;
-    var ex = (examData && examData[examId]) || {};
-    var name = ex.name || ex.title || examId;
-    $("testsTitle").textContent = name + " · Tests";
-    $("testsCard").style.display = "block";
-    var list = $("testsList");
-    var tests = ex.tests || ex.mockTests || {};
-    var rows = [];
-    if (Array.isArray(tests)) {
-      tests.forEach(function (t, i) { rows.push({ id: t.id || ("t" + i), t: t }); });
-    } else if (tests && typeof tests === "object") {
-      Object.keys(tests).forEach(function (id) { rows.push({ id: id, t: tests[id] || {} }); });
+  function openExam(examId){
+    currentExamId=examId;
+    var ex=(examData&&examData[examId])||{};
+    var name=ex.name||examId;
+    $("testsTitle").textContent=name+" · Full length";
+    $("testsCard").style.display="block";
+    var list=$("testsList");
+    var fl=ex.fullLength||{};
+    var rows=Object.keys(fl).map(function(key){
+      return { key:key, t:fl[key]||{} };
+    });
+    /* natural-ish sort by test key */
+    rows.sort(function(a,b){
+      var na=parseInt(String(a.key).replace(/\D/g,""),10)||0;
+      var nb=parseInt(String(b.key).replace(/\D/g,""),10)||0;
+      if(na&&nb&&na!==nb) return na-nb;
+      return String(a.key).localeCompare(String(b.key));
+    });
+    if(!rows.length){
+      list.innerHTML='<div class="empty">No full length tests</div>';
+      return;
     }
-
-    if (!rows.length) {
-      /* synthetic sample tests so UI works before Firebase is filled */
-      rows = [
-        { id: "full_1", t: { title: "Full Mock #1", duration: 60, questions: 50, type: "Full" } },
-        { id: "full_2", t: { title: "Full Mock #2", duration: 60, questions: 50, type: "Full" } },
-        { id: "subj_quant", t: { title: "Quant Practice", duration: 30, questions: 25, type: "Subject" } },
-        { id: "subj_eng", t: { title: "English Practice", duration: 30, questions: 25, type: "Subject" } }
-      ];
-    }
-
-    list.innerHTML = rows.map(function (row) {
-      var t = row.t;
-      var title = t.title || t.name || row.id;
-      var dur = t.duration || t.time || 60;
-      var qn = t.questions || t.qCount || (Array.isArray(t.qs) ? t.qs.length : 25);
-      var type = t.type || "Mock";
-      return '<div class="test-item" data-tid="' + escapeHTML(row.id) + '">' +
-        '<div class="test-ico">' + escapeHTML(String(type).charAt(0)) + '</div>' +
-        '<div class="test-body"><h4>' + escapeHTML(title) + '</h4>' +
-        '<p>' + escapeHTML(type) + ' test</p>' +
-        '<div class="pills"><span class="pill blue">' + qn + ' Q</span>' +
-        '<span class="pill">' + dur + ' min</span></div></div></div>';
+    list.innerHTML=rows.map(function(row){
+      var t=row.t;
+      var title=t.title||row.key;
+      var dur=t.duration||60;
+      var qn=t.questions||100;
+      var marks=t.marks!=null?t.marks:1;
+      var neg=t.negativeMarks!=null?t.negativeMarks:0;
+      return '<div class="test-item" data-key="'+escapeHTML(row.key)+'">'+
+        '<div class="test-ico">FL</div>'+
+        '<div class="test-body"><h4>'+escapeHTML(title)+'</h4>'+
+        '<p>Full length mock</p>'+
+        '<div class="pills">'+
+          '<span class="pill blue">'+qn+' Q</span>'+
+          '<span class="pill">'+dur+' min</span>'+
+          '<span class="pill green">+'+marks+'</span>'+
+          (neg?'<span class="pill red">-'+neg+'</span>':'')+
+        '</div></div></div>';
     }).join("");
-
-    list.querySelectorAll(".test-item").forEach(function (el) {
-      el.onclick = function () {
-        var tid = el.getAttribute("data-tid");
-        var row = rows.find(function (r) { return r.id === tid; });
-        startTest(examId, tid, row && row.t);
+    list.querySelectorAll(".test-item").forEach(function(el){
+      el.onclick=function(){
+        var key=el.getAttribute("data-key");
+        var t=fl[key];
+        startTest(examId,key,t);
       };
     });
-    $("testsCard").scrollIntoView({ behavior: "smooth", block: "start" });
+    $("testsCard").scrollIntoView({behavior:"smooth",block:"start"});
   }
 
-  function buildDemoQuestions(n) {
-    var out = [];
-    for (var i = 0; i < n; i++) {
-      out.push({
-        q: "Sample question " + (i + 1) + " for practice. (Replace with Firebase questions)",
-        options: ["Option A", "Option B", "Option C", "Option D"],
-        correct: i % 4,
-        qid: "demo_" + i
-      });
+  function normalizeQuestion(raw,i){
+    if(!raw||typeof raw!=="object") return null;
+    var opts=raw.options;
+    if(!opts||!opts.length){
+      opts=[raw.optionA||raw.A||raw.a||"",raw.optionB||raw.B||raw.b||"",raw.optionC||raw.C||raw.c||"",raw.optionD||raw.D||raw.d||""];
     }
-    return out;
+    var correct=raw.correct!=null?raw.correct:(raw.answer||raw.correctAnswer||raw.CORRECTANSWER);
+    var map={A:0,B:1,C:2,D:3,a:0,b:1,c:2,d:3};
+    if(typeof correct==="string"&&map[correct.trim()]!==undefined) correct=map[correct.trim()];
+    else if(typeof correct==="string"&&/^\d+$/.test(correct.trim())) correct=parseInt(correct,10);
+    if(typeof correct==="number"&&correct>=1&&correct<=4){
+      /* if 1-based and options length 4, convert when looks 1-based */
+      if(correct>=1&&correct<=opts.length&&(correct>opts.length-1||raw.oneBased)) correct=correct-1;
+    }
+    return {
+      q:raw.q||raw.question||raw.Question||raw.QUESTION||"",
+      options:opts,
+      correct:correct,
+      qid:raw.qid||raw.id||("q_"+i)
+    };
   }
 
-  function startTest(examId, testId, meta) {
-    meta = meta || {};
-    currentTestMeta = { examId: examId, testId: testId, title: meta.title || meta.name || testId, duration: meta.duration || 60 };
-    questions = [];
-    if (Array.isArray(meta.qs)) questions = meta.qs;
-    else if (Array.isArray(meta.questions) && meta.questions[0] && typeof meta.questions[0] === "object") questions = meta.questions;
-    else questions = buildDemoQuestions(Number(meta.questions) || 20);
-
-    answers = {};
-    currentIndex = 0;
-    testFinished = false;
-    remainingSec = (Number(meta.duration) || 60) * 60;
-
-    $("listView").style.display = "none";
-    $("testView").style.display = "block";
-    $("testFooter").style.display = "flex";
-    $("testTitle").textContent = currentTestMeta.title;
-    $("paletteCard").style.display = "block";
-    renderPalette();
-    renderQuestion();
-    startTimer();
+  async function loadQuestionsFromUrl(url){
+    var res=await fetch(url+(url.indexOf("?")>=0?"&":"?")+"t="+Date.now(),{cache:"no-store",redirect:"follow"});
+    if(!res.ok) throw new Error("Questions HTTP "+res.status);
+    var data=await res.json();
+    var list=[];
+    if(Array.isArray(data)) list=data;
+    else if(data&&Array.isArray(data.questions)) list=data.questions;
+    else if(data&&Array.isArray(data.data)) list=data.data;
+    else if(data&&typeof data==="object"){
+      /* object map of questions */
+      list=Object.keys(data).map(function(k){ return data[k]; });
+    }
+    return list.map(normalizeQuestion).filter(function(q){ return q&&q.q; });
   }
 
-  function startTimer() {
-    if (timer) clearInterval(timer);
-    function tick() {
-      var m = Math.floor(remainingSec / 60);
-      var s = remainingSec % 60;
-      $("timerBox").textContent = String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
-      if (remainingSec <= 0) {
-        clearInterval(timer);
-        finishTest();
-        return;
-      }
+  async function startTest(examId,testKey,meta){
+    meta=meta||{};
+    if(!meta.jsonUrl){
+      alert("Is test me jsonUrl nahi hai.");
+      return;
+    }
+    currentExamId=examId;
+    currentTestKey=testKey;
+    currentMeta={
+      title:meta.title||testKey,
+      duration:Number(meta.duration)||60,
+      marks:Number(meta.marks)!=null?Number(meta.marks):1,
+      negativeMarks:Number(meta.negativeMarks)||0,
+      questionsCount:Number(meta.questions)||100,
+      jsonUrl:meta.jsonUrl
+    };
+    answers={}; currentIndex=0; testFinished=false;
+    remainingSec=currentMeta.duration*60;
+
+    $("listView").style.display="none";
+    $("testView").style.display="block";
+    $("testFooter").style.display="flex";
+    $("testTitle").textContent=currentMeta.title;
+    $("paletteCard").style.display="none";
+    $("questionCard").innerHTML='<div class="loading">Loading questions from paper…</div>';
+
+    try{
+      questions=await loadQuestionsFromUrl(currentMeta.jsonUrl);
+      if(!questions.length) throw new Error("No questions in JSON");
+      $("paletteCard").style.display="block";
+      renderPalette();
+      renderQuestion();
+      startTimer();
+    }catch(e){
+      console.warn(e);
+      $("questionCard").innerHTML='<div class="error">Questions load failed<br>'+escapeHTML(e.message||e)+
+        '<br><br><button class="btn btn-ghost" type="button" id="btnFailBack">Back</button></div>';
+      $("testFooter").style.display="none";
+      $("btnFailBack").onclick=function(){
+        $("testView").style.display="none";
+        $("listView").style.display="block";
+      };
+    }
+  }
+
+  function startTimer(){
+    if(timer) clearInterval(timer);
+    function tick(){
+      var m=Math.floor(remainingSec/60), s=remainingSec%60;
+      $("timerBox").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+      if(remainingSec<=0){ clearInterval(timer); finishTest(); return; }
       remainingSec--;
     }
     tick();
-    timer = setInterval(tick, 1000);
+    timer=setInterval(tick,1000);
   }
 
-  function renderPalette() {
-    var box = $("palette");
-    box.innerHTML = questions.map(function (_, i) {
-      var cls = "pal";
-      if (answers[i] != null) cls += " answered";
-      if (i === currentIndex) cls += " current";
-      return '<button type="button" class="' + cls + '" data-i="' + i + '">' + (i + 1) + "</button>";
+  function renderPalette(){
+    var box=$("palette");
+    box.innerHTML=questions.map(function(_,i){
+      var cls="pal";
+      if(answers[i]!=null) cls+=" answered";
+      if(i===currentIndex) cls+=" current";
+      return '<button type="button" class="'+cls+'" data-i="'+i+'">'+(i+1)+"</button>";
     }).join("");
-    box.querySelectorAll(".pal").forEach(function (btn) {
-      btn.onclick = function () {
-        currentIndex = parseInt(btn.getAttribute("data-i"), 10);
-        renderQuestion();
-        renderPalette();
+    box.querySelectorAll(".pal").forEach(function(btn){
+      btn.onclick=function(){
+        currentIndex=parseInt(btn.getAttribute("data-i"),10);
+        renderQuestion(); renderPalette();
       };
     });
   }
 
-  function renderQuestion() {
-    if (testFinished) return;
-    var q = questions[currentIndex];
-    if (!q) return;
-    var card = $("questionCard");
-    var opts = q.options || [q.optionA, q.optionB, q.optionC, q.optionD].filter(Boolean);
-    card.innerHTML =
-      '<div class="q-meta"><span>Q ' + (currentIndex + 1) + " / " + questions.length + '</span>' +
-      '<span>' + (answers[currentIndex] != null ? "Answered" : "Not answered") + "</span></div>" +
-      '<div class="q-text">' + escapeHTML(q.q || q.question || "") + "</div>" +
-      opts.map(function (opt, i) {
-        var sel = answers[currentIndex] === i ? " selected" : "";
-        return '<div class="option' + sel + '" data-i="' + i + '">' + escapeHTML(opt || "—") + "</div>";
+  function renderQuestion(){
+    if(testFinished) return;
+    var q=questions[currentIndex]; if(!q) return;
+    var card=$("questionCard");
+    var opts=q.options||[];
+    card.innerHTML=
+      '<div class="q-meta"><span>Q '+(currentIndex+1)+" / "+questions.length+'</span>'+
+      '<span>'+(answers[currentIndex]!=null?"Answered":"Not answered")+"</span></div>"+
+      '<div class="q-text">'+escapeHTML(q.q)+"</div>"+
+      opts.map(function(opt,i){
+        var sel=answers[currentIndex]===i?" selected":"";
+        return '<div class="option'+sel+'" data-i="'+i+'">'+escapeHTML(opt||"—")+"</div>";
       }).join("");
-    card.querySelectorAll(".option").forEach(function (el) {
-      el.onclick = function () {
-        answers[currentIndex] = parseInt(el.getAttribute("data-i"), 10);
-        renderQuestion();
-        renderPalette();
+    card.querySelectorAll(".option").forEach(function(el){
+      el.onclick=function(){
+        answers[currentIndex]=parseInt(el.getAttribute("data-i"),10);
+        renderQuestion(); renderPalette();
       };
     });
-    $("prevBtn").disabled = currentIndex === 0;
-    $("nextBtn").textContent = currentIndex === questions.length - 1 ? "Submit" : "Next";
+    $("prevBtn").disabled=currentIndex===0;
+    $("nextBtn").textContent=currentIndex===questions.length-1?"Submit":"Next";
   }
 
-  $("prevBtn").onclick = function () {
-    if (currentIndex > 0) { currentIndex--; renderQuestion(); renderPalette(); }
+  $("prevBtn").onclick=function(){ if(currentIndex>0){ currentIndex--; renderQuestion(); renderPalette(); } };
+  $("nextBtn").onclick=function(){
+    if(currentIndex<questions.length-1){ currentIndex++; renderQuestion(); renderPalette(); }
+    else finishTest();
   };
-  $("nextBtn").onclick = function () {
-    if (currentIndex < questions.length - 1) {
-      currentIndex++; renderQuestion(); renderPalette();
-    } else {
-      finishTest();
+  $("btnBackList").onclick=function(){
+    if(!testFinished&&questions.length&&!confirm("Leave test?")) return;
+    if(timer) clearInterval(timer);
+    $("testView").style.display="none";
+    $("testFooter").style.display="none";
+    $("listView").style.display="block";
+  };
+
+  function resolveCorrect(q){
+    var c=q.correct, n=(q.options||[]).length;
+    if(typeof c==="string"){
+      var map={A:0,B:1,C:2,D:3,a:0,b:1,c:2,d:3};
+      if(map[c.trim()]!==undefined) c=map[c.trim()];
+      else c=parseInt(c,10);
     }
-  };
-  $("btnBackList").onclick = function () {
-    if (!testFinished && questions.length && !confirm("Leave test? Progress may be lost.")) return;
-    if (timer) clearInterval(timer);
-    $("testView").style.display = "none";
-    $("testFooter").style.display = "none";
-    $("listView").style.display = "block";
-  };
+    if(typeof c==="number"&&c>=1&&c<=n&&c>n-1) c=c-1;
+    return c;
+  }
 
-  async function finishTest() {
-    if (testFinished) return;
-    testFinished = true;
-    if (timer) clearInterval(timer);
+  async function finishTest(){
+    if(testFinished) return;
+    testFinished=true;
+    if(timer) clearInterval(timer);
 
-    var correct = 0;
-    questions.forEach(function (q, i) {
-      var c = q.correct;
-      if (typeof c === "string") {
-        var map = { A: 0, B: 1, C: 2, D: 3, a: 0, b: 1, c: 2, d: 3 };
-        if (map[c.trim()] !== undefined) c = map[c.trim()];
-        else c = parseInt(c, 10);
-      }
-      if (answers[i] != null && answers[i] === c) correct++;
+    var correct=0, wrong=0, attempted=0;
+    var marks=currentMeta.marks||1;
+    var neg=currentMeta.negativeMarks||0;
+    var score=0;
+
+    questions.forEach(function(q,i){
+      if(answers[i]==null) return;
+      attempted++;
+      var c=resolveCorrect(q);
+      if(answers[i]===c){ correct++; score+=marks; }
+      else { wrong++; score-=neg; }
     });
-    var attempted = Object.keys(answers).length;
-    var total = questions.length;
-    var pct = calcAcc(correct, total);
+    if(score<0) score=0;
+    var total=questions.length;
+    var pct=calcAcc(correct,total);
+    var maxScore=total*marks;
+    var scorePct=maxScore?Math.round((score/maxScore)*1000)/10:pct;
 
-    $("questionCard").innerHTML =
-      '<div style="text-align:center;padding:8px 0 4px">' +
-        '<div style="font-size:1.1rem;font-weight:800;margin-bottom:6px">Test submitted</div>' +
-        '<div class="muted">Great work — result saved to your profile</div>' +
-      '</div>' +
-      '<div class="stats-grid">' +
-        '<div class="stat-box"><b>' + correct + '/' + total + '</b><span>Correct</span></div>' +
-        '<div class="stat-box"><b>' + pct + '%</b><span>Score</span></div>' +
-        '<div class="stat-box"><b>' + attempted + '</b><span>Attempted</span></div>' +
-        '<div class="stat-box"><b>' + (total - attempted) + '</b><span>Skipped</span></div>' +
-      '</div>' +
+    $("questionCard").innerHTML=
+      '<div style="text-align:center;padding:8px 0 4px">'+
+        '<div style="font-size:1.1rem;font-weight:800;margin-bottom:6px">Test submitted</div>'+
+        '<div class="muted">'+escapeHTML(currentMeta.title)+'</div></div>'+
+      '<div class="stats-grid">'+
+        '<div class="stat-box"><b>'+correct+'/'+total+'</b><span>Correct</span></div>'+
+        '<div class="stat-box"><b>'+scorePct+'%</b><span>Score</span></div>'+
+        '<div class="stat-box"><b>'+attempted+'</b><span>Attempted</span></div>'+
+        '<div class="stat-box"><b>'+wrong+'</b><span>Wrong</span></div>'+
+      '</div>'+
+      '<div class="row-like muted" style="text-align:center;margin-top:10px;font-size:.8rem">Marks: +'+marks+' / −'+neg+' · Net ≈ '+Math.round(score*10)/10+'</div>'+
       '<div class="btn-row"><button class="btn btn-primary" type="button" id="btnBackAfter">Back to mocks</button></div>';
 
-    $("testFooter").style.display = "none";
-    $("paletteCard").style.display = "none";
-    $("btnBackAfter").onclick = function () {
-      $("testView").style.display = "none";
-      $("listView").style.display = "block";
-      loadLeaderboard();
-      loadUser();
+    $("testFooter").style.display="none";
+    $("paletteCard").style.display="none";
+    $("btnBackAfter").onclick=function(){
+      $("testView").style.display="none";
+      $("listView").style.display="block";
+      loadLeaderboard(); loadUser();
     };
 
-    if (!userId) return;
-    try {
-      var attemptId = "att_" + Date.now();
-      var values = {};
-      values["Users/" + safeKey(userId) + "/mockTestAttempts/" + attemptId] = {
-        examId: currentTestMeta.examId,
-        testId: currentTestMeta.testId,
-        title: currentTestMeta.title,
-        correct: correct,
-        total: total,
-        attempted: attempted,
-        scorePct: pct,
-        accuracy: pct,
-        submittedAt: new Date().toISOString(),
-        ts: Date.now()
+    if(!userId) return;
+    try{
+      var attemptId="att_"+Date.now();
+      var values={};
+      values["Users/"+safeKey(userId)+"/mockTestAttempts/"+attemptId]={
+        examId:currentExamId,
+        testKey:currentTestKey,
+        title:currentMeta.title,
+        correct:correct, wrong:wrong, total:total, attempted:attempted,
+        scorePct:scorePct, accuracy:pct, netScore:Math.round(score*10)/10,
+        marks:marks, negativeMarks:neg,
+        submittedAt:new Date().toISOString(), ts:Date.now()
       };
-      /* bump analysis lightly */
-      var at = (analysis.allTime) || { attempted: 0, correct: 0, wrong: 0, accuracy: 0 };
-      at.attempted = (at.attempted || 0) + attempted;
-      at.correct = (at.correct || 0) + correct;
-      at.wrong = (at.wrong || 0) + Math.max(0, attempted - correct);
-      at.accuracy = calcAcc(at.correct, at.attempted);
-      values["Users/" + safeKey(userId) + "/analysis/allTime"] = at;
-      values["leaderboard/" + safeKey(userId)] = {
-        name: userName || userId,
-        accuracy: at.accuracy,
-        attempted: at.attempted,
-        correct: at.correct,
-        ts: Date.now()
+      var at=(analysis.allTime)||{attempted:0,correct:0,wrong:0,accuracy:0};
+      at.attempted=(at.attempted||0)+attempted;
+      at.correct=(at.correct||0)+correct;
+      at.wrong=(at.wrong||0)+wrong;
+      at.accuracy=calcAcc(at.correct,at.attempted);
+      values["Users/"+safeKey(userId)+"/analysis/allTime"]=at;
+      values["leaderboard/"+safeKey(userId)]={
+        name:userName||userId, accuracy:at.accuracy, attempted:at.attempted, correct:at.correct, ts:Date.now()
       };
       await firebasePatch(values);
-    } catch (e) { console.warn("save attempt", e); }
+    }catch(e){ console.warn(e); }
   }
 
-  (async function init() {
+  (async function init(){
     await loadUser();
     await Promise.all([loadLeaderboard(), loadExams()]);
   })();

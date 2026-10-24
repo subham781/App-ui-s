@@ -161,7 +161,7 @@ html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,
 
   var PAGES = {
     home:         { title: "Home",          file: "app shell home" },
-    study:        { title: "Study material", file: "Study material" },
+    study:        { title: "Study material", file: "app shell study material" },
     mock:         { title: "Mock tests",    file: "app shell mock tests" },
     notification: { title: "Notifications", file: "notification" },
     profile:      { title: "Profile",       file: "app shell profile" }

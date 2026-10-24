@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Profile · PrepExam</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:Inter,system-ui,sans-serif;
+  background:#f1f5f9;color:#0f172a;min-height:100vh;padding:14px 14px 40px;
+}
+.wrap{max-width:480px;margin:0 auto}
+.hero{
+  background:linear-gradient(135deg,#2563eb,#4f46e5);
+  border-radius:20px;padding:22px 18px 18px;color:#fff;
+  box-shadow:0 12px 28px rgba(37,99,235,.22);margin-bottom:12px;position:relative;
+}
+.hero-actions{position:absolute;top:12px;right:12px;display:flex;gap:8px}
+.icon-btn{
+  width:36px;height:36px;border:0;border-radius:12px;
+  background:rgba(255,255,255,.18);color:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.icon-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.avatar-wrap{display:flex;justify-content:center;margin-bottom:10px}
+.avatar,.avatar-fallback{
+  width:84px;height:84px;border-radius:50%;border:3px solid rgba(255,255,255,.5);
+}
+.avatar{object-fit:cover;background:#ddd;display:block}
+.avatar-fallback{
+  background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;
+  font-size:1.9rem;font-weight:800;
+}
+.display-name{text-align:center;font-size:1.28rem;font-weight:800;letter-spacing:-.02em}
+.channel{text-align:center;opacity:.9;font-size:.88rem;font-weight:600;margin-top:3px}
+.bio{text-align:center;opacity:.88;font-size:.82rem;margin-top:8px;line-height:1.4;max-width:340px;margin-left:auto;margin-right:auto}
+.tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.tag{
+  background:rgba(255,255,255,.18);border-radius:999px;padding:5px 11px;
+  font-size:.7rem;font-weight:700;
+}
+.stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+  margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.2);
+}
+.stat{text-align:center}
+.stat b{display:block;font-size:1.05rem;font-weight:800}
+.stat span{font-size:.62rem;opacity:.85;font-weight:600}
+.card{
+  background:#fff;border-radius:16px;border:1px solid #e8ecf4;
+  box-shadow:0 2px 12px rgba(15,23,42,.04);padding:14px;margin-bottom:12px;
+}
+.section-title{
+  font-size:.72rem;font-weight:800;color:#4f46e5;text-transform:uppercase;
+  letter-spacing:.4px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;
+}
+.section-title select{
+  border:1px solid #e2e8f0;border-radius:10px;padding:5px 8px;font-size:.7rem;font-weight:700;
+  background:#f8fafc;color:#334155;text-transform:none;letter-spacing:0;
+}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mini{
+  background:#f8fafc;border:1px solid #eef2f7;border-radius:14px;padding:12px;text-align:center;
+}
+.mini b{display:block;font-size:1.12rem;color:#0f172a;font-weight:800}
+.mini span{font-size:.68rem;color:#64748b;font-weight:600}
+.mini.acc b{color:#2563eb}.mini.ok b{color:#15803d}.mini.bad b{color:#b91c1c}
+.row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:9px 0;border-bottom:1px solid #f1f5f9;font-size:.86rem;
+}
+.row:last-child{border-bottom:0}
+.row span{color:#64748b;font-weight:500}
+.row b{color:#0f172a;font-weight:700}
+.bar-wrap{margin-top:10px}
+.bar-label{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:4px;font-weight:600}
+.bar-label span:last-child{color:#64748b;font-weight:600}
+.bar-bg{height:8px;background:#eef2ff;border-radius:99px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,#2563eb,#4f46e5);border-radius:99px}
+.weak-box{
+  background:linear-gradient(135deg,#fff7ed,#fff);border:1px solid #fed7aa;
+  border-radius:14px;padding:12px;margin-top:10px;
+}
+.weak-box b{display:block;font-size:.88rem;color:#c2410c;margin-bottom:4px}
+.weak-box p{font-size:.78rem;color:#9a3412;line-height:1.4}
+.loading,.error{text-align:center;padding:48px 16px;color:#64748b;font-size:.92rem;line-height:1.5}
+.error{color:#b91c1c}
+.uid-hint{text-align:center;font-size:.7rem;color:#94a3b8;margin:-2px 0 12px}
+.edit-panel{display:none}
+.edit-panel.show{display:block}
+label{display:block;font-size:.76rem;font-weight:700;color:#475569;margin:10px 0 5px}
+input,textarea,select.field{
+  width:100%;border:1.5px solid #e2e8f0;border-radius:12px;padding:11px 12px;
+  font-size:.9rem;font-family:inherit;background:#fafbfc;outline:none;
+}
+input:focus,textarea:focus,select.field:focus{border-color:#6366f1;background:#fff}
+textarea{min-height:76px;resize:vertical}
+.btn-row{display:flex;gap:10px;margin-top:14px}
+.btn{
+  flex:1;border:0;border-radius:12px;padding:12px;font-weight:800;font-size:.88rem;cursor:pointer;
+}
+.btn-ghost{background:#e2e8f0;color:#0f172a}
+.btn-primary{background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff}
+.toast{
+  position:fixed;left:50%;bottom:24px;transform:translateX(-50%);
+  background:#0f172a;color:#fff;padding:10px 16px;border-radius:999px;
+  font-size:.8rem;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:50;
+}
+.toast.show{opacity:1}
+.empty-note{font-size:.8rem;color:#64748b;text-align:center;padding:8px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="app"><div class="loading">Loading profile…</div></div>
+</div>
+<div class="toast" id="toast">Saved</div>
+
+<script>
+(function () {
+  var FIREBASE_DB = "https://prepexam-f98bf-default-rtdb.firebaseio.com";
+  var currentKey = "";
+  var currentData = null;
+
+  function normalizeUserKey(raw) {
+    var s = String(raw || "").trim();
+    if (!s) return "";
+    if (s.indexOf("USER|") === 0) s = s.substring(5).trim();
+    if (s.indexOf("|") > 0) s = s.split("|").pop();
+    if (s.indexOf("@") > 0) s = s.split("@")[0];
+    s = s.replace(/@gmail\.com$/i, "").replace(/[.#$\[\]\/]/g, "_").trim();
+    return s;
+  }
+  function getUserFromKodular() {
+    try {
+      if (window.AppInventor && window.AppInventor.getWebViewString) {
+        var s = normalizeUserKey(window.AppInventor.getWebViewString() || "");
+        if (s) return s;
+      }
+    } catch (e) {}
+    try {
+      if (window.Kodular && window.Kodular.getWebViewString) {
+        var s2 = normalizeUserKey(window.Kodular.getWebViewString() || "");
+        if (s2) return s2;
+      }
+    } catch (e) {}
+    if (window.__PREPEXAM_USER_ID__) return normalizeUserKey(window.__PREPEXAM_USER_ID__);
+    try {
+      return normalizeUserKey(new URLSearchParams(location.search).get("user") || "");
+    } catch (e) { return ""; }
+  }
+  function escapeHTML(v) {
+    return String(v || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function countKeys(obj) {
+    return obj && typeof obj === "object" ? Object.keys(obj).length : 0;
+  }
+  function calcAcc(c, a) {
+    return a ? Math.round((c / a) * 1000) / 10 : 0;
+  }
+  function showToast(msg) {
+    var t = document.getElementById("toast");
+    t.textContent = msg || "Saved";
+    t.classList.add("show");
+    setTimeout(function () { t.classList.remove("show"); }, 1800);
+  }
+
+  async function firebaseGet(path) {
+    var r = await fetch(FIREBASE_DB + "/" + path + ".json?t=" + Date.now());
+    if (!r.ok) throw new Error("GET " + r.status);
+    return await r.json();
+  }
+  async function firebasePatch(values) {
+    var r = await fetch(FIREBASE_DB + "/.json", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values)
+    });
+    if (!r.ok) throw new Error("PATCH " + r.status);
+  }
+
+  function getWeakest(subjects) {
+    var worst = null;
+    Object.keys(subjects || {}).forEach(function (k) {
+      var s = subjects[k] || {};
+      if ((s.attempted || 0) < 3) return;
+      var acc = s.accuracy != null ? Number(s.accuracy) : calcAcc(s.correct, s.attempted);
+      if (!worst || acc < worst.accuracy) {
+        worst = { subject: k, accuracy: acc, attempted: s.attempted || 0, wrong: s.wrong || 0 };
+      }
+    });
+    return worst;
+  }
+
+  function renderBars(map, mode) {
+    var entries = Object.keys(map || {}).map(function (k) {
+      var s = map[k] || {};
+      return {
+        k: k,
+        attempted: Number(s.attempted) || 0,
+        correct: Number(s.correct) || 0,
+        wrong: Number(s.wrong) || 0,
+        accuracy: s.accuracy != null ? Number(s.accuracy) : calcAcc(s.correct, s.attempted)
+      };
+    }).filter(function (e) { return e.attempted > 0; });
+    entries.sort(function (a, b) { return b.attempted - a.attempted; });
+    if (!entries.length) return '<div class="empty-note">Attempt questions on Home to see breakdown</div>';
+    var max = entries[0].attempted || 1;
+    return entries.slice(0, 10).map(function (e) {
+      var pct = Math.round((e.attempted / max) * 100);
+      return '<div class="bar-wrap"><div class="bar-label"><span>' + escapeHTML(e.k) +
+        '</span><span>' + e.accuracy + '% · ' + e.attempted + ' Q</span></div>' +
+        '<div class="bar-bg"><div class="bar-fill" style="width:' + pct + '%"></div></div></div>';
+    }).join("");
+  }
+
+  function renderProfile(key, data) {
+    currentKey = key;
+    currentData = data || {};
+    var p = data.profile || {};
+    var stats = data.publicStats || {};
+    var analysis = data.analysis || {};
+    var allTime = analysis.allTime || {};
+    var today = analysis.today || {};
+    var subjects = analysis.subjects || {};
+    var topics = analysis.topics || {};
+    var exams = analysis.exams || {};
+    var pyqYears = analysis.pyqYears || {};
+    var provide = data.provide || {};
+    var consume = data.consume || {};
+    var settings = data.settings || {};
+    var insights = data.insights || {};
+
+    var displayName = p.name || p.channelName || key;
+    var channel = p.channelName || ("@" + key);
+    var photo = p.photo || p.photoURL || "";
+    var initial = String(displayName).charAt(0).toUpperCase();
+    var weak = insights.weakSubject || getWeakest(subjects);
+
+    var attempted = Number(allTime.attempted) || 0;
+    var correct = Number(allTime.correct) || 0;
+    var wrong = Number(allTime.wrong) || 0;
+    var accuracy = allTime.accuracy != null ? Number(allTime.accuracy) : calcAcc(correct, attempted);
+
+    var app = document.getElementById("app");
+    app.innerHTML =
+      '<div class="hero">' +
+        '<div class="hero-actions">' +
+          '<button class="icon-btn" type="button" id="btnEdit" title="Edit" aria-label="Edit">' +
+            '<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>' +
+          '</button>' +
+        '</div>' +
+        '<div class="avatar-wrap">' +
+          (photo
+            ? '<img class="avatar" src="' + escapeHTML(photo) + '" alt="">'
+            : '<div class="avatar-fallback">' + escapeHTML(initial) + '</div>') +
+        '</div>' +
+        '<div class="display-name">' + escapeHTML(displayName) + '</div>' +
+        '<div class="channel">' + escapeHTML(channel) + '</div>' +
+        '<div class="bio">' + escapeHTML(p.bio || "No bio yet — tap edit") + '</div>' +
+        '<div class="tags">' +
+          '<span class="tag">' + escapeHTML(p.targetExam || p.examTarget || "Exam") + '</span>' +
+          '<span class="tag">' + escapeHTML(p.targetYear || "") + '</span>' +
+          '<span class="tag">' + escapeHTML(settings.language || p.preferredLanguage || "en") + '</span>' +
+        '</div>' +
+        '<div class="stats">' +
+          '<div class="stat"><b>' + (stats.mcqPosted || 0) + '</b><span>MCQ</span></div>' +
+          '<div class="stat"><b>' + (stats.mocksCount || 0) + '</b><span>Mocks</span></div>' +
+          '<div class="stat"><b>' + (stats.likesReceived || 0) + '</b><span>Likes</span></div>' +
+          '<div class="stat"><b>' + (stats.followers || countKeys(data.following)) + '</b><span>Following</span></div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="uid-hint">ID: ' + escapeHTML(key) + '</div>' +
+
+      '<div class="card edit-panel" id="editPanel">' +
+        '<div class="section-title">Edit profile</div>' +
+        '<label>Display name</label>' +
+        '<input id="ed_name" type="text" value="' + escapeHTML(p.name || "") + '" placeholder="Your name">' +
+        '<label>Channel name</label>' +
+        '<input id="ed_channel" type="text" value="' + escapeHTML(p.channelName || "") + '" placeholder="@channel">' +
+        '<label>Bio</label>' +
+        '<textarea id="ed_bio" placeholder="About you">' + escapeHTML(p.bio || "") + '</textarea>' +
+        '<label>Photo URL</label>' +
+        '<input id="ed_photo" type="url" value="' + escapeHTML(photo) + '" placeholder="https://…">' +
+        '<label>Target exam</label>' +
+        '<input id="ed_exam" type="text" value="' + escapeHTML(p.targetExam || p.examTarget || "") + '" placeholder="SSC CGL">' +
+        '<label>Target year</label>' +
+        '<input id="ed_year" type="text" value="' + escapeHTML(p.targetYear || "") + '" placeholder="2026">' +
+        '<label>Preferred language</label>' +
+        '<select class="field" id="ed_lang">' +
+          '<option value="hi"' + ((settings.language === "hi" || p.preferredLanguage === "hi") ? " selected" : "") + '>Hindi</option>' +
+          '<option value="en"' + ((settings.language !== "hi" && p.preferredLanguage !== "hi") ? " selected" : "") + '>English</option>' +
+        '</select>' +
+        '<label>Daily reminder hour (0–23)</label>' +
+        '<input id="ed_reminder" type="number" min="0" max="23" value="' + escapeHTML(settings.dailyReminderHour != null ? settings.dailyReminderHour : 20) + '">' +
+        '<div class="btn-row">' +
+          '<button class="btn btn-ghost" type="button" id="btnCancelEdit">Cancel</button>' +
+          '<button class="btn btn-primary" type="button" id="btnSaveEdit">Save to Firebase</button>' +
+        '</div>' +
+      '</div>' +
+
+      /* ANALYSIS — moved from Home */
+      '<div class="card">' +
+        '<div class="section-title">Your analysis</div>' +
+        '<div class="grid4">' +
+          '<div class="mini"><b>' + attempted + '</b><span>Attempted</span></div>' +
+          '<div class="mini ok"><b>' + correct + '</b><span>Correct</span></div>' +
+          '<div class="mini bad"><b>' + wrong + '</b><span>Wrong</span></div>' +
+          '<div class="mini acc"><b>' + accuracy + '%</b><span>Accuracy</span></div>' +
+        '</div>' +
+        '<div class="row" style="margin-top:10px"><span>Today</span><b>' +
+          (today.attempted ? ((today.accuracy != null ? today.accuracy : calcAcc(today.correct, today.attempted)) + '% · ' + (today.attempted || 0) + ' Q') : '—') +
+        '</b></div>' +
+        (weak
+          ? '<div class="weak-box"><b>Weak subject: ' + escapeHTML(weak.subject) + '</b><p>' +
+            weak.accuracy + '% accuracy · ' + weak.attempted + ' attempted · ' + (weak.wrong || 0) + ' wrong. Practice this more.</p></div>'
+          : '') +
+      '</div>' +
+
+      '<div class="card">' +
+        '<div class="section-title">Breakdown' +
+          '<select id="analysisMode">' +
+            '<option value="subject">Subject</option>' +
+            '<option value="topic">Topic</option>' +
+            '<option value="exam">Exam</option>' +
+            '<option value="pyq">PYQ year</option>' +
+          '</select>' +
+        '</div>' +
+        '<div id="analysisBars">' + renderBars(subjects, "subject") + '</div>' +
+      '</div>' +
+
+      '<div class="card">' +
+        '<div class="section-title">Activity</div>' +
+        '<div class="row"><span>Saved MCQ</span><b>' + countKeys(data.savedQuestions || consume.savedMcq) + '</b></div>' +
+        '<div class="row"><span>Liked MCQ</span><b>' + countKeys(data.likedQuestions || consume.likedMcq) + '</b></div>' +
+        '<div class="row"><span>Revision list</span><b>' + countKeys(data.revisionQuestions) + '</b></div>' +
+        '<div class="row"><span>Following</span><b>' + countKeys(data.following) + '</b></div>' +
+      '</div>' +
+
+      '<div class="card">' +
+        '<div class="section-title">Uploaded (provide)</div>' +
+        '<div class="row"><span>MCQ</span><b>' + countKeys(provide.mcq) + '</b></div>' +
+        '<div class="row"><span>Posts</span><b>' + countKeys(provide.posts) + '</b></div>' +
+        '<div class="row"><span>Mocks</span><b>' + countKeys(provide.mocks) + '</b></div>' +
+      '</div>';
+
+    document.getElementById("btnEdit").onclick = function () {
+      document.getElementById("editPanel").classList.add("show");
+      document.getElementById("editPanel").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    };
+    document.getElementById("btnCancelEdit").onclick = function () {
+      document.getElementById("editPanel").classList.remove("show");
+    };
+    document.getElementById("btnSaveEdit").onclick = saveProfile;
+    document.getElementById("analysisMode").onchange = function () {
+      var mode = this.value;
+      var map = subjects;
+      if (mode === "topic") map = topics;
+      if (mode === "exam") map = exams;
+      if (mode === "pyq") map = pyqYears;
+      document.getElementById("analysisBars").innerHTML = renderBars(map, mode);
+    };
+  }
+
+  async function saveProfile() {
+    if (!currentKey) {
+      showToast("User ID missing");
+      return;
+    }
+    var name = (document.getElementById("ed_name").value || "").trim();
+    var channel = (document.getElementById("ed_channel").value || "").trim();
+    var bio = (document.getElementById("ed_bio").value || "").trim();
+    var photo = (document.getElementById("ed_photo").value || "").trim();
+    var exam = (document.getElementById("ed_exam").value || "").trim();
+    var year = (document.getElementById("ed_year").value || "").trim();
+    var lang = document.getElementById("ed_lang").value || "en";
+    var reminder = parseInt(document.getElementById("ed_reminder").value, 10);
+    if (isNaN(reminder) || reminder < 0 || reminder > 23) reminder = 20;
+
+    var base = "Users/" + currentKey;
+    var values = {};
+    values[base + "/profile/name"] = name || null;
+    values[base + "/profile/channelName"] = channel || null;
+    values[base + "/profile/bio"] = bio || null;
+    values[base + "/profile/photo"] = photo || null;
+    values[base + "/profile/targetExam"] = exam || null;
+    values[base + "/profile/examTarget"] = exam || null;
+    values[base + "/profile/targetYear"] = year || null;
+    values[base + "/profile/preferredLanguage"] = lang;
+    values[base + "/settings/language"] = lang;
+    values[base + "/settings/dailyReminderHour"] = reminder;
+    values[base + "/settings/notifications"] = true;
+    values[base + "/profile/updatedAt"] = Date.now();
+
+    try {
+      await firebasePatch(values);
+      showToast("Saved to Firebase");
+      document.getElementById("editPanel").classList.remove("show");
+      await load();
+    } catch (e) {
+      console.warn(e);
+      showToast("Save failed");
+    }
+  }
+
+  async function load() {
+    var app = document.getElementById("app");
+    var key = getUserFromKodular();
+    if (!key) {
+      await new Promise(function (r) { setTimeout(r, 400); });
+      key = getUserFromKodular();
+    }
+    if (!key) {
+      app.innerHTML = '<div class="error">User ID nahi mili.<br>Kodular WebViewString set karo.</div>';
+      return;
+    }
+    try {
+      var data = await firebaseGet("Users/" + key);
+      if (!data || typeof data !== "object") {
+        /* create minimal shell so edit works */
+        data = { profile: { name: key }, analysis: { allTime: { attempted: 0, correct: 0, wrong: 0, accuracy: 0 } }, settings: { language: "en" } };
+      }
+      renderProfile(key, data);
+    } catch (e) {
+      app.innerHTML = '<div class="error">Profile load failed<br>' + escapeHTML(e.message || e) + '</div>';
+    }
+  }
+
+  load();
+})();
+</script>
+</body>
+</html>

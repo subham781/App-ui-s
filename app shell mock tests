@@ -7,87 +7,124 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:Inter,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min-height:100vh}
-.page{max-width:640px;margin:0 auto;padding:14px 14px 100px}
+body{font-family:Inter,system-ui,sans-serif;background:#f0f4f8;color:#0f172a;min-height:100vh}
+.page{max-width:640px;margin:0 auto;padding:12px 12px 88px}
+
 .hero{
-  background:linear-gradient(135deg,#1d4ed8,#4f46e5);
-  border-radius:18px;padding:18px 16px;color:#fff;margin-bottom:14px;
-  box-shadow:0 12px 28px rgba(37,99,235,.22);
+  background:linear-gradient(145deg,#1e40af 0%,#4f46e5 55%,#6366f1 100%);
+  border-radius:20px;padding:18px 16px 16px;color:#fff;margin-bottom:12px;
+  box-shadow:0 14px 32px rgba(37,99,235,.28);position:relative;overflow:hidden;
 }
-.hero h1{font-size:1.15rem;font-weight:800;letter-spacing:-.02em}
-.hero p{font-size:.8rem;opacity:.88;margin-top:4px;line-height:1.4}
-.hero-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px}
-.hero-stat{background:rgba(255,255,255,.15);border-radius:12px;padding:10px 12px;flex:1;text-align:center}
-.hero-stat b{display:block;font-size:1.05rem;font-weight:800}
-.hero-stat span{font-size:.62rem;opacity:.85;font-weight:600}
+.hero::before{
+  content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;
+  border-radius:50%;background:rgba(255,255,255,.08);
+}
+.hero h1{font-size:1.2rem;font-weight:800;letter-spacing:-.03em;position:relative}
+.hero p{font-size:.78rem;opacity:.9;margin-top:4px;position:relative}
+.hero-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px;position:relative}
+.hero-stat{
+  background:rgba(255,255,255,.14);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:10px 8px;text-align:center;
+}
+.hero-stat b{display:block;font-size:1.08rem;font-weight:800}
+.hero-stat span{font-size:.6rem;opacity:.88;font-weight:600;letter-spacing:.02em}
+
 .card{
-  background:#fff;border-radius:16px;border:1px solid #e8ecf4;
-  box-shadow:0 2px 12px rgba(15,23,42,.04);padding:14px;margin-bottom:12px;
+  background:#fff;border-radius:18px;border:1px solid rgba(226,232,240,.9);
+  box-shadow:0 4px 18px rgba(15,23,42,.05);padding:14px;margin-bottom:12px;
 }
 .section-title{
-  font-size:.72rem;font-weight:800;color:#4f46e5;text-transform:uppercase;
-  letter-spacing:.4px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;
+  font-size:.7rem;font-weight:800;color:#4f46e5;text-transform:uppercase;
+  letter-spacing:.45px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;
 }
 .section-title select{
-  border:1px solid #e2e8f0;border-radius:10px;padding:5px 8px;font-size:.7rem;font-weight:700;
+  border:1px solid #e2e8f0;border-radius:10px;padding:5px 8px;font-size:.68rem;font-weight:700;
   background:#f8fafc;color:#334155;text-transform:none;letter-spacing:0;
 }
+
+/* Leaderboard */
 .lb-list{display:flex;flex-direction:column;gap:8px}
-.lb-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f8fafc;border-radius:12px;border:1px solid #eef2f7}
-.lb-rank{width:28px;height:28px;border-radius:9px;background:#e0e7ff;color:#3730a3;font-size:.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.lb-rank.gold{background:#fef3c7;color:#b45309}
-.lb-rank.silver{background:#e2e8f0;color:#475569}
-.lb-rank.bronze{background:#ffedd5;color:#c2410c}
+.lb-row{
+  display:flex;align-items:center;gap:10px;padding:11px 12px;
+  background:#f8fafc;border-radius:14px;border:1px solid #eef2f7;
+}
+.lb-rank{
+  width:30px;height:30px;border-radius:10px;background:#e0e7ff;color:#3730a3;
+  font-size:.78rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.lb-rank.gold{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#b45309}
+.lb-rank.silver{background:linear-gradient(135deg,#f1f5f9,#e2e8f0);color:#475569}
+.lb-rank.bronze{background:linear-gradient(135deg,#ffedd5,#fed7aa);color:#c2410c}
 .lb-row .name{flex:1;font-size:.84rem;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lb-row .score{font-size:.78rem;font-weight:800;color:#2563eb;white-space:nowrap}
-.lb-me{border-color:#93c5fd;background:#eff6ff}
+.lb-row .score{font-size:.76rem;font-weight:800;color:#2563eb;white-space:nowrap}
+.lb-me{border-color:#93c5fd;background:#eff6ff;box-shadow:0 0 0 2px rgba(37,99,235,.12)}
+
+/* Exams */
 .exam-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .exam-card{
-  background:#fff;border:1px solid #e8ecf4;border-radius:16px;padding:14px;
-  box-shadow:0 2px 10px rgba(15,23,42,.04);cursor:pointer;min-height:118px;
+  background:#fff;border:1.5px solid #e8ecf4;border-radius:18px;padding:14px;
+  box-shadow:0 2px 12px rgba(15,23,42,.04);cursor:pointer;min-height:128px;
   display:flex;flex-direction:column;justify-content:space-between;
+  transition:transform .15s,box-shadow .15s,border-color .15s;
 }
-.exam-card:active{transform:scale(.98)}
-.exam-card.target{border-color:#60a5fa;background:linear-gradient(135deg,#eff6ff,#fff);position:relative;overflow:hidden}
+.exam-card:active{transform:scale(.97)}
+.exam-card.target{
+  border-color:#3b82f6;
+  background:linear-gradient(160deg,#eff6ff 0%,#fff 55%);
+  box-shadow:0 8px 24px rgba(37,99,235,.15);
+  position:relative;overflow:hidden;
+}
 .exam-card.target::after{
-  content:"TARGET";position:absolute;top:10px;right:-26px;transform:rotate(35deg);
-  background:#2563eb;color:#fff;font-size:.55rem;font-weight:800;padding:3px 28px;letter-spacing:.06em;
+  content:"YOUR TARGET";position:absolute;top:12px;right:-32px;transform:rotate(35deg);
+  background:linear-gradient(90deg,#2563eb,#4f46e5);color:#fff;
+  font-size:.55rem;font-weight:800;padding:4px 36px;letter-spacing:.08em;
 }
 .exam-icon{
-  width:40px;height:40px;border-radius:12px;background:#eff6ff;color:#2563eb;
-  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;margin-bottom:10px;
+  width:42px;height:42px;border-radius:13px;
+  background:linear-gradient(135deg,#dbeafe,#e0e7ff);color:#1d4ed8;
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.05rem;margin-bottom:10px;
 }
-.exam-card h3{font-size:.88rem;font-weight:800;line-height:1.25;margin-bottom:4px}
+.exam-card.target .exam-icon{background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff}
+.exam-card h3{font-size:.9rem;font-weight:800;line-height:1.25;margin-bottom:4px}
 .exam-card p{font-size:.68rem;color:#64748b;font-weight:600}
+
+.tests-head{
+  display:flex;align-items:center;gap:10px;margin-bottom:12px;
+}
+.tests-head .back-exam{
+  width:36px;height:36px;border:0;border-radius:12px;background:#f1f5f9;color:#0f172a;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;
+}
+.tests-head .back-exam svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.tests-head h2{font-size:.95rem;font-weight:800;flex:1;min-width:0}
+
 .test-item{
-  display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #f1f5f9;cursor:pointer;
+  display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:1px solid #f1f5f9;cursor:pointer;
 }
 .test-item:last-child{border-bottom:0}
-.test-item:active{opacity:.85}
+.test-item:active{opacity:.88}
 .test-ico{
-  width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#dbeafe,#e0e7ff);
-  color:#1d4ed8;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:800;font-size:.75rem;
+  width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#dbeafe,#e0e7ff);
+  color:#1d4ed8;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:800;font-size:.72rem;
 }
 .test-body{flex:1;min-width:0}
-.test-body h4{font-size:.88rem;font-weight:700;line-height:1.3}
-.test-body p{font-size:.72rem;color:#64748b;margin-top:3px;line-height:1.35}
+.test-body h4{font-size:.86rem;font-weight:700;line-height:1.35}
+.test-body p{font-size:.7rem;color:#64748b;margin-top:3px}
 .pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
-.pill{font-size:.65rem;font-weight:700;background:#f1f5f9;color:#334155;padding:3px 8px;border-radius:999px}
+.pill{font-size:.62rem;font-weight:700;background:#f1f5f9;color:#334155;padding:3px 8px;border-radius:999px}
 .pill.blue{background:#eff6ff;color:#1d4ed8}
 .pill.green{background:#ecfdf5;color:#047857}
 .pill.red{background:#fef2f2;color:#b91c1c}
+
 .btn{border:0;border-radius:12px;padding:12px 16px;font-size:.88rem;font-weight:800;cursor:pointer;width:100%}
 .btn-primary{background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff}
 .btn-ghost{background:#e2e8f0;color:#0f172a}
 .btn-row{display:flex;gap:8px;margin-top:12px}
 .btn-row .btn{flex:1}
-.loading,.empty,.error{text-align:center;padding:36px 16px;color:#64748b;font-size:.9rem}
+.loading,.empty,.error{text-align:center;padding:32px 14px;color:#64748b;font-size:.88rem}
 .error{color:#b91c1c}
-.muted{color:#64748b;font-size:.78rem}
-.back-link{
-  display:inline-flex;align-items:center;gap:6px;border:0;background:#e2e8f0;color:#0f172a;
-  font-weight:700;font-size:.8rem;padding:8px 12px;border-radius:10px;cursor:pointer;margin-bottom:12px;
-}
+.muted{color:#64748b;font-size:.76rem}
+
 #testView{display:none}
 .q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:.8rem;color:#64748b;font-weight:600}
 .q-text{font-size:1.02rem;font-weight:600;line-height:1.5;margin-bottom:14px}
@@ -96,14 +133,12 @@ body{font-family:Inter,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min
   background:#fff;cursor:pointer;font-size:.9rem;font-weight:500;
 }
 .option.selected{border-color:#2563eb;background:#eff6ff;color:#1d4ed8;font-weight:700}
-.option.correct{border-color:#16a34a;background:#dcfce7;color:#166534;font-weight:700}
-.option.wrong{border-color:#dc2626;background:#fee2e2;color:#991b1b;font-weight:700}
 .footer-bar{
   position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #e5e7eb;
   padding:10px 14px;display:flex;gap:8px;z-index:30;max-width:640px;margin:0 auto;
 }
 .footer-bar button{flex:1}
-.timer-chip{background:#eff6ff;color:#1d4ed8;font-weight:800;font-size:.82rem;padding:6px 10px;border-radius:999px}
+.timer-chip{background:#eff6ff;color:#1d4ed8;font-weight:800;font-size:.82rem;padding:6px 10px;border-radius:999px;flex-shrink:0}
 .palette{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:10px}
 .pal{height:32px;border-radius:8px;border:1px solid #dbe3f0;background:#fff;font-size:.72rem;font-weight:700;color:#334155;cursor:pointer}
 .pal.answered{background:#dbeafe;border-color:#93c5fd;color:#1d4ed8}
@@ -112,46 +147,63 @@ body{font-family:Inter,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min
 .stat-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:14px;text-align:center}
 .stat-box b{display:block;font-size:1.3rem;color:#2563eb;margin-bottom:4px}
 .stat-box span{font-size:.72rem;color:#64748b;font-weight:600}
+.sticky-test-bar{
+  display:flex;align-items:center;gap:10px;margin-bottom:12px;
+  background:#fff;border:1px solid #e8ecf4;border-radius:14px;padding:10px 12px;
+  box-shadow:0 2px 10px rgba(15,23,42,.04);
+}
+.sticky-test-bar .back-test{
+  width:36px;height:36px;border:0;border-radius:11px;background:#f1f5f9;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;
+}
+.sticky-test-bar .back-test svg{width:18px;height:18px;stroke:#0f172a;fill:none;stroke-width:2.2;stroke-linecap:round}
 </style>
 </head>
 <body>
 <div class="page" id="listView">
   <div class="hero">
     <h1>Full Length Mocks</h1>
-    <p>Only full-length tests · live ranking</p>
+    <p>Live ranking from your mock attempts only</p>
     <div class="hero-row">
-      <div class="hero-stat"><b id="hAttempted">0</b><span>Attempts</span></div>
-      <div class="hero-stat"><b id="hBest">—</b><span>Best score</span></div>
-      <div class="hero-stat"><b id="hRank">—</b><span>Rank</span></div>
+      <div class="hero-stat"><b id="hAttempted">0</b><span>MOCKS DONE</span></div>
+      <div class="hero-stat"><b id="hBest">—</b><span>BEST MOCK</span></div>
+      <div class="hero-stat"><b id="hRank">—</b><span>MOCK RANK</span></div>
     </div>
   </div>
 
   <div class="card">
     <div class="section-title">
-      Top ranking
+      Mock ranking
       <select id="lbMode">
-        <option value="accuracy">By accuracy</option>
-        <option value="attempted">By attempted</option>
+        <option value="score">By mock score</option>
+        <option value="attempts">By mock count</option>
       </select>
     </div>
-    <div class="lb-list" id="leaderboard"><div class="muted">Loading ranks…</div></div>
+    <div class="lb-list" id="leaderboard"><div class="muted">Loading…</div></div>
   </div>
 
-  <div class="card">
-    <div class="section-title">Exams</div>
-    <div class="exam-grid" id="examGrid"><div class="loading">Loading…</div></div>
+  <div class="card" id="examsCard">
+    <div class="section-title">All exams <span id="examCount" class="muted" style="text-transform:none;letter-spacing:0;font-weight:600"></span></div>
+    <div class="exam-grid" id="examGrid"><div class="loading">Loading exams…</div></div>
   </div>
 
   <div class="card" id="testsCard" style="display:none">
-    <div class="section-title" id="testsTitle">Full length tests</div>
+    <div class="tests-head">
+      <button type="button" class="back-exam" id="btnBackExams" aria-label="Back to exams">
+        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <h2 id="testsTitle">Full length</h2>
+    </div>
     <div id="testsList"></div>
   </div>
 </div>
 
 <div class="page" id="testView">
-  <button type="button" class="back-link" id="btnBackList">← Back</button>
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px">
-    <div style="font-weight:800;font-size:.92rem;line-height:1.3;flex:1" id="testTitle">Test</div>
+  <div class="sticky-test-bar">
+    <button type="button" class="back-test" id="btnBackList" aria-label="Exit test">
+      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div style="font-weight:800;font-size:.86rem;line-height:1.3;flex:1;min-width:0" id="testTitle">Test</div>
     <div class="timer-chip" id="timerBox">00:00</div>
   </div>
   <div class="card" id="questionCard"><div class="loading">Loading questions…</div></div>
@@ -169,18 +221,23 @@ body{font-family:Inter,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min
 <script>
 (function () {
   var FIREBASE_DB = "https://prepexam-f98bf-default-rtdb.firebaseio.com";
-  var EXAMS_PATH = "exams"; /* Firebase path */
+  var EXAM_PATHS = ["exams"]; /* try both casings */
 
-  var userId = "", userName = "", userProfile = {}, analysis = {}, userAttempts = {};
+  var userId = "", userName = "", userProfile = {}, userAttempts = {};
   var examData = null, currentExamId = "", currentTestKey = "";
   var questions = [], answers = {}, currentIndex = 0;
   var timer = null, remainingSec = 0, testFinished = false;
-  var currentMeta = null; /* duration, marks, negativeMarks, title, jsonUrl */
+  var currentMeta = null;
+  var mockLeaderboard = {}; /* built from all users' mockTestAttempts if needed */
 
   function $(id){ return document.getElementById(id); }
   function escapeHTML(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
   function safeKey(v){ return String(v||"").replace(/[.#$\[\]\/]/g,"_"); }
   function calcAcc(c,a){ return a ? Math.round((c/a)*1000)/10 : 0; }
+
+  function notifyShellInTest(open){
+    try{ parent.postMessage({ type:"prepexam-intest", open:!!open }, "*"); }catch(e){}
+  }
 
   function getWebViewString(){
     try{ if(window.AppInventor&&window.AppInventor.getWebViewString) return String(window.AppInventor.getWebViewString()||"").trim(); }catch(e){}
@@ -204,6 +261,24 @@ body{font-family:Inter,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min
     if(!r.ok) throw new Error("PATCH "+r.status);
   }
 
+  function computeMockStats(){
+    var keys=Object.keys(userAttempts||{});
+    var count=keys.length;
+    var best=0;
+    var sumPct=0;
+    keys.forEach(function(k){
+      var a=userAttempts[k]||{};
+      var sc=Number(a.scorePct!=null?a.scorePct:(a.accuracy!=null?a.accuracy:0));
+      if(sc>best) best=sc;
+      sumPct+=sc;
+    });
+    return {
+      count:count,
+      best:best,
+      avg:count?Math.round((sumPct/count)*10)/10:0
+    };
+  }
+
   async function loadUser(){
     userId=normalizeUserId(getWebViewString());
     if(!userId){ await new Promise(function(r){setTimeout(r,400);}); userId=normalizeUserId(getWebViewString()); }
@@ -213,53 +288,84 @@ body{font-family:Inter,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min
       if(data&&typeof data==="object"){
         userProfile=data;
         userName=(data.profile&&(data.profile.name||data.profile.channelName))||userId;
-        analysis=data.analysis||{};
         userAttempts=data.mockTestAttempts||{};
-        var at=analysis.allTime||{};
-        $("hAttempted").textContent=Object.keys(userAttempts).length||at.attempted||0;
-        var best=0;
-        Object.keys(userAttempts).forEach(function(k){
-          var sc=Number(userAttempts[k].scorePct||userAttempts[k].accuracy||0);
-          if(sc>best) best=sc;
-        });
-        $("hBest").textContent=best?best+"%":"—";
+        var st=computeMockStats();
+        $("hAttempted").textContent=st.count;
+        $("hBest").textContent=st.best?st.best+"%":"—";
       }
     }catch(e){ console.warn(e); }
   }
 
+  /** Ranking from leaderboard.mocks OR derived from Users/*/mockTestAttempts */
   async function loadLeaderboard(){
     var box=$("leaderboard");
     try{
-      var data=await firebaseGet("leaderboard");
-      if(!data||typeof data!=="object"){ box.innerHTML='<div class="muted">No ranks yet</div>'; return; }
+      var rows=[];
+      /* Prefer dedicated mock leaderboard if present */
+      var lb=null;
+      try{ lb=await firebaseGet("leaderboard"); }catch(e){}
+      if(lb&&typeof lb==="object"){
+        Object.keys(lb).forEach(function(id){
+          var x=lb[id]||{};
+          /* Prefer mock-specific fields if stored */
+          var mockAttempts=Number(x.mockAttempts||x.mockCount||0);
+          var mockScore=Number(x.mockBest||x.mockScore||x.scorePct||0);
+          var attempted=Number(x.attempted||0);
+          /* If only practice stats exist, still show but label carefully — prefer mock fields */
+          if(mockAttempts>0||x.mockBest!=null){
+            rows.push({
+              id:id, name:x.name||id,
+              score:mockScore||Number(x.accuracy)||0,
+              attempts:mockAttempts||0
+            });
+          } else if(attempted>=1&&x.fromMock){
+            rows.push({id:id,name:x.name||id,score:Number(x.accuracy)||0,attempts:attempted});
+          }
+        });
+      }
+
+      /* Fallback: scan own attempts into local rank row only if empty */
+      if(!rows.length&&userId){
+        var st=computeMockStats();
+        if(st.count){
+          rows.push({id:userId,name:userName||userId,score:st.best,attempts:st.count});
+        }
+      }
+
       var mode=$("lbMode").value;
-      var rows=Object.keys(data).map(function(id){
-        var x=data[id]||{};
-        return {id:id,name:x.name||id,accuracy:Number(x.accuracy)||0,attempted:Number(x.attempted)||0};
-      }).filter(function(r){ return r.attempted>=1; });
       rows.sort(function(a,b){
-        if(mode==="attempted") return b.attempted-a.attempted;
-        if(b.accuracy!==a.accuracy) return b.accuracy-a.accuracy;
-        return b.attempted-a.attempted;
+        if(mode==="attempts") return b.attempts-a.attempts||b.score-a.score;
+        return b.score-a.score||b.attempts-a.attempts;
       });
+
       if(userId){
         var myIdx=rows.findIndex(function(r){ return r.id===userId||r.id===safeKey(userId); });
-        $("hRank").textContent=myIdx>=0?"#"+(myIdx+1):"—";
+        $("hRank").textContent=myIdx>=0?"#"+(myIdx+1):(computeMockStats().count?"—":"—");
       }
-      rows=rows.slice(0,12);
-      if(!rows.length){ box.innerHTML='<div class="muted">Need attempts to rank</div>'; return; }
+
+      rows=rows.slice(0,15);
+      if(!rows.length){
+        box.innerHTML='<div class="muted">Mock ranking empty — complete a full-length test</div>';
+        return;
+      }
       box.innerHTML=rows.map(function(r,i){
         var rankCls=i===0?" gold":i===1?" silver":i===2?" bronze":"";
         var me=(r.id===userId||r.id===safeKey(userId))?" lb-me":"";
-        return '<div class="lb-row'+me+'"><div class="lb-rank'+rankCls+'">'+(i+1)+'</div><div class="name">'+escapeHTML(r.name)+'</div><div class="score">'+r.accuracy+'% · '+r.attempted+'Q</div></div>';
+        return '<div class="lb-row'+me+'"><div class="lb-rank'+rankCls+'">'+(i+1)+'</div>'+
+          '<div class="name">'+escapeHTML(r.name)+'</div>'+
+          '<div class="score">'+r.score+'% · '+r.attempts+' mocks</div></div>';
       }).join("");
-    }catch(e){ box.innerHTML='<div class="muted">Leaderboard unavailable</div>'; }
+    }catch(e){
+      box.innerHTML='<div class="muted">Ranking unavailable</div>';
+    }
   }
   $("lbMode").onchange=loadLeaderboard;
 
   function targetExamName(){
     var p=(userProfile&&userProfile.profile)||{};
-    return String(p.targetExam||p.examTarget||"").trim().toLowerCase();
+    var t=String(p.targetExam||p.examTarget||"").trim().toLowerCase();
+    if(Array.isArray(p.targetExams)&&p.targetExams[0]) t=String(p.targetExams[0]).trim().toLowerCase();
+    return t;
   }
 
   function countFullLength(ex){
@@ -267,56 +373,79 @@ body{font-family:Inter,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min
     return Object.keys(fl).length;
   }
 
+  function isTargetExam(id,name,target){
+    if(!target) return false;
+    var a=String(id||"").toLowerCase();
+    var b=String(name||"").toLowerCase();
+    if(a===target||b===target) return true;
+    /* soft match: nda in "nda full" etc */
+    if(target.length>=3&&(a.indexOf(target)>=0||b.indexOf(target)>=0||target.indexOf(a)>=0)) return true;
+    return false;
+  }
+
   async function loadExams(){
     var grid=$("examGrid");
-    try{
-      var data=await firebaseGet(EXAMS_PATH);
-      if(!data||typeof data!=="object"){
-        grid.innerHTML='<div class="error">No exams in Firebase /Exams</div>';
-        return;
-      }
-      examData=data;
-      var target=targetExamName();
-      var keys=Object.keys(data);
-      /* sort: target first, then alpha */
-      keys.sort(function(a,b){
-        var na=String((data[a]&&data[a].name)||a).toLowerCase();
-        var nb=String((data[b]&&data[b].name)||b).toLowerCase();
-        var ta=target&&(na===target||a.toLowerCase()===target);
-        var tb=target&&(nb===target||b.toLowerCase()===target);
-        if(ta&&!tb) return -1; if(tb&&!ta) return 1;
-        return na.localeCompare(nb);
-      });
-      grid.innerHTML=keys.map(function(id){
-        var ex=data[id]||{};
-        var name=ex.name||id;
-        var n=countFullLength(ex);
-        var isTarget=target&&(String(name).toLowerCase()===target||id.toLowerCase()===target);
-        var letter=String(name).charAt(0).toUpperCase();
-        return '<div class="exam-card'+(isTarget?" target":"")+'" data-exam="'+escapeHTML(id)+'">'+
-          '<div><div class="exam-icon">'+escapeHTML(letter)+'</div><h3>'+escapeHTML(name)+'</h3></div>'+
-          '<p>'+n+' full length</p></div>';
-      }).join("");
-      grid.querySelectorAll(".exam-card").forEach(function(el){
-        el.onclick=function(){ openExam(el.getAttribute("data-exam")); };
-      });
-    }catch(e){
-      grid.innerHTML='<div class="error">Exams load failed</div>';
+    var data=null;
+    var lastErr=null;
+    for(var i=0;i<EXAM_PATHS.length;i++){
+      try{
+        data=await firebaseGet(EXAM_PATHS[i]);
+        if(data&&typeof data==="object"&&Object.keys(data).length){
+          console.log("Exams loaded from", EXAM_PATHS[i], Object.keys(data));
+          break;
+        }
+      }catch(e){ lastErr=e; }
     }
+    if(!data||typeof data!=="object"||!Object.keys(data).length){
+      grid.innerHTML='<div class="error">Exams nahi mile (path: /Exams)<br>'+escapeHTML(lastErr&&lastErr.message||"")+'</div>';
+      return;
+    }
+    examData=data;
+    var target=targetExamName();
+    var keys=Object.keys(data);
+    $("examCount").textContent="("+keys.length+")";
+
+    keys.sort(function(a,b){
+      var na=String(a), nb=String(b);
+      var ta=isTargetExam(a,na,target);
+      var tb=isTargetExam(b,nb,target);
+      if(ta&&!tb) return -1; if(tb&&!ta) return 1;
+      return na.localeCompare(nb);
+    });
+
+    grid.innerHTML=keys.map(function(id){
+      var ex=data[id]||{};
+      var name=ex.name||id;
+      var n=countFullLength(ex);
+      var isTarget=isTargetExam(id,name,target);
+      var letter=String(name).charAt(0).toUpperCase();
+      return '<div class="exam-card'+(isTarget?" target":"")+'" data-exam="'+escapeHTML(id)+'">'+
+        '<div><div class="exam-icon">'+escapeHTML(letter)+'</div><h3>'+escapeHTML(name)+'</h3></div>'+
+        '<p>'+n+' full length'+(isTarget?" · target":"")+"</p></div>";
+    }).join("");
+
+    grid.querySelectorAll(".exam-card").forEach(function(el){
+      el.onclick=function(){ openExam(el.getAttribute("data-exam")); };
+    });
   }
+
+  function showExamsList(){
+    $("examsCard").style.display="block";
+    $("testsCard").style.display="none";
+  }
+  $("btnBackExams").onclick=showExamsList;
 
   function openExam(examId){
     currentExamId=examId;
     var ex=(examData&&examData[examId])||{};
     var name=ex.name||examId;
     $("testsTitle").textContent=name+" · Full length";
+    $("examsCard").style.display="none";
     $("testsCard").style.display="block";
+
     var list=$("testsList");
     var fl=ex.fullLength||{};
-    var rows=Object.keys(fl).map(function(key){
-      return { key:key, t:fl[key]||{} };
-    });
-    /* natural-ish sort by test key */
+    var rows=Object.keys(fl).map(function(key){ return { key:key, t:fl[key]||{} }; });
     rows.sort(function(a,b){
       var na=parseInt(String(a.key).replace(/\D/g,""),10)||0;
       var nb=parseInt(String(b.key).replace(/\D/g,""),10)||0;
@@ -342,17 +471,16 @@ body{font-family:Inter,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min
           '<span class="pill blue">'+qn+' Q</span>'+
           '<span class="pill">'+dur+' min</span>'+
           '<span class="pill green">+'+marks+'</span>'+
-          (neg?'<span class="pill red">-'+neg+'</span>':'')+
+          (neg?'<span class="pill red">−'+neg+'</span>':'')+
         '</div></div></div>';
     }).join("");
     list.querySelectorAll(".test-item").forEach(function(el){
       el.onclick=function(){
         var key=el.getAttribute("data-key");
-        var t=fl[key];
-        startTest(examId,key,t);
+        startTest(examId,key,fl[key]);
       };
     });
-    $("testsCard").scrollIntoView({behavior:"smooth",block:"start"});
+    window.scrollTo(0,0);
   }
 
   function normalizeQuestion(raw,i){
@@ -365,15 +493,10 @@ body{font-family:Inter,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min
     var map={A:0,B:1,C:2,D:3,a:0,b:1,c:2,d:3};
     if(typeof correct==="string"&&map[correct.trim()]!==undefined) correct=map[correct.trim()];
     else if(typeof correct==="string"&&/^\d+$/.test(correct.trim())) correct=parseInt(correct,10);
-    if(typeof correct==="number"&&correct>=1&&correct<=4){
-      /* if 1-based and options length 4, convert when looks 1-based */
-      if(correct>=1&&correct<=opts.length&&(correct>opts.length-1||raw.oneBased)) correct=correct-1;
-    }
+    if(typeof correct==="number"&&correct>=1&&correct<=opts.length&&correct>opts.length-1) correct=correct-1;
     return {
       q:raw.q||raw.question||raw.Question||raw.QUESTION||"",
-      options:opts,
-      correct:correct,
-      qid:raw.qid||raw.id||("q_"+i)
+      options:opts, correct:correct, qid:raw.qid||raw.id||("q_"+i)
     };
   }
 
@@ -385,27 +508,19 @@ body{font-family:Inter,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min
     if(Array.isArray(data)) list=data;
     else if(data&&Array.isArray(data.questions)) list=data.questions;
     else if(data&&Array.isArray(data.data)) list=data.data;
-    else if(data&&typeof data==="object"){
-      /* object map of questions */
-      list=Object.keys(data).map(function(k){ return data[k]; });
-    }
+    else if(data&&typeof data==="object") list=Object.keys(data).map(function(k){ return data[k]; });
     return list.map(normalizeQuestion).filter(function(q){ return q&&q.q; });
   }
 
   async function startTest(examId,testKey,meta){
     meta=meta||{};
-    if(!meta.jsonUrl){
-      alert("Is test me jsonUrl nahi hai.");
-      return;
-    }
-    currentExamId=examId;
-    currentTestKey=testKey;
+    if(!meta.jsonUrl){ alert("jsonUrl missing"); return; }
+    currentExamId=examId; currentTestKey=testKey;
     currentMeta={
       title:meta.title||testKey,
       duration:Number(meta.duration)||60,
       marks:Number(meta.marks)!=null?Number(meta.marks):1,
       negativeMarks:Number(meta.negativeMarks)||0,
-      questionsCount:Number(meta.questions)||100,
       jsonUrl:meta.jsonUrl
     };
     answers={}; currentIndex=0; testFinished=false;
@@ -416,25 +531,28 @@ body{font-family:Inter,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min
     $("testFooter").style.display="flex";
     $("testTitle").textContent=currentMeta.title;
     $("paletteCard").style.display="none";
-    $("questionCard").innerHTML='<div class="loading">Loading questions from paper…</div>';
+    $("questionCard").innerHTML='<div class="loading">Loading paper…</div>';
+    notifyShellInTest(true);
 
     try{
       questions=await loadQuestionsFromUrl(currentMeta.jsonUrl);
       if(!questions.length) throw new Error("No questions in JSON");
       $("paletteCard").style.display="block";
-      renderPalette();
-      renderQuestion();
-      startTimer();
+      renderPalette(); renderQuestion(); startTimer();
     }catch(e){
-      console.warn(e);
-      $("questionCard").innerHTML='<div class="error">Questions load failed<br>'+escapeHTML(e.message||e)+
+      $("questionCard").innerHTML='<div class="error">Load failed<br>'+escapeHTML(e.message||e)+
         '<br><br><button class="btn btn-ghost" type="button" id="btnFailBack">Back</button></div>';
       $("testFooter").style.display="none";
-      $("btnFailBack").onclick=function(){
-        $("testView").style.display="none";
-        $("listView").style.display="block";
-      };
+      $("btnFailBack").onclick=exitTest;
     }
+  }
+
+  function exitTest(){
+    if(timer) clearInterval(timer);
+    notifyShellInTest(false);
+    $("testView").style.display="none";
+    $("testFooter").style.display="none";
+    $("listView").style.display="block";
   }
 
   function startTimer(){
@@ -445,8 +563,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min
       if(remainingSec<=0){ clearInterval(timer); finishTest(); return; }
       remainingSec--;
     }
-    tick();
-    timer=setInterval(tick,1000);
+    tick(); timer=setInterval(tick,1000);
   }
 
   function renderPalette(){
@@ -458,10 +575,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min
       return '<button type="button" class="'+cls+'" data-i="'+i+'">'+(i+1)+"</button>";
     }).join("");
     box.querySelectorAll(".pal").forEach(function(btn){
-      btn.onclick=function(){
-        currentIndex=parseInt(btn.getAttribute("data-i"),10);
-        renderQuestion(); renderPalette();
-      };
+      btn.onclick=function(){ currentIndex=parseInt(btn.getAttribute("data-i"),10); renderQuestion(); renderPalette(); };
     });
   }
 
@@ -495,10 +609,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min
   };
   $("btnBackList").onclick=function(){
     if(!testFinished&&questions.length&&!confirm("Leave test?")) return;
-    if(timer) clearInterval(timer);
-    $("testView").style.display="none";
-    $("testFooter").style.display="none";
-    $("listView").style.display="block";
+    exitTest();
   };
 
   function resolveCorrect(q){
@@ -518,10 +629,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min
     if(timer) clearInterval(timer);
 
     var correct=0, wrong=0, attempted=0;
-    var marks=currentMeta.marks||1;
-    var neg=currentMeta.negativeMarks||0;
-    var score=0;
-
+    var marks=currentMeta.marks||1, neg=currentMeta.negativeMarks||0, score=0;
     questions.forEach(function(q,i){
       if(answers[i]==null) return;
       attempted++;
@@ -537,7 +645,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min
 
     $("questionCard").innerHTML=
       '<div style="text-align:center;padding:8px 0 4px">'+
-        '<div style="font-size:1.1rem;font-weight:800;margin-bottom:6px">Test submitted</div>'+
+        '<div style="font-size:1.1rem;font-weight:800;margin-bottom:6px">Mock submitted</div>'+
         '<div class="muted">'+escapeHTML(currentMeta.title)+'</div></div>'+
       '<div class="stats-grid">'+
         '<div class="stat-box"><b>'+correct+'/'+total+'</b><span>Correct</span></div>'+
@@ -545,40 +653,36 @@ body{font-family:Inter,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min
         '<div class="stat-box"><b>'+attempted+'</b><span>Attempted</span></div>'+
         '<div class="stat-box"><b>'+wrong+'</b><span>Wrong</span></div>'+
       '</div>'+
-      '<div class="row-like muted" style="text-align:center;margin-top:10px;font-size:.8rem">Marks: +'+marks+' / −'+neg+' · Net ≈ '+Math.round(score*10)/10+'</div>'+
+      '<div class="muted" style="text-align:center;margin-top:10px">Marks +'+marks+' / −'+neg+' · Net ≈ '+Math.round(score*10)/10+'</div>'+
       '<div class="btn-row"><button class="btn btn-primary" type="button" id="btnBackAfter">Back to mocks</button></div>';
 
     $("testFooter").style.display="none";
     $("paletteCard").style.display="none";
-    $("btnBackAfter").onclick=function(){
-      $("testView").style.display="none";
-      $("listView").style.display="block";
-      loadLeaderboard(); loadUser();
-    };
+    $("btnBackAfter").onclick=function(){ exitTest(); loadLeaderboard(); loadUser(); };
 
     if(!userId) return;
     try{
       var attemptId="att_"+Date.now();
       var values={};
       values["Users/"+safeKey(userId)+"/mockTestAttempts/"+attemptId]={
-        examId:currentExamId,
-        testKey:currentTestKey,
-        title:currentMeta.title,
+        examId:currentExamId, testKey:currentTestKey, title:currentMeta.title,
         correct:correct, wrong:wrong, total:total, attempted:attempted,
         scorePct:scorePct, accuracy:pct, netScore:Math.round(score*10)/10,
         marks:marks, negativeMarks:neg,
         submittedAt:new Date().toISOString(), ts:Date.now()
       };
-      var at=(analysis.allTime)||{attempted:0,correct:0,wrong:0,accuracy:0};
-      at.attempted=(at.attempted||0)+attempted;
-      at.correct=(at.correct||0)+correct;
-      at.wrong=(at.wrong||0)+wrong;
-      at.accuracy=calcAcc(at.correct,at.attempted);
-      values["Users/"+safeKey(userId)+"/analysis/allTime"]=at;
-      values["leaderboard/"+safeKey(userId)]={
-        name:userName||userId, accuracy:at.accuracy, attempted:at.attempted, correct:at.correct, ts:Date.now()
-      };
+      /* mock-only leaderboard fields — do NOT overwrite practice accuracy */
+      var prevLb=null;
+      try{ prevLb=await firebaseGet("leaderboard/"+safeKey(userId)); }catch(e){}
+      var prevBest=Number(prevLb&&(prevLb.mockBest||0))||0;
+      var prevCount=Number(prevLb&&(prevLb.mockAttempts||0))||0;
+      values["leaderboard/"+safeKey(userId)+"/name"]=userName||userId;
+      values["leaderboard/"+safeKey(userId)+"/mockBest"]=Math.max(prevBest,scorePct);
+      values["leaderboard/"+safeKey(userId)+"/mockAttempts"]=prevCount+1;
+      values["leaderboard/"+safeKey(userId)+"/fromMock"]=true;
+      values["leaderboard/"+safeKey(userId)+"/ts"]=Date.now();
       await firebasePatch(values);
+      userAttempts[attemptId]=values["Users/"+safeKey(userId)+"/mockTestAttempts/"+attemptId];
     }catch(e){ console.warn(e); }
   }
 

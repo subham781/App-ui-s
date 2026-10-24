@@ -17,19 +17,32 @@ html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,
   --muted:#64748b;
 }
 .app{display:flex;flex-direction:column;height:100%;height:100dvh}
+
 .titlebar{
   height:var(--title-h);background:#fff;border-bottom:1px solid var(--border);
   display:flex;align-items:center;gap:8px;padding:0 12px;z-index:40;flex-shrink:0;
+  transition:transform .2s ease,opacity .18s ease;
 }
+.titlebar.hidden-bar{
+  transform:translateY(-100%);opacity:0;pointer-events:none;
+  position:absolute;left:0;right:0;top:0;
+}
+/* Home: brand visible, center title hidden */
 .titlebar.home-mode .back-btn{display:none}
+.titlebar.home-mode .sub-title{display:none !important}
+.titlebar.home-mode .brand-home{display:flex}
+/* Other tabs: only center title */
 .titlebar.sub-mode .brand-home{display:none}
-.titlebar.sub-mode .back-btn{display:flex}
+.titlebar.sub-mode .back-btn{display:none} /* nested uses child back; shell back only for community overlay */
+.titlebar.sub-mode .sub-title{display:block !important;text-align:center}
+
 .back-btn{
   display:none;width:40px;height:40px;border:0;border-radius:12px;background:#f1f5f9;
   align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:#0f172a
 }
 .back-btn:active{background:#e2e8f0}
 .back-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
 .brand-home{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
 .brand-home img.app-icon{
   width:34px;height:34px;border-radius:10px;object-fit:cover;flex-shrink:0;
@@ -37,10 +50,12 @@ html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,
 }
 .brand-home .app-name{font-size:.98rem;font-weight:800;letter-spacing:-.02em;line-height:1.1}
 .brand-home .page-sub{font-size:.66rem;font-weight:600;color:var(--muted);margin-top:2px}
+
 .sub-title{
   flex:1;min-width:0;font-size:1rem;font-weight:800;letter-spacing:-.02em;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;
 }
+
 .title-right{display:flex;align-items:center;gap:6px;margin-left:auto}
 .icon-btn{
   width:38px;height:38px;border:0;border-radius:12px;background:transparent;
@@ -52,6 +67,20 @@ html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,
   font-size:.66rem;font-weight:700;color:var(--muted);background:#f1f5f9;
   padding:5px 9px;border-radius:999px;max-width:88px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
+
+/* Community overlay — single shell back, no double back */
+.community-overlay{
+  display:none;position:absolute;inset:0;z-index:50;background:#fff;
+  flex-direction:column;
+}
+.community-overlay.open{display:flex}
+.community-bar{
+  height:var(--title-h);display:flex;align-items:center;gap:10px;
+  padding:0 12px;border-bottom:1px solid var(--border);background:#fff;flex-shrink:0;
+}
+.community-bar .title{font-size:1rem;font-weight:800;flex:1}
+.community-frame{flex:1;border:0;width:100%;min-height:0}
+
 .content{flex:1;min-height:0;position:relative;background:#f8fafc}
 .page-slot{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff;display:none}
 .page-slot.active{display:block}
@@ -69,6 +98,7 @@ html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,
 .frame-error.show{display:flex}
 .frame-error p{font-size:.9rem;color:var(--muted);line-height:1.45}
 .frame-error button{margin-top:6px;border:0;background:var(--primary);color:#fff;font-weight:700;font-size:.82rem;padding:10px 18px;border-radius:12px;cursor:pointer}
+
 .bottomnav{
   height:calc(var(--nav-h) + var(--safe-b));padding-bottom:var(--safe-b);
   background:#fff;border-top:1px solid var(--border);
@@ -107,11 +137,12 @@ html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,
         <div class="page-sub">Practice smarter</div>
       </div>
     </div>
-    <div class="sub-title" id="subTitle" style="display:none">Page</div>
+    <div class="sub-title" id="subTitle">Home</div>
     <div class="title-right">
       <span class="user-chip" id="userChip">…</span>
-      <button type="button" class="icon-btn" id="btnRefresh" title="Refresh" aria-label="Refresh">
-        <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.2"/><polyline points="21 3 21 9 15 9"/></svg>
+      <!-- Community instead of refresh -->
+      <button type="button" class="icon-btn" id="btnCommunity" title="Community" aria-label="Community">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       </button>
     </div>
   </header>
@@ -121,6 +152,16 @@ html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,
     <div class="frame-error" id="frameError">
       <p id="frameErrorMsg">Page load nahi hua.</p>
       <button type="button" id="btnRetry">Retry</button>
+    </div>
+    <!-- Community overlay: ONE back only (shell) -->
+    <div class="community-overlay" id="communityOverlay">
+      <div class="community-bar">
+        <button type="button" class="back-btn" id="btnCommunityBack" style="display:flex" aria-label="Close community">
+          <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="title">Community</div>
+      </div>
+      <iframe class="community-frame" id="communityFrame" title="Community"></iframe>
     </div>
   </main>
 
@@ -158,17 +199,19 @@ html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,
 (function () {
   var GITHUB_BASE = "https://raw.githubusercontent.com/subham781/App-ui-s/main/";
   var FIREBASE_DB = "https://prepexam-f98bf-default-rtdb.firebaseio.com";
+  var COMMUNITY_FILE = "community"; /* GitHub file name */
 
   var PAGES = {
-    home:         { title: "Home",          file: "app shell home" },
+    home:         { title: "Home",           file: "app shell home" },
     study:        { title: "Study material", file: "app shell study material" },
-    mock:         { title: "Mock tests",    file: "app shell mock tests" },
-    notification: { title: "Notifications", file: "notification" },
-    profile:      { title: "Profile",       file: "app shell profile" }
+    mock:         { title: "Mock tests",     file: "app shell mock tests" },
+    notification: { title: "Notifications",  file: "notification" },
+    profile:      { title: "Profile",        file: "app shell profile" }
   };
 
   var userId = "", userName = "", currentPage = "home";
   var cache = {};
+  var nestedOpen = false; /* child opened inner file (study tool / material) */
   var content = document.getElementById("content");
   var loading = document.getElementById("frameLoading");
   var errBox = document.getElementById("frameError");
@@ -177,7 +220,9 @@ html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,
   var subTitle = document.getElementById("subTitle");
   var bottomnav = document.getElementById("bottomnav");
   var userChip = document.getElementById("userChip");
-  var historyStack = [];
+  var communityOverlay = document.getElementById("communityOverlay");
+  var communityFrame = document.getElementById("communityFrame");
+  var communityLoaded = false;
 
   function getWebViewString() {
     try { if (window.AppInventor && window.AppInventor.getWebViewString) return String(window.AppInventor.getWebViewString() || "").trim(); } catch (e) {}
@@ -194,6 +239,10 @@ html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,
     var p = PAGES[key]; if (!p) return "";
     return GITHUB_BASE + String(p.file).split("/").map(encodeURIComponent).join("/");
   }
+  function communityUrl() {
+    return GITHUB_BASE + encodeURIComponent(COMMUNITY_FILE);
+  }
+
   function ensureSlot(key) {
     var id = "slot_" + key;
     var el = document.getElementById(id);
@@ -204,33 +253,61 @@ html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,
     content.appendChild(el);
     return el;
   }
+
+  function setTitlebarVisible(show) {
+    titlebar.classList.toggle("hidden-bar", !show);
+  }
+
   function setChrome(key) {
     var isHome = key === "home";
     titlebar.classList.toggle("home-mode", isHome);
     titlebar.classList.toggle("sub-mode", !isHome);
-    subTitle.style.display = isHome ? "none" : "block";
     subTitle.textContent = (PAGES[key] && PAGES[key].title) || key;
-    bottomnav.classList.toggle("hidden", !isHome);
+    /* Bottom nav always on main tabs unless nested/search/community */
+    if (!nestedOpen && communityOverlay.classList.contains("open") === false && !window.__PREPEXAM_IN_TEST__) {
+      bottomnav.classList.remove("hidden");
+      setTitlebarVisible(true);
+    }
     document.querySelectorAll(".nav-item").forEach(function (btn) {
       var on = btn.getAttribute("data-page") === key;
       btn.classList.toggle("active", on);
       btn.setAttribute("aria-selected", on ? "true" : "false");
     });
   }
+
   function showLoading(on) { loading.classList.toggle("hide", !on); }
   function showError(msg) { errMsg.textContent = msg || "Page load nahi hua."; errBox.classList.add("show"); showLoading(false); }
   function hideError() { errBox.classList.remove("show"); }
 
+  /**
+   * Bridge for child pages:
+   * - injects userId
+   * - on OPEN / nested viewer: parent.postMessage({type:'prepexam-nested', open:true})
+   * - on BACK from nested: parent.postMessage({type:'prepexam-nested', open:false})
+   * Child pages should call these when opening study tools / material files.
+   * Also auto-detect common patterns: OPEN webviewstring, #viewer display, etc.
+   */
   function injectBridge(html) {
-    var bridge = "\n<script>(function(){try{" +
+    var bridge =
+      "\n<script>(function(){try{" +
       "window.__PREPEXAM_USER_ID__=" + JSON.stringify(userId) + ";" +
       "window.__PREPEXAM_USER_NAME__=" + JSON.stringify(userName) + ";" +
       "if(!window.AppInventor)window.AppInventor={};" +
       "if(!window.AppInventor.getWebViewString)window.AppInventor.getWebViewString=function(){return window.__PREPEXAM_USER_ID__||'';};" +
       "if(!window.Kodular)window.Kodular={};" +
       "if(!window.Kodular.getWebViewString)window.Kodular.getWebViewString=function(){return window.__PREPEXAM_USER_ID__||'';};" +
-      "document.addEventListener('focusin',function(e){try{if(e.target&&(e.target.matches('input[type=search],input.search,.search,#globalSearch')))parent.postMessage({type:'prepexam-search',open:true},'*');}catch(x){}});" +
-      "document.addEventListener('focusout',function(e){try{if(e.target&&(e.target.matches('input[type=search],input.search,.search,#globalSearch')))setTimeout(function(){parent.postMessage({type:'prepexam-search',open:false},'*');},180);}catch(x){}});" +
+      "function peMsg(t,o){try{parent.postMessage({type:t,open:!!o},'*');}catch(e){}}" +
+      "window.PrepExamShell={openNested:function(){peMsg('prepexam-nested',true);},closeNested:function(){peMsg('prepexam-nested',false);}};" +
+      /* Hook setWebViewString OPEN/BACK if present */
+      "(function(){" +
+      "function wrap(obj,name){if(!obj||!obj[name])return;var orig=obj[name].bind(obj);obj[name]=function(v){var s=String(v||'');if(/^OPEN/i.test(s)||s==='OPEN')peMsg('prepexam-nested',true);if(/^BACK/i.test(s)||s==='BACK')peMsg('prepexam-nested',false);return orig(v);};}" +
+      "wrap(window.AppInventor,'setWebViewString');wrap(window.Kodular,'setWebViewString');" +
+      "})();" +
+      /* Search focus */
+      "document.addEventListener('focusin',function(e){try{if(e.target&&(e.target.matches('input[type=search],input.search,.search,#globalSearch')))peMsg('prepexam-search',true);}catch(x){}});" +
+      "document.addEventListener('focusout',function(e){try{if(e.target&&(e.target.matches('input[type=search],input.search,.search,#globalSearch')))setTimeout(function(){peMsg('prepexam-search',false);},180);}catch(x){}});" +
+      /* Observe #viewer show/hide (Home study tools pattern) */
+      "setTimeout(function(){try{var v=document.getElementById('viewer');if(!v)return;var obs=new MutationObserver(function(){var on=v.style.display==='flex'||v.style.display==='block'||v.classList.contains('open');peMsg('prepexam-nested',on);});obs.observe(v,{attributes:true,attributeFilter:['style','class']});}catch(e){}},400);" +
       "}catch(e){}})();<\/script>\n";
     if (/<\/head>/i.test(html)) return html.replace(/<\/head>/i, bridge + "</head>");
     if (/<body[^>]*>/i.test(html)) return html.replace(/<body([^>]*)>/i, "<body$1>" + bridge);
@@ -260,9 +337,13 @@ html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,
   async function openPage(key, opts) {
     opts = opts || {};
     if (!PAGES[key]) return;
+    /* Leaving nested when switching tabs */
+    nestedOpen = false;
+    closeCommunity();
+    setTitlebarVisible(true);
+    bottomnav.classList.remove("hidden");
+
     var force = !!opts.force;
-    var fromBack = !!opts.fromBack;
-    if (!fromBack && currentPage && currentPage !== key) historyStack.push(currentPage);
     currentPage = key;
     setChrome(key);
     hideError();
@@ -280,23 +361,80 @@ html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,
       showError((e && e.message) || "Network error");
     }
   }
-  function goBack() {
-    if (historyStack.length) { openPage(historyStack.pop(), { fromBack: true }); return; }
-    openPage("home", { fromBack: true });
+
+  async function openCommunity() {
+    communityOverlay.classList.add("open");
+    setTitlebarVisible(false); /* only community bar back — no double back */
+    bottomnav.classList.add("hidden");
+    if (communityLoaded) return;
+    try {
+      var url = communityUrl() + "?t=" + Date.now();
+      var res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      var html = await res.text();
+      /* strip any internal back bars if possible — community uses shell back only */
+      html = injectBridge(html);
+      var doc = communityFrame.contentDocument || communityFrame.contentWindow.document;
+      doc.open(); doc.write(html); doc.close();
+      communityLoaded = true;
+    } catch (e) {
+      var doc = communityFrame.contentDocument || communityFrame.contentWindow.document;
+      doc.open();
+      doc.write("<p style='padding:24px;font-family:Inter,sans-serif;color:#64748b'>Community load failed. Check GitHub file: community</p>");
+      doc.close();
+    }
+  }
+  function closeCommunity() {
+    communityOverlay.classList.remove("open");
+    if (!nestedOpen) {
+      setTitlebarVisible(true);
+      bottomnav.classList.remove("hidden");
+    }
   }
 
   document.querySelectorAll(".nav-item").forEach(function (btn) {
-    btn.addEventListener("click", function () { openPage(btn.getAttribute("data-page"), {}); });
+    btn.addEventListener("click", function () {
+      openPage(btn.getAttribute("data-page"), {});
+    });
   });
-  document.getElementById("btnBack").onclick = goBack;
-  document.getElementById("btnRefresh").onclick = function () { openPage(currentPage, { force: true, fromBack: true }); };
-  document.getElementById("btnRetry").onclick = function () { openPage(currentPage, { force: true, fromBack: true }); };
+  document.getElementById("btnCommunity").onclick = openCommunity;
+  document.getElementById("btnCommunityBack").onclick = closeCommunity;
+  document.getElementById("btnBack").onclick = function () {
+    /* reserved — normally hidden; close community if somehow shown */
+    closeCommunity();
+  };
+  document.getElementById("btnRetry").onclick = function () {
+    openPage(currentPage, { force: true });
+  };
 
   window.addEventListener("message", function (e) {
     var d = e.data || {};
+    if (d.type === "prepexam-nested") {
+      nestedOpen = !!d.open;
+      if (nestedOpen) {
+        setTitlebarVisible(false);
+        bottomnav.classList.add("hidden");
+      } else {
+        if (!communityOverlay.classList.contains("open")) {
+          setTitlebarVisible(true);
+          bottomnav.classList.remove("hidden");
+        }
+      }
+    }
     if (d.type === "prepexam-search") {
       if (d.open) bottomnav.classList.add("hidden");
-      else if (currentPage === "home") bottomnav.classList.remove("hidden");
+      else if (!nestedOpen && !communityOverlay.classList.contains("open") && !window.__PREPEXAM_IN_TEST__)
+        bottomnav.classList.remove("hidden");
+    }
+    if (d.type === "prepexam-intest") {
+      window.__PREPEXAM_IN_TEST__ = !!d.open;
+      if (d.open) {
+        setTitlebarVisible(false);
+        bottomnav.classList.add("hidden");
+      } else if (!nestedOpen) {
+        setTitlebarVisible(true);
+        bottomnav.classList.remove("hidden");
+      }
     }
   });
 
@@ -318,7 +456,7 @@ html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,-apple-system,
 
   (async function init() {
     await resolveUser();
-    await openPage("home", { fromBack: true });
+    await openPage("home", { force: false });
   })();
 })();
 </script>

@@ -169,7 +169,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min
 <script>
 (function () {
   var FIREBASE_DB = "https://prepexam-f98bf-default-rtdb.firebaseio.com";
-  var EXAMS_PATH = "Exams"; /* Firebase path */
+  var EXAMS_PATH = "exams"; /* Firebase path */
 
   var userId = "", userName = "", userProfile = {}, analysis = {}, userAttempts = {};
   var examData = null, currentExamId = "", currentTestKey = "";

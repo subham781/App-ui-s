@@ -9,75 +9,93 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{
   font-family:Inter,system-ui,sans-serif;
-  background:#f1f5f9;color:#0f172a;min-height:100vh;padding:14px 14px 40px;
+  background:#f0f4f8;color:#0f172a;min-height:100vh;padding:14px 14px 48px;
 }
 .wrap{max-width:480px;margin:0 auto}
+
 .hero{
-  background:linear-gradient(135deg,#2563eb,#4f46e5);
-  border-radius:20px;padding:22px 18px 18px;color:#fff;
-  box-shadow:0 12px 28px rgba(37,99,235,.22);margin-bottom:12px;position:relative;
+  background:linear-gradient(145deg,#1e40af 0%,#4f46e5 55%,#6366f1 100%);
+  border-radius:22px;padding:22px 18px 18px;color:#fff;margin-bottom:12px;
+  box-shadow:0 14px 32px rgba(37,99,235,.28);position:relative;overflow:hidden;
 }
-.hero-actions{position:absolute;top:12px;right:12px;display:flex;gap:8px}
+.hero::before{
+  content:"";position:absolute;right:-40px;top:-40px;width:140px;height:140px;
+  border-radius:50%;background:rgba(255,255,255,.08);
+}
+.hero-actions{position:absolute;top:12px;right:12px;z-index:2}
 .icon-btn{
-  width:36px;height:36px;border:0;border-radius:12px;
+  width:38px;height:38px;border:0;border-radius:12px;
   background:rgba(255,255,255,.18);color:#fff;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
 }
 .icon-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.avatar-wrap{display:flex;justify-content:center;margin-bottom:10px}
+.avatar-wrap{display:flex;justify-content:center;margin-bottom:10px;position:relative;z-index:1}
 .avatar,.avatar-fallback{
-  width:84px;height:84px;border-radius:50%;border:3px solid rgba(255,255,255,.5);
+  width:88px;height:88px;border-radius:50%;border:3px solid rgba(255,255,255,.55);
 }
 .avatar{object-fit:cover;background:#ddd;display:block}
 .avatar-fallback{
   background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;
-  font-size:1.9rem;font-weight:800;
+  font-size:2rem;font-weight:800;
 }
-.display-name{text-align:center;font-size:1.28rem;font-weight:800;letter-spacing:-.02em}
-.channel{text-align:center;opacity:.9;font-size:.88rem;font-weight:600;margin-top:3px}
-.bio{text-align:center;opacity:.88;font-size:.82rem;margin-top:8px;line-height:1.4;max-width:340px;margin-left:auto;margin-right:auto}
-.tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.display-name{text-align:center;font-size:1.3rem;font-weight:800;letter-spacing:-.02em;position:relative;z-index:1}
+.channel{text-align:center;opacity:.9;font-size:.88rem;font-weight:600;margin-top:3px;position:relative;z-index:1}
+.bio{text-align:center;opacity:.88;font-size:.82rem;margin-top:8px;line-height:1.4;max-width:340px;margin-left:auto;margin-right:auto;position:relative;z-index:1}
+.tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:12px;position:relative;z-index:1}
 .tag{
   background:rgba(255,255,255,.18);border-radius:999px;padding:5px 11px;
   font-size:.7rem;font-weight:700;
 }
 .stats{
   display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
-  margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.2);
+  margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.2);position:relative;z-index:1;
 }
 .stat{text-align:center}
 .stat b{display:block;font-size:1.05rem;font-weight:800}
-.stat span{font-size:.62rem;opacity:.85;font-weight:600}
+.stat span{font-size:.6rem;opacity:.85;font-weight:600}
+
 .card{
-  background:#fff;border-radius:16px;border:1px solid #e8ecf4;
+  background:#fff;border-radius:18px;border:1px solid #e8ecf4;
   box-shadow:0 2px 12px rgba(15,23,42,.04);padding:14px;margin-bottom:12px;
 }
 .section-title{
   font-size:.72rem;font-weight:800;color:#4f46e5;text-transform:uppercase;
-  letter-spacing:.4px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;
+  letter-spacing:.4px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;
 }
 .section-title select{
   border:1px solid #e2e8f0;border-radius:10px;padding:5px 8px;font-size:.7rem;font-weight:700;
   background:#f8fafc;color:#334155;text-transform:none;letter-spacing:0;
 }
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .mini{
-  background:#f8fafc;border:1px solid #eef2f7;border-radius:14px;padding:12px;text-align:center;
+  background:#f8fafc;border:1px solid #eef2f7;border-radius:14px;padding:12px 8px;text-align:center;
 }
-.mini b{display:block;font-size:1.12rem;color:#0f172a;font-weight:800}
-.mini span{font-size:.68rem;color:#64748b;font-weight:600}
+.mini b{display:block;font-size:1.1rem;color:#0f172a;font-weight:800}
+.mini span{font-size:.65rem;color:#64748b;font-weight:600}
 .mini.acc b{color:#2563eb}.mini.ok b{color:#15803d}.mini.bad b{color:#b91c1c}
+
 .row{
   display:flex;justify-content:space-between;align-items:center;
-  padding:9px 0;border-bottom:1px solid #f1f5f9;font-size:.86rem;
+  padding:11px 0;border-bottom:1px solid #f1f5f9;font-size:.86rem;cursor:pointer;
 }
 .row:last-child{border-bottom:0}
-.row span{color:#64748b;font-weight:500}
-.row b{color:#0f172a;font-weight:700}
+.row:active{opacity:.85}
+.row .left{display:flex;align-items:center;gap:10px;color:#0f172a;font-weight:600}
+.row .ico{
+  width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-size:.95rem;flex-shrink:0;
+}
+.row .ico.s{background:#eff6ff;color:#1d4ed8}
+.row .ico.l{background:#fdf2f8;color:#be185d}
+.row .ico.r{background:#ecfdf5;color:#047857}
+.row .ico.f{background:#f5f3ff;color:#6d28d9}
+.row .right{display:flex;align-items:center;gap:8px;color:#64748b;font-weight:700}
+.row .chev{color:#94a3b8;font-weight:800}
+
 .bar-wrap{margin-top:10px}
 .bar-label{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:4px;font-weight:600}
-.bar-label span:last-child{color:#64748b;font-weight:600}
+.bar-label span:last-child{color:#64748b}
 .bar-bg{height:8px;background:#eef2ff;border-radius:99px;overflow:hidden}
 .bar-fill{height:100%;background:linear-gradient(90deg,#2563eb,#4f46e5);border-radius:99px}
 .weak-box{
@@ -86,9 +104,12 @@ body{
 }
 .weak-box b{display:block;font-size:.88rem;color:#c2410c;margin-bottom:4px}
 .weak-box p{font-size:.78rem;color:#9a3412;line-height:1.4}
+
 .loading,.error{text-align:center;padding:48px 16px;color:#64748b;font-size:.92rem;line-height:1.5}
 .error{color:#b91c1c}
 .uid-hint{text-align:center;font-size:.7rem;color:#94a3b8;margin:-2px 0 12px}
+.empty-note{font-size:.8rem;color:#64748b;text-align:center;padding:16px 8px}
+
 .edit-panel{display:none}
 .edit-panel.show{display:block}
 label{display:block;font-size:.76rem;font-weight:700;color:#475569;margin:10px 0 5px}
@@ -104,13 +125,53 @@ textarea{min-height:76px;resize:vertical}
 }
 .btn-ghost{background:#e2e8f0;color:#0f172a}
 .btn-primary{background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff}
+
 .toast{
   position:fixed;left:50%;bottom:24px;transform:translateX(-50%);
   background:#0f172a;color:#fff;padding:10px 16px;border-radius:999px;
-  font-size:.8rem;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:50;
+  font-size:.8rem;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:60;
 }
 .toast.show{opacity:1}
-.empty-note{font-size:.8rem;color:#64748b;text-align:center;padding:8px 0}
+
+/* Detail sheet */
+.sheet-bg{
+  display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:50;
+}
+.sheet-bg.open{display:block}
+.sheet{
+  position:fixed;left:0;right:0;bottom:0;z-index:51;
+  background:#fff;border-radius:20px 20px 0 0;max-height:88vh;
+  display:flex;flex-direction:column;
+  transform:translateY(105%);transition:transform .28s cubic-bezier(.2,.8,.2,1);
+  box-shadow:0 -8px 32px rgba(15,23,42,.18);
+}
+.sheet.open{transform:translateY(0)}
+.sheet-head{
+  flex-shrink:0;padding:12px 16px;border-bottom:1px solid #eef2f7;
+  display:flex;align-items:center;gap:10px;
+}
+.sheet-head h3{flex:1;font-size:1rem;font-weight:800}
+.sheet-close{
+  width:36px;height:36px;border:0;border-radius:11px;background:#f1f5f9;
+  font-size:1.2rem;font-weight:700;cursor:pointer;
+}
+.sheet-body{flex:1;overflow:auto;padding:12px 14px 28px;-webkit-overflow-scrolling:touch}
+.q-card{
+  background:#f8fafc;border:1px solid #e8ecf4;border-radius:14px;padding:12px;margin-bottom:10px;
+}
+.q-card .q-meta{font-size:.68rem;font-weight:700;color:#64748b;margin-bottom:6px}
+.q-card .q-text{font-size:.88rem;font-weight:600;line-height:1.45}
+.q-card .q-opt{font-size:.8rem;color:#475569;margin-top:4px;padding-left:4px}
+.user-row{
+  display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f1f5f9;
+}
+.user-row:last-child{border-bottom:0}
+.user-av{
+  width:40px;height:40px;border-radius:50%;background:#e0e7ff;color:#3730a3;
+  display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;
+}
+.user-row b{font-size:.88rem;display:block}
+.user-row span{font-size:.72rem;color:#64748b}
 </style>
 </head>
 <body>
@@ -119,9 +180,19 @@ textarea{min-height:76px;resize:vertical}
 </div>
 <div class="toast" id="toast">Saved</div>
 
+<div class="sheet-bg" id="sheetBg"></div>
+<div class="sheet" id="sheet" aria-hidden="true">
+  <div class="sheet-head">
+    <h3 id="sheetTitle">Activity</h3>
+    <button type="button" class="sheet-close" id="sheetClose">×</button>
+  </div>
+  <div class="sheet-body" id="sheetBody"></div>
+</div>
+
 <script>
 (function () {
   var FIREBASE_DB = "https://prepexam-f98bf-default-rtdb.firebaseio.com";
+  var MCQ_SCRIPT = ""; /* optional: Apps Script for question fetch by id — leave empty to use stored snapshots */
   var currentKey = "";
   var currentData = null;
 
@@ -131,8 +202,7 @@ textarea{min-height:76px;resize:vertical}
     if (s.indexOf("USER|") === 0) s = s.substring(5).trim();
     if (s.indexOf("|") > 0) s = s.split("|").pop();
     if (s.indexOf("@") > 0) s = s.split("@")[0];
-    s = s.replace(/@gmail\.com$/i, "").replace(/[.#$\[\]\/]/g, "_").trim();
-    return s;
+    return s.replace(/@gmail\.com$/i, "").replace(/[.#$\[\]\/]/g, "_").trim();
   }
   function getUserFromKodular() {
     try {
@@ -167,7 +237,6 @@ textarea{min-height:76px;resize:vertical}
     t.classList.add("show");
     setTimeout(function () { t.classList.remove("show"); }, 1800);
   }
-
   async function firebaseGet(path) {
     var r = await fetch(FIREBASE_DB + "/" + path + ".json?t=" + Date.now());
     if (!r.ok) throw new Error("GET " + r.status);
@@ -195,19 +264,17 @@ textarea{min-height:76px;resize:vertical}
     return worst;
   }
 
-  function renderBars(map, mode) {
+  function renderBars(map) {
     var entries = Object.keys(map || {}).map(function (k) {
       var s = map[k] || {};
       return {
         k: k,
         attempted: Number(s.attempted) || 0,
-        correct: Number(s.correct) || 0,
-        wrong: Number(s.wrong) || 0,
         accuracy: s.accuracy != null ? Number(s.accuracy) : calcAcc(s.correct, s.attempted)
       };
     }).filter(function (e) { return e.attempted > 0; });
     entries.sort(function (a, b) { return b.attempted - a.attempted; });
-    if (!entries.length) return '<div class="empty-note">Attempt questions on Home to see breakdown</div>';
+    if (!entries.length) return '<div class="empty-note">Attempt questions to see breakdown</div>';
     var max = entries[0].attempted || 1;
     return entries.slice(0, 10).map(function (e) {
       var pct = Math.round((e.attempted / max) * 100);
@@ -215,6 +282,118 @@ textarea{min-height:76px;resize:vertical}
         '</span><span>' + e.accuracy + '% · ' + e.attempted + ' Q</span></div>' +
         '<div class="bar-bg"><div class="bar-fill" style="width:' + pct + '%"></div></div></div>';
     }).join("");
+  }
+
+  function openSheet(title, html) {
+    document.getElementById("sheetTitle").textContent = title;
+    document.getElementById("sheetBody").innerHTML = html || '<div class="empty-note">Empty</div>';
+    document.getElementById("sheetBg").classList.add("open");
+    document.getElementById("sheet").classList.add("open");
+    document.getElementById("sheet").setAttribute("aria-hidden", "false");
+  }
+  function closeSheet() {
+    document.getElementById("sheetBg").classList.remove("open");
+    document.getElementById("sheet").classList.remove("open");
+    document.getElementById("sheet").setAttribute("aria-hidden", "true");
+  }
+  document.getElementById("sheetClose").onclick = closeSheet;
+  document.getElementById("sheetBg").onclick = closeSheet;
+
+  function mapToList(obj) {
+    if (!obj || typeof obj !== "object") return [];
+    return Object.keys(obj).map(function (k) {
+      var v = obj[k];
+      if (v && typeof v === "object") {
+        return Object.assign({ id: k }, v);
+      }
+      /* true / timestamp flag */
+      return { id: k, flag: v, q: "", subject: "", topic: "" };
+    });
+  }
+
+  function renderQuestionCards(list, emptyMsg) {
+    if (!list.length) return '<div class="empty-note">' + escapeHTML(emptyMsg || "No items yet") + "</div>";
+    return list.map(function (it) {
+      var q = it.q || it.question || it.text || "";
+      var meta = [it.subject, it.topic || it.chapter, it.exam].filter(Boolean).join(" · ");
+      var opts = it.options || [];
+      if (!Array.isArray(opts)) opts = [];
+      var optsHtml = opts.slice(0, 4).map(function (o, i) {
+        return '<div class="q-opt">' + String.fromCharCode(65 + i) + ". " + escapeHTML(o) + "</div>";
+      }).join("");
+      if (!q) {
+        q = "Question ID: " + (it.id || "—");
+        meta = (meta ? meta + " · " : "") + "Open Home feed to practice; snapshot not saved yet";
+      }
+      return '<div class="q-card"><div class="q-meta">' + escapeHTML(meta || "MCQ") +
+        "</div><div class=\"q-text\">" + escapeHTML(q) + "</div>" + optsHtml + "</div>";
+    }).join("");
+  }
+
+  function renderFollowingList(following) {
+    var list = mapToList(following);
+    if (!list.length) return '<div class="empty-note">Not following anyone yet</div>';
+    return list.map(function (u) {
+      var name = u.name || u.channelName || u.id || "User";
+      var ch = u.channelName || ("@" + (u.id || ""));
+      return '<div class="user-row"><div class="user-av">' + escapeHTML(String(name).charAt(0).toUpperCase()) +
+        "</div><div><b>" + escapeHTML(name) + "</b><span>" + escapeHTML(ch) + "</span></div></div>";
+    }).join("");
+  }
+
+  async function enrichQuestions(list) {
+    /* Try load snapshot from Users/{id}/questionCache/{qid} if present */
+    var out = [];
+    for (var i = 0; i < list.length; i++) {
+      var it = list[i];
+      if (it.q || it.question) { out.push(it); continue; }
+      try {
+        var snap = await firebaseGet("Users/" + currentKey + "/questionCache/" + encodeURIComponent(it.id));
+        if (snap && typeof snap === "object") {
+          out.push(Object.assign({}, it, snap));
+          continue;
+        }
+      } catch (e) {}
+      try {
+        var global = await firebaseGet("questionBank/" + encodeURIComponent(it.id));
+        if (global && typeof global === "object") {
+          out.push(Object.assign({}, it, global));
+          continue;
+        }
+      } catch (e) {}
+      out.push(it);
+    }
+    return out;
+  }
+
+  async function showActivity(type) {
+    var data = currentData || {};
+    var consume = data.consume || {};
+    var title = "Activity";
+    var list = [];
+
+    if (type === "saved") {
+      title = "Saved MCQs";
+      list = mapToList(data.savedQuestions || consume.savedMcq || {});
+    } else if (type === "liked") {
+      title = "Liked MCQs";
+      list = mapToList(data.likedQuestions || consume.likedMcq || {});
+    } else if (type === "revision") {
+      title = "Revision list";
+      list = mapToList(data.revisionQuestions || consume.revision || {});
+    } else if (type === "following") {
+      title = "Following";
+      openSheet(title, renderFollowingList(data.following || {}));
+      return;
+    }
+
+    openSheet(title, '<div class="empty-note">Loading…</div>');
+    try {
+      var enriched = await enrichQuestions(list);
+      openSheet(title, renderQuestionCards(enriched, "No " + title.toLowerCase() + " yet"));
+    } catch (e) {
+      openSheet(title, renderQuestionCards(list, "Could not load details"));
+    }
   }
 
   function renderProfile(key, data) {
@@ -230,7 +409,6 @@ textarea{min-height:76px;resize:vertical}
     var exams = analysis.exams || {};
     var pyqYears = analysis.pyqYears || {};
     var provide = data.provide || {};
-    var consume = data.consume || {};
     var settings = data.settings || {};
     var insights = data.insights || {};
 
@@ -245,11 +423,16 @@ textarea{min-height:76px;resize:vertical}
     var wrong = Number(allTime.wrong) || 0;
     var accuracy = allTime.accuracy != null ? Number(allTime.accuracy) : calcAcc(correct, attempted);
 
+    var nSaved = countKeys(data.savedQuestions || (data.consume && data.consume.savedMcq));
+    var nLiked = countKeys(data.likedQuestions || (data.consume && data.consume.likedMcq));
+    var nRev = countKeys(data.revisionQuestions);
+    var nFollow = countKeys(data.following);
+
     var app = document.getElementById("app");
     app.innerHTML =
       '<div class="hero">' +
         '<div class="hero-actions">' +
-          '<button class="icon-btn" type="button" id="btnEdit" title="Edit" aria-label="Edit">' +
+          '<button class="icon-btn" type="button" id="btnEdit" title="Edit">' +
             '<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>' +
           '</button>' +
         '</div>' +
@@ -263,14 +446,14 @@ textarea{min-height:76px;resize:vertical}
         '<div class="bio">' + escapeHTML(p.bio || "No bio yet — tap edit") + '</div>' +
         '<div class="tags">' +
           '<span class="tag">' + escapeHTML(p.targetExam || p.examTarget || "Exam") + '</span>' +
-          '<span class="tag">' + escapeHTML(p.targetYear || "") + '</span>' +
+          (p.targetYear ? '<span class="tag">' + escapeHTML(p.targetYear) + '</span>' : '') +
           '<span class="tag">' + escapeHTML(settings.language || p.preferredLanguage || "en") + '</span>' +
         '</div>' +
         '<div class="stats">' +
-          '<div class="stat"><b>' + (stats.mcqPosted || 0) + '</b><span>MCQ</span></div>' +
-          '<div class="stat"><b>' + (stats.mocksCount || 0) + '</b><span>Mocks</span></div>' +
+          '<div class="stat"><b>' + (stats.mcqPosted || countKeys(provide.mcq)) + '</b><span>MCQ</span></div>' +
+          '<div class="stat"><b>' + (stats.mocksCount || countKeys(provide.mocks) || countKeys(data.mockTestAttempts)) + '</b><span>Mocks</span></div>' +
           '<div class="stat"><b>' + (stats.likesReceived || 0) + '</b><span>Likes</span></div>' +
-          '<div class="stat"><b>' + (stats.followers || countKeys(data.following)) + '</b><span>Following</span></div>' +
+          '<div class="stat"><b>' + nFollow + '</b><span>Following</span></div>' +
         '</div>' +
       '</div>' +
 
@@ -279,31 +462,31 @@ textarea{min-height:76px;resize:vertical}
       '<div class="card edit-panel" id="editPanel">' +
         '<div class="section-title">Edit profile</div>' +
         '<label>Display name</label>' +
-        '<input id="ed_name" type="text" value="' + escapeHTML(p.name || "") + '" placeholder="Your name">' +
+        '<input id="ed_name" type="text" value="' + escapeHTML(p.name || "") + '">' +
         '<label>Channel name</label>' +
-        '<input id="ed_channel" type="text" value="' + escapeHTML(p.channelName || "") + '" placeholder="@channel">' +
+        '<input id="ed_channel" type="text" value="' + escapeHTML(p.channelName || "") + '">' +
         '<label>Bio</label>' +
-        '<textarea id="ed_bio" placeholder="About you">' + escapeHTML(p.bio || "") + '</textarea>' +
+        '<textarea id="ed_bio">' + escapeHTML(p.bio || "") + '</textarea>' +
         '<label>Photo URL</label>' +
-        '<input id="ed_photo" type="url" value="' + escapeHTML(photo) + '" placeholder="https://…">' +
+        '<input id="ed_photo" type="url" value="' + escapeHTML(photo) + '">' +
         '<label>Target exam</label>' +
-        '<input id="ed_exam" type="text" value="' + escapeHTML(p.targetExam || p.examTarget || "") + '" placeholder="SSC CGL">' +
+        '<input id="ed_exam" type="text" value="' + escapeHTML(p.targetExam || p.examTarget || "") + '">' +
         '<label>Target year</label>' +
-        '<input id="ed_year" type="text" value="' + escapeHTML(p.targetYear || "") + '" placeholder="2026">' +
-        '<label>Preferred language</label>' +
+        '<input id="ed_year" type="text" value="' + escapeHTML(p.targetYear || "") + '">' +
+        '<label>Language</label>' +
         '<select class="field" id="ed_lang">' +
           '<option value="hi"' + ((settings.language === "hi" || p.preferredLanguage === "hi") ? " selected" : "") + '>Hindi</option>' +
           '<option value="en"' + ((settings.language !== "hi" && p.preferredLanguage !== "hi") ? " selected" : "") + '>English</option>' +
         '</select>' +
         '<label>Daily reminder hour (0–23)</label>' +
-        '<input id="ed_reminder" type="number" min="0" max="23" value="' + escapeHTML(settings.dailyReminderHour != null ? settings.dailyReminderHour : 20) + '">' +
+        '<input id="ed_reminder" type="number" min="0" max="23" value="' +
+          escapeHTML(settings.dailyReminderHour != null ? settings.dailyReminderHour : 20) + '">' +
         '<div class="btn-row">' +
           '<button class="btn btn-ghost" type="button" id="btnCancelEdit">Cancel</button>' +
           '<button class="btn btn-primary" type="button" id="btnSaveEdit">Save to Firebase</button>' +
         '</div>' +
       '</div>' +
 
-      /* ANALYSIS — moved from Home */
       '<div class="card">' +
         '<div class="section-title">Your analysis</div>' +
         '<div class="grid4">' +
@@ -312,12 +495,12 @@ textarea{min-height:76px;resize:vertical}
           '<div class="mini bad"><b>' + wrong + '</b><span>Wrong</span></div>' +
           '<div class="mini acc"><b>' + accuracy + '%</b><span>Accuracy</span></div>' +
         '</div>' +
-        '<div class="row" style="margin-top:10px"><span>Today</span><b>' +
+        '<div class="row" style="cursor:default;margin-top:4px"><span style="color:#64748b;font-weight:500">Today</span><b>' +
           (today.attempted ? ((today.accuracy != null ? today.accuracy : calcAcc(today.correct, today.attempted)) + '% · ' + (today.attempted || 0) + ' Q') : '—') +
         '</b></div>' +
         (weak
           ? '<div class="weak-box"><b>Weak subject: ' + escapeHTML(weak.subject) + '</b><p>' +
-            weak.accuracy + '% accuracy · ' + weak.attempted + ' attempted · ' + (weak.wrong || 0) + ' wrong. Practice this more.</p></div>'
+            weak.accuracy + '% accuracy · ' + weak.attempted + ' attempted · ' + (weak.wrong || 0) + ' wrong</p></div>'
           : '') +
       '</div>' +
 
@@ -330,22 +513,26 @@ textarea{min-height:76px;resize:vertical}
             '<option value="pyq">PYQ year</option>' +
           '</select>' +
         '</div>' +
-        '<div id="analysisBars">' + renderBars(subjects, "subject") + '</div>' +
+        '<div id="analysisBars">' + renderBars(subjects) + '</div>' +
       '</div>' +
 
       '<div class="card">' +
-        '<div class="section-title">Activity</div>' +
-        '<div class="row"><span>Saved MCQ</span><b>' + countKeys(data.savedQuestions || consume.savedMcq) + '</b></div>' +
-        '<div class="row"><span>Liked MCQ</span><b>' + countKeys(data.likedQuestions || consume.likedMcq) + '</b></div>' +
-        '<div class="row"><span>Revision list</span><b>' + countKeys(data.revisionQuestions) + '</b></div>' +
-        '<div class="row"><span>Following</span><b>' + countKeys(data.following) + '</b></div>' +
+        '<div class="section-title">Activity · tap to open</div>' +
+        '<div class="row" data-act="saved"><div class="left"><div class="ico s">🔖</div>Saved MCQs</div>' +
+          '<div class="right"><span>' + nSaved + '</span><span class="chev">›</span></div></div>' +
+        '<div class="row" data-act="liked"><div class="left"><div class="ico l">♥</div>Liked MCQs</div>' +
+          '<div class="right"><span>' + nLiked + '</span><span class="chev">›</span></div></div>' +
+        '<div class="row" data-act="revision"><div class="left"><div class="ico r">📋</div>Revision list</div>' +
+          '<div class="right"><span>' + nRev + '</span><span class="chev">›</span></div></div>' +
+        '<div class="row" data-act="following"><div class="left"><div class="ico f">👥</div>Following</div>' +
+          '<div class="right"><span>' + nFollow + '</span><span class="chev">›</span></div></div>' +
       '</div>' +
 
       '<div class="card">' +
-        '<div class="section-title">Uploaded (provide)</div>' +
-        '<div class="row"><span>MCQ</span><b>' + countKeys(provide.mcq) + '</b></div>' +
-        '<div class="row"><span>Posts</span><b>' + countKeys(provide.posts) + '</b></div>' +
-        '<div class="row"><span>Mocks</span><b>' + countKeys(provide.mocks) + '</b></div>' +
+        '<div class="section-title">Uploaded</div>' +
+        '<div class="row" style="cursor:default"><div class="left">MCQ</div><b>' + countKeys(provide.mcq) + '</b></div>' +
+        '<div class="row" style="cursor:default"><div class="left">Posts</div><b>' + countKeys(provide.posts) + '</b></div>' +
+        '<div class="row" style="cursor:default"><div class="left">Mocks</div><b>' + countKeys(provide.mocks) + '</b></div>' +
       '</div>';
 
     document.getElementById("btnEdit").onclick = function () {
@@ -362,15 +549,15 @@ textarea{min-height:76px;resize:vertical}
       if (mode === "topic") map = topics;
       if (mode === "exam") map = exams;
       if (mode === "pyq") map = pyqYears;
-      document.getElementById("analysisBars").innerHTML = renderBars(map, mode);
+      document.getElementById("analysisBars").innerHTML = renderBars(map);
     };
+    document.querySelectorAll("[data-act]").forEach(function (el) {
+      el.onclick = function () { showActivity(el.getAttribute("data-act")); };
+    });
   }
 
   async function saveProfile() {
-    if (!currentKey) {
-      showToast("User ID missing");
-      return;
-    }
+    if (!currentKey) { showToast("User ID missing"); return; }
     var name = (document.getElementById("ed_name").value || "").trim();
     var channel = (document.getElementById("ed_channel").value || "").trim();
     var bio = (document.getElementById("ed_bio").value || "").trim();
@@ -402,7 +589,6 @@ textarea{min-height:76px;resize:vertical}
       document.getElementById("editPanel").classList.remove("show");
       await load();
     } catch (e) {
-      console.warn(e);
       showToast("Save failed");
     }
   }
@@ -421,7 +607,6 @@ textarea{min-height:76px;resize:vertical}
     try {
       var data = await firebaseGet("Users/" + key);
       if (!data || typeof data !== "object") {
-        /* create minimal shell so edit works */
         data = { profile: { name: key }, analysis: { allTime: { attempted: 0, correct: 0, wrong: 0, accuracy: 0 } }, settings: { language: "en" } };
       }
       renderProfile(key, data);

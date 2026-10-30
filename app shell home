@@ -136,6 +136,87 @@ body{background:#f1f5f9;color:#0f172a;min-height:100vh}
 .viewer-title{font-size:1rem;font-weight:700}
 #viewer-frame{flex:1;width:100%;border:0}
 .v-loading{flex:1;display:flex;align-items:center;justify-content:center;color:#64748b}
+
+/* Chapter notes CTA below MCQ — opens viewer like Study tools */
+.chapter-notes-cta{
+  margin-top:12px;width:100%;border:1.5px solid #bfdbfe;background:linear-gradient(135deg,#eff6ff,#f8fafc);
+  border-radius:14px;padding:12px 14px;cursor:pointer;text-align:left;
+  display:flex;align-items:center;gap:12px;font-family:inherit;
+}
+.chapter-notes-cta:active{transform:scale(.98);background:#dbeafe}
+.chapter-notes-cta .cn-ico{
+  width:40px;height:40px;border-radius:12px;background:#2563eb;color:#fff;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;
+}
+.chapter-notes-cta .cn-text{flex:1;min-width:0}
+.chapter-notes-cta .cn-text b{display:block;font-size:.84rem;font-weight:800;color:#1e40af;line-height:1.3}
+.chapter-notes-cta .cn-text span{display:block;font-size:.7rem;color:#64748b;margin-top:2px;font-weight:600}
+.chapter-notes-cta .cn-arrow{color:#2563eb;font-weight:800;font-size:1.1rem;flex-shrink:0}
+.notes-slot .notes-loading{font-size:.72rem;color:#94a3b8;padding:8px 2px}
+
+
+/* Chapter bottom sheet */
+.notes-sheet-backdrop{
+  display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:10000;
+  opacity:0;transition:opacity .2s ease;-webkit-tap-highlight-color:transparent;
+}
+.notes-sheet-backdrop.open{display:block;opacity:1}
+.notes-sheet{
+  position:fixed;left:0;right:0;bottom:0;z-index:10001;
+  background:#fff;border-radius:18px 18px 0 0;
+  box-shadow:0 -8px 32px rgba(15,23,42,.2);
+  display:flex;flex-direction:column;
+  height:50vh;max-height:94vh;
+  transform:translateY(110%);
+  transition:transform .28s cubic-bezier(.2,.8,.2,1);
+  will-change:transform,height;
+}
+.notes-sheet.open{transform:translateY(0)}
+.notes-sheet.no-anim{transition:none !important}
+.notes-sheet-handle-wrap{
+  flex-shrink:0;padding:8px 12px 10px;cursor:grab;user-select:none;
+  -webkit-user-select:none;touch-action:none;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:#fff;border-radius:18px 18px 0 0;
+}
+.notes-sheet-handle-wrap:active{cursor:grabbing}
+.notes-sheet-handle{
+  width:44px;height:5px;border-radius:99px;background:#94a3b8;margin-bottom:2px;
+}
+.notes-sheet-bar{
+  width:100%;display:flex;align-items:center;gap:8px;pointer-events:auto;
+}
+.notes-sheet-bar .ns-title{
+  flex:1;min-width:0;font-size:.9rem;font-weight:800;letter-spacing:-.02em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;
+  pointer-events:none;
+}
+.notes-sheet-bar .ns-hint{
+  font-size:.62rem;font-weight:600;color:#94a3b8;white-space:nowrap;pointer-events:none;
+}
+.ns-btn{
+  border:0;border-radius:10px;padding:8px 12px;font-size:.75rem;font-weight:800;
+  background:#eff6ff;color:#1d4ed8;cursor:pointer;flex-shrink:0;font-family:inherit;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.ns-btn:active{opacity:.85}
+.ns-btn-close{background:#f1f5f9;color:#0f172a}
+.notes-sheet-close{
+  width:36px;height:36px;border:0;border-radius:11px;background:#f1f5f9;color:#0f172a;
+  font-size:1.25rem;font-weight:700;cursor:pointer;flex-shrink:0;line-height:1;
+  touch-action:manipulation;
+}
+.notes-sheet-body{
+  flex:1;min-height:0;position:relative;background:#fff;
+  /* iframe should not steal vertical drag from handle only */
+}
+.notes-sheet-body iframe{width:100%;height:100%;border:0;display:block;background:#fff}
+.notes-sheet-loading{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;font-weight:600;color:#64748b;background:#fff;z-index:2;
+}
+.notes-sheet-loading.hide{display:none}
+
 </style>
 </head>
 <body>
@@ -197,6 +278,25 @@ body{background:#f1f5f9;color:#0f172a;min-height:100vh}
   <iframe id="viewer-frame" style="display:none"></iframe>
 </div>
 
+<!-- Chapter notes bottom sheet -->
+<div class="notes-sheet-backdrop" id="notesSheetBackdrop"></div>
+<div class="notes-sheet" id="notesSheet" aria-hidden="true">
+  <div class="notes-sheet-handle-wrap" id="notesSheetDrag">
+    <div class="notes-sheet-handle"></div>
+    <div class="notes-sheet-bar">
+      <div class="ns-title" id="notesSheetTitle">Chapter</div>
+      <button type="button" class="ns-btn" id="notesSheetFull" aria-label="Full screen">Full</button>
+      <button type="button" class="ns-btn ns-btn-close" id="notesSheetClose" aria-label="Close">Close</button>
+    </div>
+  </div>
+  <div class="notes-sheet-body">
+    <div class="notes-sheet-loading" id="notesSheetLoading">Loading chapter…</div>
+    <iframe id="notesSheetFrame" title="Chapter notes"></iframe>
+  </div>
+</div>
+
+
+
 <script>
 (function () {
   var MSG_OPEN = "OPEN", MSG_BACK = "BACK";
@@ -204,8 +304,12 @@ body{background:#f1f5f9;color:#0f172a;min-height:100vh}
   var POSTS_API = "https://script.google.com/macros/s/AKfycbzVYw5uC-1sASG-6BAMChC3JhCqKK-0LHMgmkQjEmAolRF8_3ozyETPH6cEWBVqDil3/exec";
   var ONELINER_API = "https://script.google.com/macros/s/AKfycbwLtMNNkWyRAhKbyXXhEK3Cg46n2XQfUsFEFgsg1ys4HLjjnCSGKxeDG61efsmMBsd3Dg/exec";
   var FIREBASE_DB = "https://prepexam-f98bf-default-rtdb.firebaseio.com";
-  var DRIVE_API_KEY = "YOUR_GOOGLE_DRIVE_API_KEY";
-  var DRIVE_FOLDER_ID = "YOUR_DRIVE_FOLDER_ID_FOR_PYP";
+  var DRIVE_API_KEY = "AIzaSyDtdFn-GBAZE6iKoFGvAe86nFSKJ7NJA_c";
+  var DRIVE_FOLDER_ID = "1xgsVBJ0FbLOcrH9NEyHxPKaU13NJHXbk";
+  /* Chapter notes HTML (study-material style) — same Drive API key, notes folder */
+  var DRIVE_NOTES_FOLDER_ID = "1xgsVBJ0FbLOcrH9NEyHxPKaU13NJHXbk";
+  var NOTES_CACHE_TTL_MS = 10 * 60 * 1000;
+  var _notesIndex = null, _notesIndexAt = 0, _notesHtmlCache = {};
   var GITHUB_BASE = "https://raw.githubusercontent.com/subham781/App-ui-s/main/";
 
   var userId = "", userName = "", userPreferredLang = "";
@@ -279,7 +383,7 @@ body{background:#f1f5f9;color:#0f172a;min-height:100vh}
     return {
       q:raw.q||raw.question||raw.Question||"", options:opts, correct:correct,
       username:raw.username||raw.channelName||"Educator",
-      subject:raw.subject||"General", topic:raw.topic||raw.chapter||"",
+      subject:raw.subject||"General", topic:raw.topic||raw.chapter||"", chapter:raw.chapter||raw.Chapter||raw.topic||"",
       difficulty:raw.difficulty||raw.level||"Medium",
       exam:raw.exam||raw.examName||"", year:raw.year||raw.pyqYear||"",
       shift:raw.shift||"", section:raw.section||"", source:raw.source||"",
@@ -342,8 +446,15 @@ body{background:#f1f5f9;color:#0f172a;min-height:100vh}
   }
   $("btnViewerBack").onclick=function(){
     sendWebViewString(MSG_BACK);
-    $("viewer").style.display="none";
-    $("main-page").style.display="block";
+    try {
+      var frame = $("viewer-frame");
+      frame.style.display = "none";
+      frame.removeAttribute("src");
+      var doc = frame.contentDocument || frame.contentWindow.document;
+      doc.open(); doc.write(""); doc.close();
+    } catch (e) {}
+    $("viewer").style.display = "none";
+    $("main-page").style.display = "block";
   };
 
   function fillSelect(id,values){
@@ -381,8 +492,7 @@ body{background:#f1f5f9;color:#0f172a;min-height:100vh}
     if(userPreferredLang) parts.push("language="+encodeURIComponent(userPreferredLang));
     return u+parts.join("&");
   }
-
-  /* ===== User + analysis save (for Profile) ===== */
+/* ===== User + analysis save (for Profile) ===== */
   async function loadCurrentUser(){
     userId=getWebViewString();
     if(userId.indexOf("|")>0) userId=userId.split("|").pop();
@@ -628,8 +738,7 @@ body{background:#f1f5f9;color:#0f172a;min-height:100vh}
     if(f.source&&String(item.source||"").toLowerCase().indexOf(String(f.source).toLowerCase())<0) return false;
     return true;
   }
-
-  function renderFeed(type){
+function renderFeed(type){
     var box=$("mixedFeed");
     var filters=currentFilters();
     type=type||filters.type||"All";
@@ -673,6 +782,331 @@ body{background:#f1f5f9;color:#0f172a;min-height:100vh}
     return chips.map(function(c,i){ return '<span class="exam-chip'+(i&&/PYQ/i.test(c)?' py':'')+'">'+escapeHTML(String(c))+'</span>'; }).join("");
   }
 
+  
+  /* ===== Chapter notes from Drive (auto below MCQ) ===== */
+  function normNotesKey(str) {
+    return String(str || "")
+      .toLowerCase()
+      .replace(/\.html?$/i, "")
+      .replace(/[^a-z0-9\u0900-\u097f]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  async function loadNotesIndex(force) {
+    if (!force && _notesIndex && (Date.now() - _notesIndexAt) < NOTES_CACHE_TTL_MS) return _notesIndex;
+    _notesIndex = {};
+    var keyOk = DRIVE_API_KEY && String(DRIVE_API_KEY).indexOf("YOUR_") < 0;
+    var folder = DRIVE_NOTES_FOLDER_ID && String(DRIVE_NOTES_FOLDER_ID).indexOf("YOUR_") < 0
+      ? DRIVE_NOTES_FOLDER_ID
+      : (DRIVE_FOLDER_ID && String(DRIVE_FOLDER_ID).indexOf("YOUR_") < 0 ? DRIVE_FOLDER_ID : "");
+    if (!keyOk || !folder) return _notesIndex;
+    try {
+      var q = encodeURIComponent("'" + folder + "' in parents and trashed=false");
+      var url = "https://www.googleapis.com/drive/v3/files?q=" + q +
+        "&fields=files(id,name,mimeType,webViewLink)&pageSize=1000&key=" + encodeURIComponent(DRIVE_API_KEY);
+      var res = await fetch(url);
+      if (!res.ok) throw new Error("notes list " + res.status);
+      var data = await res.json();
+      (data.files || []).forEach(function (f) {
+        var n = normNotesKey(f.name);
+        if (!n) return;
+        var isHtml = /\.html?$/i.test(f.name) || (f.mimeType || "").indexOf("html") >= 0;
+        if (!_notesIndex[n] || isHtml) {
+          _notesIndex[n] = { id: f.id, name: f.name, mimeType: f.mimeType || "", webViewLink: f.webViewLink || "", isHtml: isHtml };
+        }
+      });
+      _notesIndexAt = Date.now();
+      console.log("[notes] files", Object.keys(_notesIndex).length);
+    } catch (e) { console.warn("[notes]", e); }
+    return _notesIndex;
+  }
+  function scoreNotesMatch(query, fileKey) {
+    if (!query || !fileKey) return 0;
+    if (query === fileKey) return 100;
+    if (fileKey.indexOf(query) >= 0 || query.indexOf(fileKey) >= 0) {
+      var shorter = Math.min(query.length, fileKey.length);
+      if (shorter < 4) return 0;
+      return 60 + Math.min(30, shorter);
+    }
+    var qt = query.split(" "), ft = fileKey.split(" "), hit = 0;
+    qt.forEach(function (t) { if (t.length > 2 && ft.indexOf(t) >= 0) hit++; });
+    if (hit && hit === qt.length) return 80;
+    if (hit >= 2) return 50;
+    if (hit === 1 && qt.length === 1) return 40;
+    return 0;
+  }
+  function resolveNotesFile(item) {
+    if (!_notesIndex) return null;
+    var chapter = normNotesKey(item.chapter || item.Chapter || "");
+    var topic = normNotesKey(item.topic || item.topics || "");
+    var subject = normNotesKey(item.subject || "");
+    var best = null, bestScore = 0;
+    Object.keys(_notesIndex).forEach(function (key) {
+      var sc = 0;
+      if (chapter) sc = Math.max(sc, scoreNotesMatch(chapter, key));
+      if (topic) sc = Math.max(sc, scoreNotesMatch(topic, key) - 5);
+      if (subject && chapter) sc = Math.max(sc, scoreNotesMatch(subject + " " + chapter, key) - 10);
+      if (sc > bestScore) { bestScore = sc; best = _notesIndex[key]; }
+    });
+    return bestScore >= 40 ? best : null;
+  }
+  async function fetchNotesHtml(fileId) {
+    if (_notesHtmlCache[fileId]) return _notesHtmlCache[fileId];
+    var url = "https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(fileId) +
+      "?alt=media&key=" + encodeURIComponent(DRIVE_API_KEY);
+    var res = await fetch(url);
+    if (!res.ok) throw new Error("notes body " + res.status);
+    var text = await res.text();
+    _notesHtmlCache[fileId] = text;
+    return text;
+  }
+  /* ===== Bottom sheet: height in px for reliable drag ===== */
+  var _nsH = 0;
+  var _nsDragging = false;
+  var _nsStartY = 0;
+  var _nsStartH = 0;
+  var _nsMax = 0;
+  var _nsMin = 0;
+  var _nsHalf = 0;
+
+  function nsMeasure() {
+    _nsMax = Math.round(window.innerHeight * 0.94);
+    _nsMin = Math.round(window.innerHeight * 0.28);
+    _nsHalf = Math.round(window.innerHeight * 0.5);
+  }
+
+  function nsApplyH(px, anim) {
+    var sheet = $("notesSheet");
+    if (!sheet) return;
+    px = Math.max(_nsMin, Math.min(_nsMax, px));
+    _nsH = px;
+    if (!anim) sheet.classList.add("no-anim");
+    else sheet.classList.remove("no-anim");
+    sheet.style.height = px + "px";
+    var hint = $("notesSheetHint");
+    if (hint) {
+      hint.textContent = px > window.innerHeight * 0.75 ? "↓ pull down to close" : "↑ pull up for full · ↓ close";
+    }
+    if (!anim) {
+      /* force reflow then allow anim later */
+      void sheet.offsetHeight;
+    }
+  }
+
+  function closeNotesSheet() {
+    var sheet = $("notesSheet");
+    var backdrop = $("notesSheetBackdrop");
+    var frame = $("notesSheetFrame");
+    var loading = $("notesSheetLoading");
+    if (!sheet) return;
+    sheet.classList.remove("open");
+    if (backdrop) backdrop.classList.remove("open");
+    sheet.setAttribute("aria-hidden", "true");
+    setTimeout(function () {
+      try {
+        if (frame) {
+          frame.removeAttribute("src");
+          frame.style.display = "none";
+          var doc = frame.contentDocument || frame.contentWindow.document;
+          doc.open(); doc.write(""); doc.close();
+        }
+      } catch (err) {}
+      if (loading) {
+        loading.classList.remove("hide");
+        loading.textContent = "Loading chapter…";
+      }
+      nsMeasure();
+      nsApplyH(_nsHalf, false);
+    }, 280);
+    try { sendWebViewString(MSG_BACK); } catch (err) {}
+  }
+
+  function openChapterNotes(fileMeta) {
+    var sheet = $("notesSheet");
+    var backdrop = $("notesSheetBackdrop");
+    var frame = $("notesSheetFrame");
+    var loading = $("notesSheetLoading");
+    var titleEl = $("notesSheetTitle");
+    if (!sheet) return;
+
+    nsMeasure();
+    nsApplyH(_nsHalf, false);
+
+    var title = String(fileMeta.name || "Chapter").replace(/\.html?$/i, "").replace(/-/g, " ");
+    if (titleEl) titleEl.textContent = title;
+    if (loading) {
+      loading.classList.remove("hide");
+      loading.textContent = "Loading chapter…";
+    }
+    if (frame) {
+      frame.style.display = "none";
+      try { frame.removeAttribute("src"); } catch (err) {}
+    }
+
+    if (backdrop) backdrop.classList.add("open");
+    sheet.classList.add("open");
+    sheet.setAttribute("aria-hidden", "false");
+    var fullBtn = $("notesSheetFull");
+    var closeBtn = $("notesSheetClose");
+    if (fullBtn) {
+      fullBtn.textContent = "Full";
+      fullBtn.onclick = function (ev) {
+        if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+        nsMeasure();
+        if (_nsH >= window.innerHeight * 0.8) {
+          nsApplyH(_nsHalf, true);
+          fullBtn.textContent = "Full";
+        } else {
+          nsApplyH(_nsMax, true);
+          fullBtn.textContent = "Half";
+        }
+      };
+    }
+    if (closeBtn) {
+      closeBtn.onclick = function (ev) {
+        if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+        closeNotesSheet();
+      };
+    }
+    var backdrop = $("notesSheetBackdrop");
+    if (backdrop) backdrop.onclick = function () { closeNotesSheet(); };
+    try { sendWebViewString(MSG_OPEN); } catch (err) {}
+
+    function showHtml(html) {
+      try {
+        var doc = frame.contentDocument || frame.contentWindow.document;
+        doc.open();
+        doc.write(html);
+        doc.close();
+        frame.style.display = "block";
+        if (loading) loading.classList.add("hide");
+      } catch (err) {
+        showPreview();
+      }
+    }
+    function showPreview() {
+      frame.src = "https://drive.google.com/file/d/" + fileMeta.id + "/preview";
+      frame.style.display = "block";
+      if (loading) loading.classList.add("hide");
+    }
+
+    if (fileMeta.isHtml) {
+      fetchNotesHtml(fileMeta.id).then(showHtml).catch(showPreview);
+    } else {
+      showPreview();
+    }
+  }
+
+  function initNotesSheetDrag() {
+    var sheet = $("notesSheet");
+    var backdrop = $("notesSheetBackdrop");
+    var closeBtn = $("notesSheetClose");
+    var fullBtn = $("notesSheetFull");
+    if (!sheet) return;
+
+    nsMeasure();
+    nsApplyH(_nsHalf, false);
+
+    function toggleFull() {
+      nsMeasure();
+      if (_nsH >= window.innerHeight * 0.8) {
+        nsApplyH(_nsHalf, true);
+        if (fullBtn) fullBtn.textContent = "Full";
+      } else {
+        nsApplyH(_nsMax, true);
+        if (fullBtn) fullBtn.textContent = "Half";
+      }
+    }
+
+    if (fullBtn) {
+      fullBtn.onclick = function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        toggleFull();
+      };
+    }
+    if (closeBtn) {
+      closeBtn.onclick = function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        closeNotesSheet();
+      };
+    }
+    if (backdrop) {
+      backdrop.onclick = function () { closeNotesSheet(); };
+    }
+
+    /* Optional light drag on handle only — buttons are primary */
+    var drag = $("notesSheetDrag");
+    if (drag) {
+      function pointerY(ev) {
+        if (ev.touches && ev.touches[0]) return ev.touches[0].clientY;
+        if (ev.changedTouches && ev.changedTouches[0]) return ev.changedTouches[0].clientY;
+        return ev.clientY;
+      }
+      function isBtn(t) {
+        return t && (t.id === "notesSheetClose" || t.id === "notesSheetFull" ||
+          (t.closest && (t.closest("#notesSheetClose") || t.closest("#notesSheetFull"))));
+      }
+      drag.addEventListener("touchstart", function (ev) {
+        if (isBtn(ev.target)) return;
+        _nsDragging = true;
+        _nsStartY = pointerY(ev);
+        _nsStartH = _nsH || sheet.offsetHeight;
+        sheet.classList.add("no-anim");
+      }, { passive: true });
+      drag.addEventListener("touchmove", function (ev) {
+        if (!_nsDragging) return;
+        if (ev.cancelable) ev.preventDefault();
+        nsApplyH(_nsStartH + (_nsStartY - pointerY(ev)), false);
+      }, { passive: false });
+      drag.addEventListener("touchend", function () {
+        if (!_nsDragging) return;
+        _nsDragging = false;
+        sheet.classList.remove("no-anim");
+        if (_nsH < window.innerHeight * 0.36) closeNotesSheet();
+        else if (_nsH > window.innerHeight * 0.7) {
+          nsApplyH(_nsMax, true);
+          if (fullBtn) fullBtn.textContent = "Half";
+        } else {
+          nsApplyH(_nsHalf, true);
+          if (fullBtn) fullBtn.textContent = "Full";
+        }
+      }, { passive: true });
+    }
+
+    window.addEventListener("resize", function () {
+      if (!sheet.classList.contains("open")) {
+        nsMeasure();
+        nsApplyH(_nsHalf, false);
+      }
+    });
+  }
+
+  /** Button only — chapter opens in bottom sheet */
+  /** Button only — chapter opens in bottom sheet */
+  /** Button only — chapter opens in bottom sheet */
+  /** Button only — full chapter opens in viewer (same as Study tools) */
+  async function renderChapterNotesForItem(item) {
+    await loadNotesIndex(false);
+    var file = resolveNotesFile(item || {});
+    if (!file) return "";
+    var title = String(file.name || "").replace(/\.html?$/i, "").replace(/-/g, " ");
+    var topicHint = (item.chapter || item.topic || title || "this topic");
+    return (
+      '<button type="button" class="chapter-notes-cta" data-notes-id="' + file.id + '">' +
+        '<div class="cn-ico">📘</div>' +
+        '<div class="cn-text">' +
+          '<b>Read complete chapter of this topic</b>' +
+          '<span>' + escapeHTML(String(topicHint)) + ' · Study material</span>' +
+        '</div>' +
+        '<div class="cn-arrow">›</div>' +
+      '</button>'
+    );
+  }
+  /* ===== end chapter notes ===== */
+
+
   function renderMcq(item,index){
     var card=document.createElement("div"); card.className="card";
     var uname=item.username||"Educator", qid=getQid(item);
@@ -712,6 +1146,27 @@ body{background:#f1f5f9;color:#0f172a;min-height:100vh}
         this.classList.toggle("active",next); this.textContent=next?"✓ In Revision":"+ Revision";
       }.bind(this));
     };
+    /* Auto chapter notes under this MCQ (Drive study-material HTML) */
+    var notesSlot = document.createElement("div");
+    notesSlot.className = "notes-slot";
+    notesSlot.innerHTML = '<div class="notes-loading">Loading notes…</div>';
+    card.appendChild(notesSlot);
+    renderChapterNotesForItem(item).then(function (html) {
+      notesSlot.innerHTML = html || "";
+      var btn = notesSlot.querySelector(".chapter-notes-cta");
+      if (btn) {
+        btn.onclick = function () {
+          var id = btn.getAttribute("data-notes-id");
+          var file = null;
+          if (_notesIndex) {
+            Object.keys(_notesIndex).forEach(function (k) {
+              if (_notesIndex[k].id === id) file = _notesIndex[k];
+            });
+          }
+          if (file) openChapterNotes(file);
+        };
+      }
+    }).catch(function () { notesSlot.innerHTML = ""; });
     return card;
   }
 
@@ -787,10 +1242,13 @@ body{background:#f1f5f9;color:#0f172a;min-height:100vh}
   };
   $("btnRefresh").onclick=loadMixedFeed;
 
+  setTimeout(function(){ initNotesSheetDrag(); }, 0);
   renderTools();
   renderAds();
+  loadNotesIndex(false);
   loadMeta().then(loadMixedFeed).then(loadCurrentUser);
 })();
 </script>
+
 </body>
 </html>

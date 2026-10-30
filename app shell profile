@@ -306,8 +306,10 @@ textarea{min-height:76px;resize:vertical}
       if (v && typeof v === "object") {
         return Object.assign({ id: k }, v);
       }
-      /* true / timestamp flag */
+      /* legacy: only id flag true */
       return { id: k, flag: v, q: "", subject: "", topic: "" };
+    }).sort(function (a, b) {
+      return (b.savedAt || b.followedAt || 0) - (a.savedAt || a.followedAt || 0);
     });
   }
 
@@ -323,7 +325,7 @@ textarea{min-height:76px;resize:vertical}
       }).join("");
       if (!q) {
         q = "Question ID: " + (it.id || "—");
-        meta = (meta ? meta + " · " : "") + "Open Home feed to practice; snapshot not saved yet";
+        meta = (meta ? meta + " · " : "") + "Old save (id only) — like/save again from Home for full text";
       }
       return '<div class="q-card"><div class="q-meta">' + escapeHTML(meta || "MCQ") +
         "</div><div class=\"q-text\">" + escapeHTML(q) + "</div>" + optsHtml + "</div>";
@@ -334,10 +336,14 @@ textarea{min-height:76px;resize:vertical}
     var list = mapToList(following);
     if (!list.length) return '<div class="empty-note">Not following anyone yet</div>';
     return list.map(function (u) {
-      var name = u.name || u.channelName || u.id || "User";
-      var ch = u.channelName || ("@" + (u.id || ""));
+      /* key is always userId; value may be true or {name, channelName, ...} */
+      var uid = u.id || "";
+      var name = u.name || u.channelName || uid || "User";
+      var ch = u.channelName ? u.channelName : ("@" + uid);
       return '<div class="user-row"><div class="user-av">' + escapeHTML(String(name).charAt(0).toUpperCase()) +
-        "</div><div><b>" + escapeHTML(name) + "</b><span>" + escapeHTML(ch) + "</span></div></div>";
+        "</div><div><b>" + escapeHTML(name) + "</b><span>" + escapeHTML(ch) +
+        '</span><span style="display:block;font-size:.65rem;color:#94a3b8">ID: ' + escapeHTML(uid) +
+        "</span></div></div>";
     }).join("");
   }
 

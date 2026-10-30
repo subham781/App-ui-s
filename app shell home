@@ -221,8 +221,6 @@ body{background:#f1f5f9;color:#0f172a;min-height:100vh}
 </head>
 <body>
 <div class="page" id="main-page">
-  <div class="section-label">Sponsored</div>
-  <div class="adds-wrapper"><div class="adds-track" id="addsTrack"></div></div>
 
   <div class="search-row">
     <div class="search-wrap">
@@ -328,7 +326,7 @@ body{background:#f1f5f9;color:#0f172a;min-height:100vh}
   var studyTools = [
     { id:"flash", title:"Flash Card", desc:"Important formulas", color:"c1", link: GITHUB_BASE + "FLASH%20CARD", svg:'<path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/>' },
     { id:"graph", title:"Graph Plotter", desc:"Plot math graphs", color:"c2", link: GITHUB_BASE + "GRAPH%20PLOTER", svg:'<path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/>' },
-    { id:"calc", title:"Calculator", desc:"Scientific calc", color:"c3", link: GITHUB_BASE + "Smart%20calculator", svg:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 12h2M12 12h2M16 12h0M8 16h2M12 16h2"/>' },
+    { id:"calc", title:"Calculator", desc:"Scientific calc", color:"c3",link: GITHUB_BASE + "Smart%20calculator", svg:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 12h2M12 12h2M16 12h0M8 16h2M12 16h2"/>' },
     { id:"unit", title:"Unit Converter", desc:"Length, weight…", color:"c4", link: GITHUB_BASE + "Unit%20converter", svg:'<path d="M7 7h10v10H7z"/><path d="M3 12h4M17 12h4"/>' },
     { id:"syn", title:"Synonyms", desc:"Word finder", color:"c5", link: GITHUB_BASE + "Ant%20and%20syn%20finder", svg:'<path d="M4 6h16M4 12h10M4 18h14"/>' },
     { id:"oneliner", title:"One-liners", desc:"Quick Q&A", color:"c1", link: GITHUB_BASE + "one%20liner", svg:'<path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/>' }
@@ -492,7 +490,8 @@ body{background:#f1f5f9;color:#0f172a;min-height:100vh}
     if(userPreferredLang) parts.push("language="+encodeURIComponent(userPreferredLang));
     return u+parts.join("&");
   }
-/* ===== User + analysis save (for Profile) ===== */
+
+  /* ===== User + analysis save (for Profile) ===== */
   async function loadCurrentUser(){
     userId=getWebViewString();
     if(userId.indexOf("|")>0) userId=userId.split("|").pop();
@@ -551,7 +550,7 @@ body{background:#f1f5f9;color:#0f172a;min-height:100vh}
     bumpBucket(analysis.topics,topic,isCorrect);
     bumpBucket(analysis.exams,exam,isCorrect);
     if(year) bumpBucket(analysis.pyqYears,String(year),isCorrect);
-    if(!isCorrect&&qid) revisionQuestions[qid]=true;
+    if(!isCorrect&&qid) revisionQuestions[qid]=questionSnapshot(item);
     if(!userId) return;
     try{
       var base="Users/"+safeKey(userId)+"/analysis";
@@ -563,18 +562,87 @@ body{background:#f1f5f9;color:#0f172a;min-height:100vh}
       values[base+"/exams/"+safeKey(exam)]=analysis.exams[exam];
       if(year) values[base+"/pyqYears/"+safeKey(year)]=analysis.pyqYears[year];
       values[base+"/lastAnswer"]={qid:qid,subject:subject,topic:topic,exam:exam,year:year||null,correct:!!isCorrect,ts:Date.now()};
-      if(!isCorrect&&qid) values["Users/"+safeKey(userId)+"/revisionQuestions/"+safeKey(qid)]=true;
+      if(!isCorrect&&qid) values["Users/"+safeKey(userId)+"/revisionQuestions/"+safeKey(qid)]=questionSnapshot(item);
       values["leaderboard/"+safeKey(userId)]={name:userName||userId,accuracy:analysis.allTime.accuracy,attempted:analysis.allTime.attempted,correct:analysis.allTime.correct,ts:Date.now()};
       await firebasePatch(values);
     }catch(e){ console.warn(e); }
   }
 
-  async function setUserFlag(path,key,enabled){
-    if(!userId||!key) return false;
-    try{
-      var values={}; values["Users/"+safeKey(userId)+"/"+path+"/"+safeKey(key)]=enabled?true:null;
-      await firebasePatch(values); return true;
-    }catch(e){ return false; }
+  /** Snapshot of MCQ stored on like / save / revision (full question, not only id) */
+  function questionSnapshot(item) {
+    item = item || {};
+    var opts = item.options || [];
+    if (!Array.isArray(opts)) opts = [];
+    return {
+      qid: getQid(item) || null,
+      q: item.q || item.question || "",
+      options: opts.slice(0, 6),
+      correct: item.correct != null ? item.correct : null,
+      subject: item.subject || "",
+      topic: item.topic || item.chapter || "",
+      chapter: item.chapter || item.topic || "",
+      exam: item.exam || item.examName || "",
+      year: item.year || item.pyqYear || "",
+      difficulty: item.difficulty || item.level || "",
+      source: item.source || "",
+      username: item.username || "",
+      language: item.language || "",
+      savedAt: Date.now()
+    };
+  }
+
+  /** path: likedQuestions | savedQuestions | revisionQuestions — value = full question object or null to delete */
+  async function setUserQuestion(path, key, enabled, item) {
+    if (!userId || !key) return false;
+    try {
+      var values = {};
+      values["Users/" + safeKey(userId) + "/" + path + "/" + safeKey(key)] =
+        enabled ? questionSnapshot(item) : null;
+      await firebasePatch(values);
+      return true;
+    } catch (e) {
+      console.warn(e);
+      return false;
+    }
+  }
+
+  /** Following: store by userId only (true or light profile) */
+  async function setFollowing(targetUserId, enabled, profile) {
+    if (!userId || !targetUserId) return false;
+    try {
+      var values = {};
+      var val = null;
+      if (enabled) {
+        val = true;
+        if (profile && typeof profile === "object") {
+          val = {
+            id: targetUserId,
+            name: profile.name || profile.channelName || targetUserId,
+            channelName: profile.channelName || "",
+            photo: profile.photo || profile.photoURL || "",
+            followedAt: Date.now()
+          };
+        }
+      }
+      values["Users/" + safeKey(userId) + "/following/" + safeKey(targetUserId)] = val;
+      await firebasePatch(values);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async function setUserFlag(path, key, enabled) {
+    /* legacy boolean flag — prefer setUserQuestion for MCQs */
+    if (!userId || !key) return false;
+    try {
+      var values = {};
+      values["Users/" + safeKey(userId) + "/" + path + "/" + safeKey(key)] = enabled ? true : null;
+      await firebasePatch(values);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   /* ===== Search ===== */
@@ -618,7 +686,7 @@ body{background:#f1f5f9;color:#0f172a;min-height:100vh}
     try{
       if(DRIVE_API_KEY.indexOf("YOUR_")<0&&DRIVE_FOLDER_ID.indexOf("YOUR_")<0){
         var dq=encodeURIComponent("'"+DRIVE_FOLDER_ID+"' in parents and trashed=false and name contains '"+q.replace(/'/g,"\\'")+"'");
-        var driveUrl="https://www.googleapis.com/drive/v3/files?q="+dq+"&fields=files(id,name,mimeType,webViewLink)&key="+encodeURIComponent(DRIVE_API_KEY)+"&pageSize=12";
+        vardriveUrl="https://www.googleapis.com/drive/v3/files?q="+dq+"&fields=files(id,name,mimeType,webViewLink)&key="+encodeURIComponent(DRIVE_API_KEY)+"&pageSize=12";
         var dres=await fetch(driveUrl);
         if(dres.ok){
           var djson=await dres.json();
@@ -681,7 +749,7 @@ body{background:#f1f5f9;color:#0f172a;min-height:100vh}
   async function loadMixedFeed(){
     var box=$("mixedFeed");
     box.innerHTML='<div class="loading">Loading practice…</div>';
-    renderAds();
+    /* renderAds(); sponsored off */
     var filters=currentFilters();
     try{
       var tasks=[];
@@ -738,7 +806,8 @@ body{background:#f1f5f9;color:#0f172a;min-height:100vh}
     if(f.source&&String(item.source||"").toLowerCase().indexOf(String(f.source).toLowerCase())<0) return false;
     return true;
   }
-function renderFeed(type){
+
+  function renderFeed(type){
     var box=$("mixedFeed");
     var filters=currentFilters();
     type=type||filters.type||"All";
@@ -1017,8 +1086,7 @@ function renderFeed(type){
         if (fullBtn) fullBtn.textContent = "Half";
       }
     }
-
-    if (fullBtn) {
+ if (fullBtn) {
       fullBtn.onclick = function (ev) {
         ev.preventDefault();
         ev.stopPropagation();
@@ -1120,30 +1188,39 @@ function renderFeed(type){
       '<div class="options" id="options-'+domId(index)+'"></div>'+
       '<div class="footer-line" id="answered-'+domId(index)+'">Tap an option</div>'+
       '<div class="q-actions">'+
-        '<button class="q-action" type="button" data-qact="like">♡ Like</button>'+
-        '<button class="q-action" type="button" data-qact="save">Save</button>'+
-        '<button class="q-action revision" type="button" data-qact="revision">+ Revision</button></div>';
+        '<button class="q-action'+(likedQuestions[qid]?' active':'')+'" type="button" data-qact="like">'+(likedQuestions[qid]?'♥ Liked':'♡ Like')+'</button>'+
+        '<button class="q-action'+(savedQuestions[qid]?' active':'')+'" type="button" data-qact="save">'+(savedQuestions[qid]?'✓ Saved':'Save')+'</button>'+
+        '<button class="q-action revision'+(revisionQuestions[qid]?' active':'')+'" type="button" data-qact="revision">'+(revisionQuestions[qid]?'✓ In Revision':'+ Revision')+'</button></div>';
     var optBox=card.querySelector(".options");
     (item.options||[]).forEach(function(opt,i){
       var d=document.createElement("div"); d.className="option"; d.textContent=opt||"—";
       d.onclick=function(){ selectOption(index,i,item); }; optBox.appendChild(d);
     });
     card.querySelector('[data-qact="like"]').onclick=function(){
-      var next=!likedQuestions[qid]; setUserFlag("likedQuestions",qid,next).then(function(ok){
-        if(!ok) return; if(next) likedQuestions[qid]=true; else delete likedQuestions[qid];
-        this.classList.toggle("active",next); this.textContent=next?"♥ Liked":"♡ Like";
+      var next=!likedQuestions[qid];
+      setUserQuestion("likedQuestions", qid, next, item).then(function(ok){
+        if(!ok) return;
+        if(next) likedQuestions[qid]=questionSnapshot(item); else delete likedQuestions[qid];
+        this.classList.toggle("active", !!next);
+        this.textContent=next?"♥ Liked":"♡ Like";
       }.bind(this));
     };
     card.querySelector('[data-qact="save"]').onclick=function(){
-      var next=!savedQuestions[qid]; setUserFlag("savedQuestions",qid,next).then(function(ok){
-        if(!ok) return; if(next) savedQuestions[qid]=true; else delete savedQuestions[qid];
-        this.classList.toggle("active",next); this.textContent=next?"✓ Saved":"Save";
+      var next=!savedQuestions[qid];
+      setUserQuestion("savedQuestions", qid, next, item).then(function(ok){
+        if(!ok) return;
+        if(next) savedQuestions[qid]=questionSnapshot(item); else delete savedQuestions[qid];
+        this.classList.toggle("active", !!next);
+        this.textContent=next?"✓ Saved":"Save";
       }.bind(this));
     };
     card.querySelector('[data-qact="revision"]').onclick=function(){
-      var next=!revisionQuestions[qid]; setUserFlag("revisionQuestions",qid,next).then(function(ok){
-        if(!ok) return; if(next) revisionQuestions[qid]=true; else delete revisionQuestions[qid];
-        this.classList.toggle("active",next); this.textContent=next?"✓ In Revision":"+ Revision";
+      var next=!revisionQuestions[qid];
+      setUserQuestion("revisionQuestions", qid, next, item).then(function(ok){
+        if(!ok) return;
+        if(next) revisionQuestions[qid]=questionSnapshot(item); else delete revisionQuestions[qid];
+        this.classList.toggle("active", !!next);
+        this.textContent=next?"✓ In Revision":"+ Revision";
       }.bind(this));
     };
     /* Auto chapter notes under this MCQ (Drive study-material HTML) */
@@ -1244,7 +1321,7 @@ function renderFeed(type){
 
   setTimeout(function(){ initNotesSheetDrag(); }, 0);
   renderTools();
-  renderAds();
+  /* renderAds(); sponsored off */
   loadNotesIndex(false);
   loadMeta().then(loadMixedFeed).then(loadCurrentUser);
 })();
